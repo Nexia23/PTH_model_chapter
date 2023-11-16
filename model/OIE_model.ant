@@ -1,6 +1,6 @@
 # steady state 
-t_R_aging_init =     param1_TRPaging/ (1+exp (-param2_TRPaging*(Hkt_init - param3_TRPaging)))  #in days, Entwicklung von Stammzelle zum Retikulozyt dauert ca. 5-9 Tage, plus 3 Tage die er schon retikulozyte ist aber noch in Rückenmark
-t_P_aging_init = 11-(param1_TRPaging/ (1+exp (-param2_TRPaging*(Hkt_init - param3_TRPaging)))) 
+t_R_aging_init =     param1_TRPaging/ (1+exp (param2_TRPaging*(Hkt_init - param3_TRPaging)))  #in days, Entwicklung von Stammzelle zum Retikulozyt dauert ca. 5-9 Tage, plus 3 Tage die er schon retikulozyte ist aber noch in Rückenmark
+t_P_aging_init = 11-(param1_TRPaging/ (1+exp (param2_TRPaging*(Hkt_init - param3_TRPaging)))) 
 Hkt_init = 0.45
 LDH_RBC = (J_LDH_decay * Vol_blood) / (J_E_death +J_R_death ) #  U  (pro RBC)  #https://www.ncbi.nlm.nih.gov/books/NBK557536/?report=printable
 

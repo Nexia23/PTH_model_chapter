@@ -1,0 +1,31 @@
+{
+    "metadata": {
+        "description": "k_P_death linear, ohne iE, 1x durchlauf, mit fixed update function, ohne hill, paramTRPaging 1 und 3, paramPdeaths",
+        "algorithm": "differential_evolution",
+        "patient": "36",
+        "estimation_duration": 15.66065764427185
+    },
+    "results": [
+        {
+            "index": 0,
+            "initial_guess": {
+                "Hkt_init": -0.42382544092084073,
+                "M": 3.19150813529296,
+                "k_E_infect": -5.706683869403481,
+                "k_iE_rupture": -0.9093807676682408,
+                "k_M_death": 0.19872260063547753,
+                "param1_Pdeath": -3.237798110563056,
+                "param2_Pdeath": -2.276993352404704,
+                "I0_death_iE": -3.7078973450495463,
+                "t_oiE_death": 0.952213662382694,
+                "k_BH": -3.4072026983450714,
+                "J_oiEdeath_0": 3.701421145343146,
+                "BH_max": -0.13523841646688473,
+                "t_ART_add": 0.730291196332599,
+                "param1_TRPaging": 1.2394685053008019,
+                "param3_TRPaging": -1.2867793870168651
+            },
+            "error": "CVODE Error: CV_CONV_FAILURE: Convergence test failures occurred too many times (= MXNCF = 10) during one internal timestep or occurred with |h| = hmin.; In virtual double rr::CVODEIntegrator::integrate(double, double)"
+        }
+    ]
+}

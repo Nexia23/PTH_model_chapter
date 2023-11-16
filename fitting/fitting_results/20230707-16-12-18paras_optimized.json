@@ -1,0 +1,41 @@
+{
+    "metadata": {
+        "description": "mit Hkt init, weglassen von imax, Id50, param1death param2death",
+        "algorithm": "differential_evolution",
+        "patient": 36
+    },
+    "results": [
+        {
+            "index": 0,
+            "initial_guess": {
+                "Hkt_init": -0.4497264164989955,
+                "M": 2.347370580985719,
+                "k_E_infect": -4.36660233175352,
+                "k_iE_rupture": -0.10175865292133679,
+                "k_M_death": 1.748910677076605,
+                "I0_death_iE": -3.001691737508153,
+                "hill": 0.09307440788311118,
+                "t_oiE_death": 0.7605301171046746,
+                "k_BH": -2.506884758573228,
+                "J_oiEdeath_0": 3.7505519190874206,
+                "BH_max": -0.0904049460892713,
+                "t_ART_add": 1.1709211170638125
+            },
+            "best_score": 6.093113987167135,
+            "best_params": {
+                "Hkt_init": -0.3928421598242402,
+                "M": 3.173174909472354,
+                "k_E_infect": -7.2550416536069235,
+                "k_iE_rupture": -0.4592473001520665,
+                "k_M_death": 0.762254240226354,
+                "I0_death_iE": -5.99044511338733,
+                "hill": 0.094077582714087,
+                "t_oiE_death": 1.0555919892778107,
+                "k_BH": -3.137736240981741,
+                "J_oiEdeath_0": 3.824677840581106,
+                "BH_max": -0.32981625160412764,
+                "t_ART_add": 0.8333829004878525
+            }
+        }
+    ]
+}

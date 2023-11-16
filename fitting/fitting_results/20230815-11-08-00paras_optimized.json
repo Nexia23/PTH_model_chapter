@@ -1,0 +1,72 @@
+{
+    "metadata": {
+        "description": "k_P_death linear, ohne iE, ohne t_ART add, 2x durchlauf",
+        "algorithm": "differential_evolution",
+        "patient": "59",
+        "estimation_duration": 423.9049983024597
+    },
+    "results": [
+        {
+            "index": 0,
+            "initial_guess": {
+                "Hkt_init": -0.27661592089477643,
+                "M": 3.1065569399263673,
+                "k_E_infect": -5.779431572303837,
+                "k_iE_rupture": 0.2417256094804996,
+                "k_M_death": 2.5981823768998407,
+                "I0_death_iE": -4.746506042342326,
+                "hill": 0.10172590906960487,
+                "t_oiE_death": 1.0680811050571182,
+                "k_BH": -4.282179831926214,
+                "J_oiEdeath_0": 3.926832377668181,
+                "BH_max": 0.11983539056729842
+            },
+            "best_score": 1608.0064267497125,
+            "best_params": {
+                "Hkt_init": -0.44966665248157045,
+                "M": 3.44163776474894,
+                "k_E_infect": -5.946388158424388,
+                "k_iE_rupture": 0.4615670156679903,
+                "k_M_death": 1.8240494913287202,
+                "I0_death_iE": -3.8065616854342887,
+                "hill": 0.2742865204486225,
+                "t_oiE_death": 0.9689829645468108,
+                "k_BH": -2.823159813467882,
+                "J_oiEdeath_0": 3.793076248179842,
+                "BH_max": 0.8797567921238508
+            },
+            "termination_cause": "Optimization terminated successfully."
+        },
+        {
+            "index": 1,
+            "initial_guess": {
+                "Hkt_init": -0.36118383038672597,
+                "M": 4.521560484733929,
+                "k_E_infect": -5.983751139036931,
+                "k_iE_rupture": -0.823898462188326,
+                "k_M_death": 0.7713622036581144,
+                "I0_death_iE": -4.195260884461275,
+                "hill": 0.3290187193192379,
+                "t_oiE_death": 0.805494512515792,
+                "k_BH": -2.5301174208749844,
+                "J_oiEdeath_0": 3.7438422586739573,
+                "BH_max": 0.525797782892246
+            },
+            "best_score": 1608.0064396893692,
+            "best_params": {
+                "Hkt_init": -0.34122822370314976,
+                "M": 3.1252848861611047,
+                "k_E_infect": -5.893231995635867,
+                "k_iE_rupture": 0.11719363969031305,
+                "k_M_death": 1.5565777168547492,
+                "I0_death_iE": -5.501182915780007,
+                "hill": 0.11257941819405584,
+                "t_oiE_death": 1.1597163354481324,
+                "k_BH": -2.6409181294718076,
+                "J_oiEdeath_0": 3.8451613744072715,
+                "BH_max": 0.880783335535997
+            },
+            "termination_cause": "Optimization terminated successfully."
+        }
+    ]
+}

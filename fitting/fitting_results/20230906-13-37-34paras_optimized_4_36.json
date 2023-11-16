@@ -1,0 +1,30 @@
+{
+    "metadata": {
+        "description": "k_P_death linear, ohne iE, 1x durchlauf, mit fixed update function, ohne hill, paramTRPaging, paramPdeaths",
+        "algorithm": "differential_evolution",
+        "patient": "36",
+        "estimation_duration": 209.5898153781891
+    },
+    "results": [
+        {
+            "index": 0,
+            "initial_guess": {
+                "Hkt_init": -0.4132936093290824,
+                "M": 4.801232342058982,
+                "k_E_infect": -5.652369134442003,
+                "k_iE_rupture": -0.9996604120142056,
+                "k_M_death": 1.784453763522787,
+                "I0_death_iE": -5.7701558068221415,
+                "t_oiE_death": 1.0555634006767831,
+                "k_BH": -2.669301586867281,
+                "J_oiEdeath_0": 3.793407769116868,
+                "BH_max": 0.09962566336694145,
+                "t_ART_add": 0.9737365365967812,
+                "param1_TRPaging": 0.9688189374944747,
+                "param2_TRPaging": 1.2625144961098393,
+                "param3_TRPaging": -1.231854251741595
+            },
+            "error": "CVODE Error: CV_ERR_FAILURE: Error test failures occurred too many times (= MXNEF = 7) during one internal time step oroccurred with |h| = hmin.; In virtual double rr::CVODEIntegrator::integrate(double, double)"
+        }
+    ]
+}

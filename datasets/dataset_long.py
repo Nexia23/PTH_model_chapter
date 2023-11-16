@@ -1,0 +1,126 @@
+#packages
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from IPython.display import display
+
+
+def rename_patientnumber(df):
+    """ Convert patient number from the form "S14" to 14000"""
+    df.patientnumber.str.replace('S', '').astype(int) * 1000
+    return df
+
+def rename_columns(df):
+    """ deletes hastags in col-names, renames RPI-berechnet and V4_PTH"""
+    df.columns = df.columns.str.replace('RPI-berechnet', 'RPI')
+    df.columns =  df.columns.str.replace('#', '')
+    df.columns  = df.columns.str.replace('V4_PTH', 'PTH')
+    df.columns  = df.columns.str.replace('Parasite_%', 'parasitemia')
+    df.columns =  df.columns.str.replace('OIE_per_µl', '[oiE]')
+    df.columns =  df.columns.str.replace('Parasite_per_µl', '[iE]')
+    df.columns =  df.columns.str.replace('Ery', '[E]')
+    df.columns =  df.columns.str.replace('Reti-prozent', 'R_percent')
+    df.columns =  df.columns.str.replace('Reti-abs', '[R]')
+    df.columns =  df.columns.str.replace('OIE%', 'oiE_percent')
+    return df
+
+def create_immunity_column(df):
+    df['Immunity'] = df['Groups'].str.extract('(semi-immune|non-immune)')
+    return df
+
+def switch_column_name_prefix_suffix(df):
+    """ Returns Dataframe, where suffix and prefix of column_names are switched, e.g. 'V1-Hkt' ->'Hkt-V1'"""
+    rename_columns(df)
+    df.columns = ['-'.join(col.split('-')[::-1]) for col in df.columns]
+    return df
+
+def get_column_suffixes():
+    """Creates list with Suffixe of col_names of dataframe, e.g. ['V1', 'V2', 'V3', 'V4', 'V5']"""
+    suffixes = [f'V{i}' for i in range(1,6)]
+    return suffixes
+
+def get_column_stubnames(df):
+    """ Creates list with Stubnames of col_names of dataframe, e.g.['Hkt', 'Ery', 'RPI_berechnet']"""
+    stubnames = [col.split('-')[0] for col in df.columns if col.split('-')[-1] in get_column_suffixes()]
+    stubnames = list(dict.fromkeys(stubnames))
+    return stubnames
+
+def get_index_columns(df) -> list:
+    """returns list of col-names, who havent multiple timepoint measurements, e.g. patientnr."""
+    ic = [col.split('-')[0] for col in df.columns if not col.split('-')[-1] in get_column_suffixes()] 
+    return ic
+
+def create_time_column(df):
+    time_of_measurment = {'V1':0, 'V2':2, 'V3':6, 'V4':13,'V5':27}
+    df['time'] = df['measurement'].map(time_of_measurment)
+    return df
+
+def drop_different_drug_rows(df):
+    allowed_drug = 'Dihydroartemisinin-Piperaquine'
+    df = df[(df['drug1'].isna() | (df['drug1'] ==  allowed_drug)) 
+            & (df['drug2'].isna() | (df['drug2'] == allowed_drug))]
+    return df
+
+def drop_columns(df, columns_to_drop = [ 'OIE_any', 'measurement', 'drug1', 'drug2']): #,'malclass','age', 'sex', 'Groups', 'Symptombeginn']):
+    df = df.drop(columns_to_drop, axis=1)
+    return df
+
+def long_format(df):
+    """ reshapes dataframe to long format"""
+    #df_clean = rename_patientnumber(df)
+    df_clean = rename_columns(df)
+    df_clean = create_immunity_column(df_clean)
+    df_clean = switch_column_name_prefix_suffix(df_clean)
+    suffix = f"(!?{'|'.join(get_column_suffixes())})"
+    stubnames = get_column_stubnames(df_clean)
+    index = get_index_columns(df_clean)
+    df = pd.wide_to_long(df_clean, stubnames= stubnames, i=index, sep='-', j='measurement', suffix=suffix)
+    df = df.sort_values(['patientnumber', 'measurement'])
+    df = df.reset_index()
+    df.index.name = 'index'
+    df = create_time_column(df)
+    df = drop_different_drug_rows(df)
+    df = drop_columns (df)
+    df['[E]'] *= 1e6  #Erys sind in Daten in x*1e6, deswegen Experiment mit 1e6 multiplizieren
+    df['[R]'] *= 1e3  #Retis in daten per nl (mein modell in mikroliter)
+    return df
+
+
+if __name__=='__main__':
+    data_df = pd.read_excel('haemolysismodel_conRetis.xlsx')   #import Data von Pinkus 
+    df =long_format(data_df)
+    display(df)
+
+
+""""
+data_df2 = pd.read_excel('haemolysismodel_conRetis.xlsx')
+test_columns = ['patientnumber', 'age'] + [col for col in data_df2.columns if col.endswith(('Hkt', 'Ery', 'RPI-berechnet'))]
+test_df2 = data_df2[test_columns].head(10)
+test_df2
+
+#test_df2.columns
+
+# Column renaming
+new_cols = [col.replace('RPI-berechnet', 'RPI_berechnet').replace('#', '') for col in test_df2.columns]
+
+# switch suffix and prefix
+new_cols = ['-'.join(col.split('-')[::-1]) for col in new_cols]
+
+new_cols
+# make new df with updated columns
+new_col_df = test_df2.copy()
+new_col_df.columns = new_cols
+new_col_df
+
+suffixes = [f'V{i}' for i in range(1,6)]
+stubnames = [col.split('-')[0] for col in new_col_df.columns if col.split('-')[-1] in suffixes]
+get_index_columns = [col.split('-')[0] for col in new_col_df.columns if not col.split('-')[-1] in suffixes]
+stubnames = list(dict.fromkeys(stubnames))
+
+suffixes_sorted = f"(!?{'|'.join(suffixes)})"
+
+long_df = pd.wide_to_long(new_col_df, stubnames=stubnames, i=get_index_columns, sep='-', j='Time', suffix=suffixes_sorted)
+
+final = long_df.reset_index()
+"""

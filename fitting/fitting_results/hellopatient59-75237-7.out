@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/home/beyer/Dokumente/studienprojekt/gitlab_studienprojekt/fitting/paramfitt_singlePatient.py", line 338, in <module>
+    patient_id = sys.arg[2]
+AttributeError: module 'sys' has no attribute 'arg'. Did you mean: 'argv'?
+Traceback (most recent call last):
+  File "/home/beyer/Dokumente/studienprojekt/gitlab_studienprojekt/fitting/paramfitt_singlePatient.py", line 338, in <module>
+    patient_id = sys.arg[2]
+AttributeError: module 'sys' has no attribute 'arg'. Did you mean: 'argv'?
+malloc_consolidate(): unaligned fastbin chunk detected
+double free or corruption (fasttop)
+srun: error: smeik: tasks 0-1: Aborted

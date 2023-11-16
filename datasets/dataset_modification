@@ -1,0 +1,99 @@
+# Datasets modification module
+
+
+#packages
+import pandas as pd
+import numpy as np
+
+#import Data von Pinkus 
+data_my_df2 = pd.read_excel('/haemolysismodel_conRetis.xlsx')
+
+
+test_columns = ['patientnumber', 'age'] + [col for col in data_my_df2.columns if col.endswith(('Hkt', 'Ery', 'RPI-berechnet'))]
+test_my_df2 = data_my_df2[test_columns].head(10)
+test_my_df2
+
+
+class Dataset(object):
+    def __init__(self, my_df):
+        self.my_df = my_df
+
+    def col_renaming(self):
+        """
+        Column renaming
+        """
+        new_cols = [col.replace('RPI-berechnet', 'RPI_berechnet').replace('#', '') for col in self.columns]
+
+    def colnames_fixswitch(self):
+        """
+        Returns Dataframe, where suffix and prefix of column_names are switched, e.g. 'V1-Hkt' ->'Hkt-V1'
+        @type my_df:   pd dataframe
+        @rtype:     pd dataframe
+        """
+        new_cols = ['-'.join(col.split('-')[::-1]) for col in self.columns]
+
+
+    def colnames_suffixes() -> list:
+        """
+        Creates list with Suffixe of col_names of dataframe, e.g. ['V1', 'V2', 'V3', 'V4', 'V5']
+        @type my_df:   panda-dataframe
+        @rtype:     list
+        """
+        suff = [f'V{i}' for i in range(1,6)]
+        return suff
+
+    def stubnames(self) -> list:
+        """
+        Creates list with Stubnames of col_names of dataframe, e.g.['Hkt', 'Ery', 'RPI_berechnet']
+        @type my_df:   panda-dataframe
+        @rtype:     list
+        """
+        sn = [col.split('-')[0] for col in self.columns if col.split('-')[-1] in self.colnames_suffixes(self)]
+        sn = list(dict.fromkeys(sn))
+        return sn
+
+    def index_col(self) -> list:
+        """
+        returns list of col-names, who havent multiple timepoint measurements
+        """
+        ic = [col.split('-')[0] for col in self.columns if not col.split('-')[-1] in self.colnames_suffixes(self)] 
+        return ic
+
+    def cleaned_long_version(self):
+        index_col = [col.split('-')[0] for col in self.columns if not col.split('-')[-1] in self.colnames_suffixes(self)]
+        suffixis = f"(!?{'|'.join(self.colnames_suffixes(self))})"
+        long_my_df = pd.wide_to_long(self.columns, stubnames=self.stubnames(self), i=index_col, sep='-', j='Timepoint', suffix= suffixis)
+        
+
+data_my_df2 = pd.read_excel('/haemolysismodel_conRetis.xlsx')
+
+a = Dataset(data_my_df2)
+
+#print(dataset(data_my_df2))
+
+#if __name__ =='__main__':
+#dataset(data_my_df2).cleaned_long_version
+
+#print(data_my_df2)
+
+
+"""
+# make new my_df with updated columns
+new_col_my_df = test_my_df2.copy()
+new_col_my_df.columns = new_cols
+new_col_my_df
+
+suffixes = [f'V{i}' for i in range(1,6)]
+stubnames = [col.split('-')[0] for col in new_col_my_df.columns if     col.split('-')[-1] in suffixes]
+index_col = [col.split('-')[0] for col in new_col_my_df.columns if not col.split('-')[-1] in suffixes]
+stubnames = list(dict.fromkeys(stubnames))
+#index_col = ['patientnumber']
+suffixes, stubnames
+
+f"(!?{'|'.join(suffixes)})"
+
+long_my_df = pd.wide_to_long(new_col_my_df, stubnames=stubnames, i=index_col, sep='-', j='Time', suffix='(!?V1|V2|V3|V4|V5)')
+
+
+final = long_my_df.reset_index()
+"""

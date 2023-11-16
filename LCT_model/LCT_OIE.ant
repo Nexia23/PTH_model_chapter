@@ -1,6 +1,6 @@
 # steady state 
-    t_R_aging_init =     param1_TRPaging/ (1+exp (-param2_TRPaging*(Hkt_init - param3_TRPaging)))  #in days, Entwicklung von Stammzelle zum Retikulozyt dauert ca. 5-9 Tage, plus 3 Tage die er schon retikulozyte ist aber noch in Rückenmark
-    t_P_aging_init = 11-(param1_TRPaging/ (1+exp (-param2_TRPaging*(Hkt_init - param3_TRPaging)))) 
+    t_R_aging_init =     param1_TRPaging/ (1+exp (param2_TRPaging*(Hkt_init - param3_TRPaging)))  #in days, Entwicklung von Stammzelle zum Retikulozyt dauert ca. 5-9 Tage, plus 3 Tage die er schon retikulozyte ist aber noch in Rückenmark
+    t_P_aging_init = 11-(param1_TRPaging/ (1+exp (param2_TRPaging*(Hkt_init - param3_TRPaging)))) 
     Hkt_init = 0.45
     LDH_RBC = (J_LDH_decay * Vol_blood) / (J_E_death +J_R_death ) #  U  (pro RBC)  #https://www.ncbi.nlm.nih.gov/books/NBK557536/?report=printable
 
@@ -10,7 +10,7 @@
     R   =  E* t_R_aging_init/ t_E_death                                                            #46696.30405453991 
     E   = (Hkt_init * Vol_blood * (t_E_death/2))/ ( ((t_E_death/2)* Vol_E) + ((t_R_aging_init/2)*Vol_R)) #5566629.619931825  #    cells, bezieht sich auf gesamtvolumen 1 mikroliter
     ##parasite lifecircle 
-    M   =0# 40e3     #Merozoiten,(Austin, 1997) pro mikroliter (10^6 cells/ml => 10^3 cells/mikroliter)
+    M   = 40e3     #Merozoiten,(Austin, 1997) pro mikroliter (10^6 cells/ml => 10^3 cells/mikroliter)
     iE  = 0        # in cells/(kg body weight*10^11)
     ##Artesunate treatment
     ART = 0        # in gramm
@@ -39,7 +39,7 @@
     Rinfect:    R+M -> iE   ; J_R_infect
     Einfect:    E+M -> iE   ; J_E_infect     
     iEdeath:    iE ->       ; J_iE_death     
-    iErupture:  iE -> 16M   ; J_iE_rupture  # Tumwiine (2008) the 4 is kind of arbitrary, question is how many relaeased merozoits actually reinvade
+    iErupture:  iE -> 4M   ; J_iE_rupture  # Tumwiine (2008) the 4 is kind of arbitrary, question is how many relaeased merozoits actually reinvade
     deathofM:      M ->     ; J_M_death
     ##Artesunate treatment
     ARTdeath:  ART ->       ; J_ART_decay
@@ -113,7 +113,7 @@
     #k_E_death := ln(2) / (t_E_death/2)       #in 1/days       #verkürzung bei Infektion: k_E_alter; 0.15aus komischen paper 2022
     ##infection with parasit  
     k_R_infect  = k_E_infect                  
-    k_E_infect  = 1e-6#1e-6                      # in 1/mikroliter*day ((Austin, 1997) 2e-6
+    k_E_infect  = 1e-6                      # in 1/mikroliter*day ((Austin, 1997) 2e-6
     k_iE_death  := I0_death_iE  + (1- k_iE_kill_proportion) * Imax_iE*(ART^hill/((ART^hill)+(ID50)^hill))                          # in 1/days, vereinfacht in Austin(1998)  (0.025  Ma 2019)
     k_iE_rupture= 1                         # ln(2) / (t_iE_rupture/2)    #in 1/days, Austin(1998)
     k_M_death   = 48        #48 in 1/days 2010 Thi (48)
@@ -202,7 +202,7 @@
     #par2_fHb = 0.001
     #determes cause of Edeath
     #switch_oiE = 0            #[0,1] if presence of oiE is additional cause for Edeath
-    BH_max = 10  #2    #[0,1] if dying of oiE is additional cause for Edeath -> 2 ist gut
+    BH_max = 0  #2    #[0,1] if dying of oiE is additional cause for Edeath -> 2 ist gut
     #switch_fHb = 0 
 
     # Events

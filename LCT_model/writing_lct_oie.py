@@ -192,7 +192,7 @@ def define_lct_oie_model(n: int = 12, l: float = 0.96333725)-> str:
     #par2_fHb = 0.001
     #determes cause of Edeath
     #switch_oiE = 0            #[0,1] if presence of oiE is additional cause for Edeath
-    BH_max = 10  #2    #[0,1] if dying of oiE is additional cause for Edeath -> 2 ist gut
+    BH_max = 0  #2    #[0,1] if dying of oiE is additional cause for Edeath -> 2 ist gut
     #switch_fHb = 0 
 
     # Events

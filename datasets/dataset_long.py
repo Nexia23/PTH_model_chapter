@@ -91,36 +91,4 @@ if __name__=='__main__':
     data_df = pd.read_excel('haemolysismodel_conRetis.xlsx')   #import Data von Pinkus 
     df =long_format(data_df)
     display(df)
-
-
-""""
-data_df2 = pd.read_excel('haemolysismodel_conRetis.xlsx')
-test_columns = ['patientnumber', 'age'] + [col for col in data_df2.columns if col.endswith(('Hkt', 'Ery', 'RPI-berechnet'))]
-test_df2 = data_df2[test_columns].head(10)
-test_df2
-
-#test_df2.columns
-
-# Column renaming
-new_cols = [col.replace('RPI-berechnet', 'RPI_berechnet').replace('#', '') for col in test_df2.columns]
-
-# switch suffix and prefix
-new_cols = ['-'.join(col.split('-')[::-1]) for col in new_cols]
-
-new_cols
-# make new df with updated columns
-new_col_df = test_df2.copy()
-new_col_df.columns = new_cols
-new_col_df
-
-suffixes = [f'V{i}' for i in range(1,6)]
-stubnames = [col.split('-')[0] for col in new_col_df.columns if col.split('-')[-1] in suffixes]
-get_index_columns = [col.split('-')[0] for col in new_col_df.columns if not col.split('-')[-1] in suffixes]
-stubnames = list(dict.fromkeys(stubnames))
-
-suffixes_sorted = f"(!?{'|'.join(suffixes)})"
-
-long_df = pd.wide_to_long(new_col_df, stubnames=stubnames, i=get_index_columns, sep='-', j='Time', suffix=suffixes_sorted)
-
-final = long_df.reset_index()
-"""
+    print(df.columns)

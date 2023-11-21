@@ -98,7 +98,7 @@ def define_lct_oie_model(n: int = 12, l: float = 0.96333725)-> str:
     k_R_aging  := ln(2) / (t_R_aging/2)     # in 1/days 
     k_E_death  := ln(2) / (t_E_death/2) * (1 + k_BH_max)  #+ k_switch_oiE +k_switch_fHb
     #k_switch_oiE      := switch_oiE /    (1+exp(-par1_oiE     *(oiE        -par2_oiE     )))   # switch_oiE entscheidet Maximum
-    k_BH_max := BH_max/(1+exp(-k_BH*(J_oiE_death-J_oiEdeath_0)))
+    k_BH_max :=  BH_max * J_oiE_death # replaced  BH_max/(1+exp(-k_BH*(J_oiE_death-J_oiEdeath_0))), as this is non-zero even without J_oiE_death
     #k_switch_fHb      := switch_fHb /    (1+exp(-par1_fHb     *(fHb   -par2_fHb     )))
     #k_E_death := ln(2) / (t_E_death/2)       #in 1/days       #verkürzung bei Infektion: k_E_alter; 0.15aus komischen paper 2022
     ##infection with parasit  
@@ -147,7 +147,7 @@ def define_lct_oie_model(n: int = 12, l: float = 0.96333725)-> str:
     parasitemia := iE*100 / (E + R + iE + oiE )          # in percent, bsp 0.5
     R_percent   := 100*R / (R + E + iE + oiE )           # in % bsp. 50%
     RPI         := R_percent * Hkt/ (t_R_aging * 0.45) 
-    oiE :=  {'+'.join(['oiE_'+str(i) for i in range(n)])};
+    oiE :=  {'+'.join(['oiE_'+str(i) for i in range(n+1)])};
     oiE_percent := oiE*100 / (R + E + iE + oiE )         # in %
 
     # parameters

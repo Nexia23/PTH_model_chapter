@@ -40,12 +40,12 @@ def define_lct_oie_model(n: int = 12, l: float = 0.96333725)-> str:
     Rinfect:    R+M -> iE   ; J_R_infect
     Einfect:    E+M -> iE   ; J_E_infect     
     iEdeath:    iE ->       ; J_iE_death     
-    iErupture:  iE -> 4M   ; J_iE_rupture  # Tumwiine (2008) the 4 is kind of arbitrary, question is how many relaeased merozoits actually reinvade
+    iErupture:  iE -> 16M   ; J_iE_rupture  # Tumwiine (2008) the 4 is kind of arbitrary, question is how many relaeased merozoits actually reinvade
     deathofM:      M ->     ; J_M_death
     ##Artesunate treatment
     ARTdeath:  ART ->       ; J_ART_decay
-    iE_treat:   iE -> oiE_0   ; J_iE_kill     
-    {'xxxx'.join(['oiE_'+str(i)+'=> oiE_'+str(i+1)+'; oiE_'+str(i)+'*k_oiE_death;' for i in range(n)])}
+    iE_treat:   iE -> oiE_1   ; J_iE_kill     
+    {'xxxx'.join(['oiE_'+str(i)+'=> oiE_'+str(i+1)+'; oiE_'+str(i)+'*k_oiE_death;' for i in range(1, n)])}
     oiE_{n} =>; J_oiE_death;
     ##LDH
     LDHrelease:    -> LDH   ; J_LDH_release   
@@ -147,7 +147,7 @@ def define_lct_oie_model(n: int = 12, l: float = 0.96333725)-> str:
     parasitemia := iE*100 / (E + R + iE + oiE )          # in percent, bsp 0.5
     R_percent   := 100*R / (R + E + iE + oiE )           # in % bsp. 50%
     RPI         := R_percent * Hkt/ (t_R_aging * 0.45) 
-    oiE :=  {'+'.join(['oiE_'+str(i) for i in range(n+1)])};
+    oiE :=  {'+'.join(['oiE_'+str(i) for i in range(1, n+1)])};
     oiE_percent := oiE*100 / (R + E + iE + oiE )         # in %
 
     # parameters

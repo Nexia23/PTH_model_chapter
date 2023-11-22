@@ -1,15 +1,15 @@
 def define_lct_oie_model(n: int = 12, l: float = 0.96333725)-> str:
     model = f"""# steady state 
-    t_R_aging_init =     param1_TRPaging/ (1+exp (param2_TRPaging*(Hkt_init - param3_TRPaging)))  #in days, Entwicklung von Stammzelle zum Retikulozyt dauert ca. 5-9 Tage, plus 3 Tage die er schon retikulozyte ist aber noch in Rückenmark
-    t_P_aging_init = 11-(param1_TRPaging/ (1+exp (param2_TRPaging*(Hkt_init - param3_TRPaging)))) 
+    t_R_a_init =     t_R_a_max/ (1+exp (s_R_a*(Hkt_init - Hkt_0)))  #in days, Entwicklung von Stammzelle zum Retikulozyt dauert ca. 5-9 Tage, plus 3 Tage die er schon retikulozyte ist aber noch in Rückenmark
+    t_P_a_init = 11-(t_R_a_max/ (1+exp (s_R_a*(Hkt_init - Hkt_0)))) 
     Hkt_init = 0.45
     LDH_RBC = (J_LDH_decay * Vol_blood) / (J_E_death +J_R_death ) #  U  (pro RBC)  #https://www.ncbi.nlm.nih.gov/books/NBK557536/?report=printable
 
     #species initiation
     ##erythropoisis
-    P   = (R * (k_R_death + log(2)/(t_R_aging_init/2)))/ (2^10 *log(2) / (t_P_aging_init/2))     #453.04169624571756  
-    R   =  E* t_R_aging_init/ t_E_death                                                            #46696.30405453991 
-    E   = (Hkt_init * Vol_blood * (t_E_death/2))/ ( ((t_E_death/2)* Vol_E) + ((t_R_aging_init/2)*Vol_R)) #5566629.619931825  #    cells, bezieht sich auf gesamtvolumen 1 mikroliter
+    P   = (R * (k_R_death + log(2)/(t_R_a_init/2)))/ (2^10 *log(2) / (t_P_a_init/2))     #453.04169624571756  
+    R   =  E* t_R_a_init/ t_E_death                                                            #46696.30405453991 
+    E   = (Hkt_init * Vol_blood * (t_E_death/2))/ ( ((t_E_death/2)* Vol_E) + ((t_R_a_init/2)*Vol_R)) #5566629.619931825  #    cells, bezieht sich auf gesamtvolumen 1 mikroliter
     ##parasite lifecircle 
     M   = 40e3     #Merozoiten,(Austin, 1997) pro mikroliter (10^6 cells/ml => 10^3 cells/mikroliter)
     iE  = 0        # in cells/(kg body weight*10^11)
@@ -44,7 +44,7 @@ def define_lct_oie_model(n: int = 12, l: float = 0.96333725)-> str:
     deathofM:      M ->     ; J_M_death
     ##Artesunate treatment
     ARTdeath:  ART ->       ; J_ART_decay
-    iE_treat:   iE -> oiE_1   ; J_iE_kill     
+    iE_treat:   iE -> oiE_1   ; J_iE_pit     
     {'xxxx'.join(['oiE_'+str(i)+'=> oiE_'+str(i+1)+'; oiE_'+str(i)+'*k_oiE_death;' for i in range(1, n)])}
     oiE_{n} =>; J_oiE_death;
     ##LDH
@@ -73,7 +73,7 @@ def define_lct_oie_model(n: int = 12, l: float = 0.96333725)-> str:
     J_M_death   := M  * k_M_death
     ##Artesunate treatment
     J_ART_decay := ART * k_ART_decay
-    J_iE_kill   := iE  * k_iE_kill       #einbezug artesunat
+    J_iE_pit   := iE  * k_iE_pit       #einbezug artesunat
     J_oiE_death := oiE_{n}*k_oiE_death;
     ##LDH
     J_LDH_release := (LDH_RBC/ Vol_blood)* (J_R_death+ J_E_death + J_iE_death + J_iE_rupture + J_oiE_death) 
@@ -104,12 +104,12 @@ def define_lct_oie_model(n: int = 12, l: float = 0.96333725)-> str:
     ##infection with parasit  
     k_R_infect  = k_E_infect                  
     k_E_infect  = 1e-6                      # in 1/mikroliter*day ((Austin, 1997) 2e-6
-    k_iE_death  := I0_death_iE  + (1- k_iE_kill_proportion) * Imax_iE*(ART^hill/((ART^hill)+(ID50)^hill))                          # in 1/days, vereinfacht in Austin(1998)  (0.025  Ma 2019)
+    k_iE_death  := I0_death_iE  + (1- k_iE_pit_frac) * Imax_iE*(ART^hill/((ART^hill)+(ID50)^hill))                          # in 1/days, vereinfacht in Austin(1998)  (0.025  Ma 2019)
     k_iE_rupture= 1                         # ln(2) / (t_iE_rupture/2)    #in 1/days, Austin(1998)
     k_M_death   = 48        #48 in 1/days 2010 Thi (48)
     ##Artesunate treatment
     k_ART_decay = ln(2) / t_halb_ART_decay  #ART hat 1h Halbwertszeit (Tilley 2016), andere Quellen 2h 
-    k_iE_kill  := I0_iE + k_iE_kill_proportion * Imax_iE*(ART^hill/((ART^hill)+(ID50)^hill)) #bei Medikamentengabe nach 8h Maximum an gepitteten RBCs
+    k_iE_pit  := I0_iE + k_iE_pit_frac * Imax_iE*(ART^hill/((ART^hill)+(ID50)^hill)) #bei Medikamentengabe nach 8h Maximum an gepitteten RBCs
     k_oiE_death = {l}  # ln(2) / (t_oiE_death/2)   #in 1/days               
     ##LDH
     k_LDH_decay = ln(2) / t_halb_LDH_decay
@@ -152,8 +152,8 @@ def define_lct_oie_model(n: int = 12, l: float = 0.96333725)-> str:
 
     # parameters
     ##Erythropoese
-    t_R_aging :=     param1_TRPaging/ (1+exp (param2_TRPaging*(Hkt - param3_TRPaging)))  #in days, Entwicklung von Stammzelle zum Retikulozyt dauert ca. 5-9 Tage, plus 3 Tage die er schon retikulozyte ist aber noch in Rückenmark
-    t_P_aging := 11-(param1_TRPaging/ (1+exp (param2_TRPaging*(Hkt - param3_TRPaging))))           #in days, Entwicklung R -> E dauert ca 4 Tage (3 tage knochenmark, 1 Tage im peripheren Blut)-> wir betrachten nur Retis in peripheren Blut, bei niedrigen Hkt verlassen Retis eher Knochenmark,  reifen länger im Blut
+    t_R_aging :=     t_R_a_max/ (1+exp (s_R_a*(Hkt - Hkt_0)))  #in days, Entwicklung von Stammzelle zum Retikulozyt dauert ca. 5-9 Tage, plus 3 Tage die er schon retikulozyte ist aber noch in Rückenmark
+    t_P_aging := 11-(t_R_a_max/ (1+exp (s_R_a*(Hkt - Hkt_0))))           #in days, Entwicklung R -> E dauert ca 4 Tage (3 tage knochenmark, 1 Tage im peripheren Blut)-> wir betrachten nur Retis in peripheren Blut, bei niedrigen Hkt verlassen Retis eher Knochenmark,  reifen länger im Blut
     t_E_death  = 120
     t_iE_rupture = 4                     #in days, dauert ca 4 Tage bis Ruptur, sinuskurvig (2010 Th)
     ##Artesunate treatment
@@ -171,14 +171,14 @@ def define_lct_oie_model(n: int = 12, l: float = 0.96333725)-> str:
     #param3_Pdeath = 14.5        #Hb,0, vlt direkt Hb0 angeben= param3 = Hb??
 
     ##parameter für t1/2 von R und P #müssen gefittet werden
-    param1_TRPaging= 3.53276388
-    param2_TRPaging= 5.99745537
-    param3_TRPaging= 0.29658879
+    t_R_a_max= 3.53276388
+    s_R_a= 5.99745537
+    Hkt_0= 0.29658879
 
-    ##Parameter für k_iE_kill, alles random zahlen müssen gefittet werden. egscP
+    ##Parameter für k_iE_pit, alles random zahlen müssen gefittet werden. egscP
     I0_iE   = 0      # 0.00001 Annahme. keine oiE ohne ART medikament    inhihition die stattfindet ohne ART
     I0_death_iE = 0
-    k_iE_kill_proportion = 0.5  #annahme Hälfte der iE die getroffen werden sterben direkt, andere Hälfte zu oiE
+    k_iE_pit_frac = 0.5  #annahme Hälfte der iE die getroffen werden sterben direkt, andere Hälfte zu oiE
     Imax_iE = 15  #10 für Medikamentzuageb #8   #maximal inhibition-effect, reine Annahme
     hill    = 2.0      #hill-coefficient, muss gefittet werden (Angus 2002)
     ID50    = 20       # Annahme bei hälber konz. halbe inhibition; 0.6*75 inhibition-dosis (muss geschätzt werden, gerade gibt es die PC50 an, parasite clearance) in mg/kg (Angus 2002)* 75kg(Annahme ungefähr 75kg Gewicht)

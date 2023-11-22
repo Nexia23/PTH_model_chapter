@@ -93,28 +93,28 @@ def get_params_guess():
 def get_params_bounds():
     bounds = OrderedDict({
     'Hkt_init': (0.35, 0.55),   
-    'M': (1e2,1e5),
-    #'k_R_death': (1e-5, 1e-4),            #k_R_death < k_R_aging=1.38, drei einheiten kleiner setzen
-    'k_E_infect': (1e-6 , 2.5e-6),    #jetzt paramscan früher (1e-8 , 1e-4),
-    'k_iE_rupture':(1e-1, 10),
-    'k_M_death': (0,1e3) , 
+    'M': (1e2,1e5),                     # discard for fitting mean
+    #'k_R_death': (1e-5, 1e-4),         # k_R_death < k_R_aging=1.38, drei einheiten kleiner setzen
+    'k_E_infect': (1e-6 , 2.5e-6),      # jetzt paramscan früher (1e-8 , 1e-4),
+    'k_iE_rupture':(1e-1, 10),          # lebenszeit 2 Tage, Half-life 1 day, rate ln(2)
+    'k_M_death': (0,1e3) ,              # k_M_death ~ 48 (lebenszeit 30 min), drei einheiten kleiner setzen
 
-    'param1_Pdeath': (1e-6, 1e-1),  #sigmoid(1e-2, 1e2) ,      #linear #parameterscan zu unsensibel
-    'param2_Pdeath':  (1e-6, 1), #sigmoid(1e-2,1e3) ,     #parameterscan zu unsensibel
-    #'param3_Pdeath': (5, 18),   # nur bei sigmoid notwendig
+    'param1_Pdeath': (1e-6, 1e-1),      # sigmoid(1e-2, 1e2) ,      #linear #parameterscan zu unsensibel
+    'param2_Pdeath':  (1e-6, 1),        # sigmoid(1e-2,1e3) ,     #parameterscan zu unsensibel
+    #'param3_Pdeath': (5, 18),          # nur bei sigmoid notwendig
 
-    #'I0_iE':    (0, 1e-3),            #vlt auf 0 setzen ausprobieren, Inhibition ohne ART, zw. 0 und viel kleiner als Imax_iE 
+    #'I0_iE':    (0, 1e-3),             # vlt auf 0 setzen ausprobieren, Inhibition ohne ART, zw. 0 und viel kleiner als Imax_iE 
     'I0_death_iE': (0, 1e-3), 
-    #'Imax_iE': (1, 1000),             # maximale abtötrate von iE durch ART, #parameterscan zu unsensibel 
-    #'hill' :(1, 4),                 #Anstieg, sehr sensibey= 
-    #'ID50': (1e-1, 1000),               #ART dosis bei der 50% der iE getötet werden, #parameterscan zu unsensibel       
+    #'Imax_iE': (1, 1000),              # maximale abtötrate von iE durch ART, #parameterscan zu unsensibel 
+    #'hill' :(1, 4),                    # Anstieg, sehr sensibey= 
+    #'ID50': (1e-1, 1000),              # ART dosis bei der 50% der iE getötet werden, #parameterscan zu unsensibel       
 
-    't_oiE_death': (5,15),           #Zeit nach der oiE sterben, nach ca. 7- 14
-    #'t_halb_LDH_decay': (2,14),      # Halbwertzeit von LDH, 3-5 Tage+ Puffer
+    # 't_oiE_death': (5,15),            # Zeit nach der oiE sterben, nach ca. 7- 14
+    # 't_halb_LDH_decay': (2,14),       # Halbwertzeit von LDH, 3-5 Tage+ Puffer
 
 
-    'k_BH': (5e-5, 5e-3),    # Anstieg Kurve 
-    'J_oiEdeath_0': (5000, 10000),    # in Modell max. 15.000
+    'k_BH': (5e-5, 5e-3),               # Anstieg Kurve 
+    'J_oiEdeath_0': (5000, 10000),      # in Modell max. 15.000
     
 
     'BH_max': (2e-1, 20),  

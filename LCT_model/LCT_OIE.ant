@@ -39,13 +39,12 @@
     Rinfect:    R+M -> iE   ; J_R_infect
     Einfect:    E+M -> iE   ; J_E_infect     
     iEdeath:    iE ->       ; J_iE_death     
-    iErupture:  iE -> 4M   ; J_iE_rupture  # Tumwiine (2008) the 4 is kind of arbitrary, question is how many relaeased merozoits actually reinvade
+    iErupture:  iE -> 16M   ; J_iE_rupture  # Tumwiine (2008) the 4 is kind of arbitrary, question is how many relaeased merozoits actually reinvade
     deathofM:      M ->     ; J_M_death
     ##Artesunate treatment
     ARTdeath:  ART ->       ; J_ART_decay
-    iE_treat:   iE -> oiE_0   ; J_iE_kill     
-    oiE_0=> oiE_1; oiE_0*k_oiE_death;
-	oiE_1=> oiE_2; oiE_1*k_oiE_death;
+    iE_treat:   iE -> oiE_1   ; J_iE_kill     
+    oiE_1=> oiE_2; oiE_1*k_oiE_death;
 	oiE_2=> oiE_3; oiE_2*k_oiE_death;
 	oiE_3=> oiE_4; oiE_3*k_oiE_death;
 	oiE_4=> oiE_5; oiE_4*k_oiE_death;
@@ -157,7 +156,7 @@
     parasitemia := iE*100 / (E + R + iE + oiE )          # in percent, bsp 0.5
     R_percent   := 100*R / (R + E + iE + oiE )           # in % bsp. 50%
     RPI         := R_percent * Hkt/ (t_R_aging * 0.45) 
-    oiE :=  oiE_0+oiE_1+oiE_2+oiE_3+oiE_4+oiE_5+oiE_6+oiE_7+oiE_8+oiE_9+oiE_10+oiE_11+oiE_12;
+    oiE :=  oiE_1+oiE_2+oiE_3+oiE_4+oiE_5+oiE_6+oiE_7+oiE_8+oiE_9+oiE_10+oiE_11+oiE_12;
     oiE_percent := oiE*100 / (R + E + iE + oiE )         # in %
 
     # parameters

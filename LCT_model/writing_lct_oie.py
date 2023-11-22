@@ -92,25 +92,22 @@ def define_lct_oie_model(n: int = 12, l: float = 0.96333725)-> str:
     # Rates
     ##Erythropoese  
     k_P_birth   = J_P_death + J_P_aging     # P *(k_P_death +k_P_aging)
-    k_P_death  := param1_Pdeath * Hb + param2_Pdeath                         # sigmoid param1_Pdeath/ (1+exp(-param2_Pdeath*(Hb -param3_Pdeath)))      #linear  #lineare Funktion von Hb(t)  
+    k_P_death  := s_P_d * Hb + k_P_d0       
     k_P_aging  := ln(2) / (t_P_aging/2)     # in 1/days
-    k_R_death   =  0 #0.1# 0.001                     # in 1/days,Annahme
+    k_R_death   =  0                        # in 1/days,Annahme
     k_R_aging  := ln(2) / (t_R_aging/2)     # in 1/days 
-    k_E_death  := ln(2) / (t_E_death/2) * (1 + k_BH_max)  #+ k_switch_oiE +k_switch_fHb
-    #k_switch_oiE      := switch_oiE /    (1+exp(-par1_oiE     *(oiE        -par2_oiE     )))   # switch_oiE entscheidet Maximum
-    k_BH_max :=  BH_max * J_oiE_death # replaced  BH_max/(1+exp(-k_BH*(J_oiE_death-J_oiEdeath_0))), as this is non-zero even without J_oiE_death
-    #k_switch_fHb      := switch_fHb /    (1+exp(-par1_fHb     *(fHb   -par2_fHb     )))
-    #k_E_death := ln(2) / (t_E_death/2)       #in 1/days       #verkürzung bei Infektion: k_E_alter; 0.15aus komischen paper 2022
-    ##infection with parasit  
+    k_E_death  := ln(2) / (t_E_death/2) * (1 + k_BH) 
+    k_BH :=  s_BH * J_oiE_death             # replaced  sigmoid, as this is non-zero even without J_oiE_death
+    ##infection with parasite  
     k_R_infect  = k_E_infect                  
     k_E_infect  = 1e-6                      # in 1/mikroliter*day ((Austin, 1997) 2e-6
-    k_iE_death  := I0_death_iE  + (1- k_iE_pit_frac) * Imax_iE*(ART^hill/((ART^hill)+(ID50)^hill))                          # in 1/days, vereinfacht in Austin(1998)  (0.025  Ma 2019)
-    k_iE_rupture= 1                         # ln(2) / (t_iE_rupture/2)    #in 1/days, Austin(1998)
+    k_iE_death  := k_iE_death_0  + (1- k_iE_pit_frac) * k_iE_art_max*(ART^h_art/((ART^h_art)+(ID50)^h_art))                          # in 1/days, vereinfacht in Austin(1998)  (0.025  Ma 2019)
+    k_iE_rupture= ln(2) / (t_iE_rupture/2)       # CHECK/MAXIM: in 1/days, Austin(1998)
     k_M_death   = 48        #48 in 1/days 2010 Thi (48)
     ##Artesunate treatment
     k_ART_decay = ln(2) / t_halb_ART_decay  #ART hat 1h Halbwertszeit (Tilley 2016), andere Quellen 2h 
-    k_iE_pit  := I0_iE + k_iE_pit_frac * Imax_iE*(ART^hill/((ART^hill)+(ID50)^hill)) #bei Medikamentengabe nach 8h Maximum an gepitteten RBCs
-    k_oiE_death = {l}  # ln(2) / (t_oiE_death/2)   #in 1/days               
+    k_iE_pit  := k_iE_pit_0 + k_iE_pit_frac * k_iE_art_max*(ART^h_art/((ART^h_art)+(ID50)^h_art)) #bei Medikamentengabe nach 8h Maximum an gepitteten RBCs
+    k_oiE_death = {l}  # from LCT              
     ##LDH
     k_LDH_decay = ln(2) / t_halb_LDH_decay
     ##Haptoglobin
@@ -131,13 +128,13 @@ def define_lct_oie_model(n: int = 12, l: float = 0.96333725)-> str:
     ###Hb Konzentrationen in g/l
     Hb_conc_R   = 300        #in g/l (Piva,2014)   #niedriger conc. aber Hb-content ist höher wegen dem hohen Volumen
     Hb_conc_E   = 322.5      #in g/l,  =MCHC, 5mM (Hanssen 2012), (Francis 1997))  
-    Hb_conc_iE  = 209.625    #in g/l, orin meinte80, Aber 60-80% (Francis 1997) 65% (Krugliak 2002)- 80% (Coronado 2014) von Hb bis rupture wird aufgebraucht -> nur 20-35% bleiben übrig , durchschnittlich 65% des Hb von E
-    Hb_conc_oiE = 316.05     #Annahme: gleiche Hb wie ringstage Ery, 4.9mM (Hanssen 2012), noch nicht alles Hb verbraucht
+    Hb_conc_iE  = 209.625    # CHECK: avg over ring, troph, schiz?in g/l, orin meinte80, Aber 60-80% (Francis 1997) 65% (Krugliak 2002)- 80% (Coronado 2014) von Hb bis rupture wird aufgebraucht -> nur 20-35% bleiben übrig , durchschnittlich 65% des Hb von E
+    Hb_conc_oiE = 316.05     # CHECK: same amoutn different volume?:Annahme: gleiche Hb wie ringstage Ery, 4.9mM (Hanssen 2012), noch nicht alles Hb verbraucht
 
     ## Hkt, Hb
     #https://www.labopart.de/einsender/formelberechnungen/rpi/
-    Hkt      := (Vol_E * E + Vol_R * R + Vol_iE * iE + Vol_oiE * oiE) / Vol_blood            #0.4 ~ 40 %, #hier fehlen noch MCHC von infected Zellen https://www.charite.de/fileadmin/user_upload/microsites/m_cc05/ilp/referenzdb/30451.htm    https://www.labor-und-diagnose-2020.de/k15.html
-    Hb       := (Vol_E * E * Hb_conc_E + Vol_R * R * Hb_conc_R +  Vol_iE * iE * Hb_conc_iE + Vol_oiE * oiE * Hb_conc_oiE  ) / (10*Vol_blood)     #in g/dl      https://www.charite.de/fileadmin/user_upload/microsites/m_cc05/ilp/referenzdb/30459.htm
+    Hkt := (Vol_E * E + Vol_R * R + Vol_iE * iE + Vol_oiE * oiE) / Vol_blood            #0.4 ~ 40 %, #hier fehlen noch MCHC von infected Zellen https://www.charite.de/fileadmin/user_upload/microsites/m_cc05/ilp/referenzdb/30451.htm    https://www.labor-und-diagnose-2020.de/k15.html
+    Hb  := (Vol_E * E * Hb_conc_E + Vol_R * R * Hb_conc_R +  Vol_iE * iE * Hb_conc_iE + Vol_oiE * oiE * Hb_conc_oiE  ) / (10*Vol_blood)     #in g/dl      https://www.charite.de/fileadmin/user_upload/microsites/m_cc05/ilp/referenzdb/30459.htm
 
     ## HP, fHb
     #M_Hb = 64500              # g/mol, Molare Masse 
@@ -155,10 +152,9 @@ def define_lct_oie_model(n: int = 12, l: float = 0.96333725)-> str:
     t_R_aging :=     t_R_a_max/ (1+exp (s_R_a*(Hkt - Hkt_0)))  #in days, Entwicklung von Stammzelle zum Retikulozyt dauert ca. 5-9 Tage, plus 3 Tage die er schon retikulozyte ist aber noch in Rückenmark
     t_P_aging := 11-(t_R_a_max/ (1+exp (s_R_a*(Hkt - Hkt_0))))           #in days, Entwicklung R -> E dauert ca 4 Tage (3 tage knochenmark, 1 Tage im peripheren Blut)-> wir betrachten nur Retis in peripheren Blut, bei niedrigen Hkt verlassen Retis eher Knochenmark,  reifen länger im Blut
     t_E_death  = 120
-    t_iE_rupture = 4                     #in days, dauert ca 4 Tage bis Ruptur, sinuskurvig (2010 Th)
+    t_iE_rupture = 2                     # MAXIM: in days, dauert ca 4 Tage bis Ruptur, sinuskurvig (2010 Th)
     ##Artesunate treatment
     t_halb_ART_decay = 1/12   #Halbwertszeit von 2h -> verlässliche quelle noch suchen
-    t_oiE_death =  20        #in days, Lebenspanne von 7-14 Tage(Fanello,2017), 7-21 (Arguin 2014) -> dort Verweise nachgehen
     ##LDH
     t_halb_LDH_decay = 4      #(3-5 Tage), https://www.medicoconsult.de/ldh/
     #Haptoglobin, fHb
@@ -166,9 +162,8 @@ def define_lct_oie_model(n: int = 12, l: float = 0.96333725)-> str:
     #t_halb_HCC_decay = 0.00694  #in days,  ca 10min Springer (Gressner, 2019)
 
     #Parameter für J_P_death
-    param1_Pdeath = 0.00071535   #0.5 sigmoid          # muss gefitted werden, Anpassung SS wenn fitting
-    param2_Pdeath =  0.48924947  #1 sigmoid  # muss gefitted werden, Anpassung SS wenn fitting
-    #param3_Pdeath = 14.5        #Hb,0, vlt direkt Hb0 angeben= param3 = Hb??
+    s_P_d = 0.00071535   #0.5 sigmoid          # muss gefitted werden, Anpassung SS wenn fitting
+    k_P_d0 =  0.48924947  #1 sigmoid  # muss gefitted werden, Anpassung SS wenn fitting
 
     ##parameter für t1/2 von R und P #müssen gefittet werden
     t_R_a_max= 3.53276388
@@ -176,24 +171,16 @@ def define_lct_oie_model(n: int = 12, l: float = 0.96333725)-> str:
     Hkt_0= 0.29658879
 
     ##Parameter für k_iE_pit, alles random zahlen müssen gefittet werden. egscP
-    I0_iE   = 0      # 0.00001 Annahme. keine oiE ohne ART medikament    inhihition die stattfindet ohne ART
-    I0_death_iE = 0
+    k_iE_pit_0   = 0      # 0.00001 Annahme. keine oiE ohne ART medikament    inhihition die stattfindet ohne ART
+    k_iE_death_0 = 0
     k_iE_pit_frac = 0.5  #annahme Hälfte der iE die getroffen werden sterben direkt, andere Hälfte zu oiE
-    Imax_iE = 15  #10 für Medikamentzuageb #8   #maximal inhibition-effect, reine Annahme
-    hill    = 2.0      #hill-coefficient, muss gefittet werden (Angus 2002)
+    k_iE_art_max = 15  #10 für Medikamentzuageb #8   #maximal inhibition-effect, reine Annahme
+    h_art    = 2.0      #Hill-coefficient, muss gefittet werden (Angus 2002)
     ID50    = 20       # Annahme bei hälber konz. halbe inhibition; 0.6*75 inhibition-dosis (muss geschätzt werden, gerade gibt es die PC50 an, parasite clearance) in mg/kg (Angus 2002)* 75kg(Annahme ungefähr 75kg Gewicht)
 
     #Parameter für k_E_death
-    #par1_oiE = 0.0005
-    #par2_oiE = 10000
-    k_BH = 0.001
-    J_oiEdeath_0 =  7500
-    #par1_fHb = 1e4
-    #par2_fHb = 0.001
-    #determes cause of Edeath
-    #switch_oiE = 0            #[0,1] if presence of oiE is additional cause for Edeath
-    BH_max = 0  #2    #[0,1] if dying of oiE is additional cause for Edeath -> 2 ist gut
-    #switch_fHb = 0 
+    s_BH = 0.001
+ 
 
     # Events
     ## ART Zugabe, 3x im Abstand von 3h Zugabe von 40mg DHA= Dihydroartemisinin

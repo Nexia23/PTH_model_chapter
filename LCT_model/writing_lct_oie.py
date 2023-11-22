@@ -1,3 +1,8 @@
+import numpy as np
+from scipy.stats import gamma, erlang
+from scipy.optimize import minimize
+import matplotlib.pyplot as plt
+
 def define_lct_oie_model(n: int = 12, l: float = 0.96333725)-> str:
     model = f"""# steady state 
     t_R_a_init =     t_R_a_max/ (1+exp (s_R_a*(Hkt_init - Hkt_0)))  #in days, Entwicklung von Stammzelle zum Retikulozyt dauert ca. 5-9 Tage, plus 3 Tage die er schon retikulozyte ist aber noch in Rückenmark
@@ -195,13 +200,35 @@ def define_lct_oie_model(n: int = 12, l: float = 0.96333725)-> str:
     model = model.replace('xxxx', '\n\t')
     return model
 
+
+def objective_gamma(pars: list, data: np.array = np.array([12, 7, 21])) -> float: 
+    """ Returns quadratic error of gamma distribution properties
+    with parameters n and l and chosen median and 95% confidence interval."""
+    alpha, beta = pars
+    m = gamma.median(a=alpha, scale=1/beta)
+    low, high = gamma.interval(a=alpha, confidence=0.95,scale=1/beta)
+    esti_array = np.array([m, low, high])
+    score_array = (data - esti_array)**2
+    score = score_array.sum()
+    return score
+
+def fit_gamma(data: np.array = np.array([12, 7, 21])) -> list:
+    """ Returns parameters of gamma distribution with chosen median and 95% confidence interval."""
+    pars = [10, 0.5]
+    res = minimize(objective_gamma, pars, args=(data), method='Nelder-Mead')
+    print(res.message, res.x)  
+    return res.x
+
 def save_model(model: str, name:str):
     with open(name, 'w') as w_file:
         w_file.writelines(model)
     
 
 def main():
-    model = define_lct_oie_model()
+    # fit gamma distribution    
+    data = np.array([12, 7, 21])  # median, low, high
+    pars = fit_gamma(data)  # alpha, beta
+    model = define_lct_oie_model(n=int(np.round(pars[0])), l=pars[1])  # round alpha to int and use beta as l; round because n is number of oiE states
     save_model(model, 'LCT_model/LCT_OIE.ant')
 
 if __name__=='__main__':

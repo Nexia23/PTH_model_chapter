@@ -66,6 +66,15 @@ def drop_columns(df, columns_to_drop = [ 'OIE_any', 'measurement', 'drug1', 'dru
     df = df.drop(columns_to_drop, axis=1)
     return df
 
+def add_patient_id(df):
+    # add patient_id
+    patient_names = df['patientnumber'].unique()
+
+    for i, p_name in enumerate(patient_names):
+        df.loc[df['patientnumber'] == p_name, 'patient_id'] = int(i)
+    
+    return df
+
 def long_format(df):
     """ reshapes dataframe to long format"""
     #df_clean = rename_patientnumber(df)
@@ -81,7 +90,8 @@ def long_format(df):
     df.index.name = 'index'
     df = create_time_column(df)
     df = drop_different_drug_rows(df)
-    df = drop_columns (df)
+    df = drop_columns(df)
+    df = add_patient_id(df)
     df['[E]'] *= 1e6  #Erys sind in Daten in x*1e6, deswegen Experiment mit 1e6 multiplizieren
     df['[R]'] *= 1e3  #Retis in daten per nl (mein modell in mikroliter)
     return df
@@ -90,5 +100,4 @@ def long_format(df):
 if __name__=='__main__':
     data_df = pd.read_excel('haemolysismodel_conRetis.xlsx')   #import Data von Pinkus 
     df =long_format(data_df)
-    display(df)
-    print(df.columns)
+    df.to_csv('OIE_data.csv', index=False)    

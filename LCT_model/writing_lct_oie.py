@@ -8,6 +8,7 @@ def define_lct_oie_model(n: int = 12, l: float = 0.96333725)-> str:
     t_R_a_init =     t_R_a_max/ (1+exp (s_R_a*(Hkt_init - Hkt_0)))  #in days, Entwicklung von Stammzelle zum Retikulozyt dauert ca. 5-9 Tage, plus 3 Tage die er schon retikulozyte ist aber noch in Rückenmark
     t_P_a_init = 11-(t_R_a_max/ (1+exp (s_R_a*(Hkt_init - Hkt_0)))) 
     Hkt_init = 0.45
+    k_P_birth   = J_P_death + J_P_aging     # P *(k_P_death +k_P_aging)
     LDH_RBC = (J_LDH_decay * Vol_blood) / (J_E_death +J_R_death ) #  U  (pro RBC)  #https://www.ncbi.nlm.nih.gov/books/NBK557536/?report=printable
 
     #species initiation
@@ -96,7 +97,6 @@ def define_lct_oie_model(n: int = 12, l: float = 0.96333725)-> str:
 
     # Rates
     ##Erythropoese  
-    k_P_birth   = J_P_death + J_P_aging     # P *(k_P_death +k_P_aging)
     k_P_death  := s_P_d * Hb + k_P_d0       
     k_P_aging  := ln(2) / (t_P_aging/2)     # in 1/days
     k_R_death   =  0                        # in 1/days,Annahme
@@ -167,8 +167,8 @@ def define_lct_oie_model(n: int = 12, l: float = 0.96333725)-> str:
     #t_halb_HCC_decay = 0.00694  #in days,  ca 10min Springer (Gressner, 2019)
 
     #Parameter für J_P_death
-    s_P_d = 0.00071535   #0.5 sigmoid          # muss gefitted werden, Anpassung SS wenn fitting
-    k_P_d0 =  0.48924947  #1 sigmoid  # muss gefitted werden, Anpassung SS wenn fitting
+    s_P_d = 0.00071535    # slope of P death increase, will be multiplied with Hb
+    k_P_d0 =  0.48924947  # default death rate of Precusors
 
     ##parameter für t1/2 von R und P #müssen gefittet werden
     t_R_a_max= 3.53276388
@@ -178,7 +178,7 @@ def define_lct_oie_model(n: int = 12, l: float = 0.96333725)-> str:
     ##Parameter für k_iE_pit, alles random zahlen müssen gefittet werden. egscP
     k_iE_pit_0   = 0      # 0.00001 Annahme. keine oiE ohne ART medikament    inhihition die stattfindet ohne ART
     k_iE_death_0 = 0
-    k_iE_pit_frac = 0.5  #annahme Hälfte der iE die getroffen werden sterben direkt, andere Hälfte zu oiE
+    k_iE_pit_frac = 0.33  # troph+schiz sterben direkt, rings zu oiE
     k_iE_art_max = 15  #10 für Medikamentzuageb #8   #maximal inhibition-effect, reine Annahme
     h_art    = 2.0      #Hill-coefficient, muss gefittet werden (Angus 2002)
     ID50    = 20       # Annahme bei hälber konz. halbe inhibition; 0.6*75 inhibition-dosis (muss geschätzt werden, gerade gibt es die PC50 an, parasite clearance) in mg/kg (Angus 2002)* 75kg(Annahme ungefähr 75kg Gewicht)
@@ -190,7 +190,7 @@ def define_lct_oie_model(n: int = 12, l: float = 0.96333725)-> str:
     # Events
     ## ART Zugabe, 3x im Abstand von 3h Zugabe von 40mg DHA= Dihydroartemisinin
     events_medication_on = true
-    t_ART_add = 7
+    t_ART_add = 0
     ACT_dose1: at((time>=t_ART_add)   &&events_medication_on): ART = 400;        #ART in gramm
     ACT_dose2: at((time>=t_ART_add +1)&&events_medication_on): ART = ART+400; 
     ACT_dose3: at((time>=t_ART_add +2)&&events_medication_on): ART = ART+400;

@@ -60,9 +60,10 @@ def save_estimation(best_score, best_parameters, ParamEster, fit_data:str, bound
 
 
 def main():
-    run_id = sys.argv[1]
+    fit_data = sys.argv[1]
+    run_id = sys.argv[2]
     model = te.loada('../LCT_model/LCT_OIE.ant')
-    fit_data = 'non_pth.csv'
+    
     data = pd.read_csv(fit_data)
     est_obj = FitManager(model, data)
     ParamEster = ParameterEstimator()

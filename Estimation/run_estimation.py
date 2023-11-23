@@ -12,8 +12,8 @@ def get_params_bounds():
     'Hkt_init': (0.35, 0.55, False),   
     'k_E_infect': (1e-7 , 1e-5, True),    #jetzt paramscan früher (1e-8 , 1e-4),
 
-    's_P_d': (1e-6, 1e-1, True),  #sigmoid(1e-2, 1e2) ,      #linear #parameterscan zu unsensibel
-    'k_P_d0':  (1e-6, 1, True), #sigmoid(1e-2,1e3) ,     #parameterscan zu unsensibel
+    's_P_d': (1e-6, 1e-1, True),     # sigmoid(1e-2, 1e2) ,      #linear #parameterscan zu unsensibel
+    'k_P_d0':  (1e-6, 1, True),      # sigmoid(1e-2,1e3) ,     #parameterscan zu unsensibel
 
 
     #'k_iE_pit_frac': (0, 1, False),            # Anteil der iE die durch ART gepitted werden, 0-1. Rest sterben durch ART
@@ -21,7 +21,7 @@ def get_params_bounds():
    # 'h_art' :(3, 6, False),                 # assume similar to in vitro: [1] R. K. Tyagi u. a., doi: 10.1186/s12916-018-1156-x.
     #'ID50': (1e-1, 1000),               #ART dosis bei der 50% der iE getötet werden, #parameterscan zu unsensibel       
 
-    's_BH': (5e-7, 5e-4, True),                 # slope of linear function defining bystander heamolysis strength
+    's_BH': (5e-7, 5e-4, True),      # slope of linear function defining bystander heamolysis strength
  
     'pre_t': (2,6, True),            # time of ART addition, 3 and 5 in medians in data for non-pth and pth respectively
 

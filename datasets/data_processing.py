@@ -97,6 +97,7 @@ def long_format(df):
     return df
 
 
+
 if __name__=='__main__':
     data_df = pd.read_excel('haemolysismodel_conRetis.xlsx')   #import Data von Pinkus 
     df =long_format(data_df)

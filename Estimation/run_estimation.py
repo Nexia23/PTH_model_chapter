@@ -42,9 +42,9 @@ def calculate_cma_std(bounds):
     return stds
     
 
-def save_estimation(best_score, best_parameters, ParamEster, fit_data:str, bounds: OrderedDict, run_id:int):
+def save_estimation(best_score, best_parameters, update_params,ParamEster, fit_data:str, bounds: OrderedDict, run_id:int):
     result_dict = {'fitted_data': fit_data, 'parameter_space': bounds, 'run_id': run_id,
-            'best_score': best_score, 'best_parameters': best_parameters,
+            'best_score': best_score, 'best_parameters': best_parameters, 'update_parameters': update_params,
             'cost_history': ParamEster.cost_history,
             'function_calls': ParamEster.function_calls,
             'full_cost_history': ParamEster.complete_cost_history}
@@ -52,7 +52,7 @@ def save_estimation(best_score, best_parameters, ParamEster, fit_data:str, bound
 
     t = time.strftime("%Y_%m_%d_%H")
     name = t
-    save_to = fit_data
+    save_to = fit_data[:-4]
     os.makedirs(f'{save_to}', exist_ok=True)
 
     with open(f'{save_to}/{name}_{run_id}.json', "w") as write_file:
@@ -71,7 +71,10 @@ def main():
     stds = calculate_cma_std(bounds)
     ParamEster.initialize(est_obj.objective_function, bounds)
     best_score, best_parameters, runtime = ParamEster.run(method='cma', iterations=20, run_id=run_id, n_lhs=1,optimizer_args={'CMA_stds': stds})
-    save_estimation(best_score, best_parameters, ParamEster, fit_data, bounds, run_id)
+    pre_t = best_parameters.pop('pre_t')
+    update_parameters = get_steady_state(model, best_parameters)
+    best_parameters['pre_t'] = pre_t
+    save_estimation(best_score, best_parameters, update_parameters,ParamEster, fit_data, bounds, run_id)
 
 
     print(best_score, best_parameters, runtime)

@@ -96,9 +96,38 @@ def long_format(df):
     df['[R]'] *= 1e3  #Retis in daten per nl (mein modell in mikroliter)
     return df
 
+def extract_fitting_data(df: pd.DataFrame, features: list=['Hb', 'LDH']):
+    """ Returns two dataframes, with mean of features for PTH=1, one for PTH=0."""
 
+    # extract means for features of pth patients
+    pth_df = pd.DataFrame(columns=['Time'] + features)
+    pth_df['Time'] = df['time'].unique()    
+    for feature in features:
+        pth_df[f'{feature}_mean'] = get_mean_of_feature(df, feature, pth=1)
+
+    # extract means for features of non-pth patients
+    nonpth_df = pd.DataFrame(columns=['Time'] + features)
+    nonpth_df['Time'] = df['time'].unique()
+    for feature in features:
+        nonpth_df[f'{feature}_mean'] = get_mean_of_feature(df, feature, pth=0)
+
+    return pth_df, nonpth_df  
+
+
+def get_mean_of_feature(data: pd.DataFrame, feature: str, pth: int = 0):
+    pth_data = data[data['PTH'] == pth]
+    feature_array = pth_data[feature].values
+    f_reshaped = feature_array.reshape(len(feature_array)//5 , 5)
+
+    mean_feature = np.nanmean(f_reshaped, axis=0)
+    # median_feature = np.nanmedian(f_reshaped, axis=0)  
+    return mean_feature 
 
 if __name__=='__main__':
-    data_df = pd.read_excel('haemolysismodel_conRetis.xlsx')   #import Data von Pinkus 
+    data_df = pd.read_excel('datasets/haemolysismodel_conRetis.xlsx')   #import Data von Pinkus 
     df =long_format(data_df)
-    df.to_csv('OIE_data.csv', index=False)    
+    df.to_csv('datasets/OIE_data.csv', index=False)    
+    pth, non_pth = extract_fitting_data(df) 
+    pth.to_csv('Estimation/pth.csv', index=False)
+    non_pth.to_csv('Estimation/non_pth.csv', index=False)
+

@@ -21,7 +21,7 @@ def get_params_bounds():
    # 'h_art' :(3, 6, False),                 # assume similar to in vitro: [1] R. K. Tyagi u. a., doi: 10.1186/s12916-018-1156-x.
     #'ID50': (1e-1, 1000),               #ART dosis bei der 50% der iE getötet werden, #parameterscan zu unsensibel       
 
-    's_BH': (5e-5, 5e-2, True),                 # slope of linear function defining bystander heamolysis strength
+    's_BH': (5e-7, 5e-4, True),                 # slope of linear function defining bystander heamolysis strength
  
     'pre_t': (2,6, True),            # time of ART addition, 3 and 5 in medians in data for non-pth and pth respectively
 

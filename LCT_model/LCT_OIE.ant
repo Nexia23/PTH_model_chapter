@@ -7,7 +7,7 @@
 
     #species initiation
     ##erythropoisis
-    P   = (R * (k_R_death + log(2)/(t_R_a_init/2)))/ (2^10 *log(2) / (t_P_a_init/2))     #453.04169624571756  
+    P   = (R * (k_R_death + log(2)/(t_R_a_init/2)))/ (2^10 *log(2) / (t_P_a_init/2))     #453.04169624571756  k_R_death -> for ss = 0 since no ioE
     R   =  E* t_R_a_init/ t_E_death                                                            #46696.30405453991 
     E   = (Hkt_init * Vol_blood * (t_E_death/2))/ ( ((t_E_death/2)* Vol_E) + ((t_R_a_init/2)*Vol_R)) #5566629.619931825  #    cells, bezieht sich auf gesamtvolumen 1 mikroliter
     ##parasite lifecircle 
@@ -72,7 +72,7 @@
     J_P_birth    = k_P_birth 
     J_P_death   := P* k_P_death  
     J_P_aging   := P * k_P_aging
-    J_R_death   := R * k_R_death
+    J_R_death   := R * k_R_death 
     J_R_aging   := R * k_R_aging
     J_E_death   := E * k_E_death  
     ##Infection with parasite
@@ -103,11 +103,11 @@
     ##Erythropoese  
     k_P_death  := s_P_d * Hb + k_P_d0       
     k_P_aging  := ln(2) / (t_P_aging/2)     # in 1/days
-    k_R_death   =  0                        # in 1/days,Annahme
+    k_R_death  :=  0 + s_BH * J_oiE_death  # in 1/days,Annahme
     k_R_aging  := ln(2) / (t_R_aging/2)     # in 1/days 
-    k_E_death  := ln(2) / (t_E_death/2) * (1 + k_BH) 
-    k_BH :=  s_BH * J_oiE_death             # replaced  sigmoid, as this is non-zero even without J_oiE_death
-    ##infection with parasite  
+    k_E_death  := 2*ln(2) / (t_E_death) + s_BH * J_oiE_death
+   
+     ##infection with parasite  
     k_R_infect  = k_E_infect                  
     k_E_infect  = 1e-6                      # in 1/mikroliter*day ((Austin, 1997) 2e-6
     k_iE_death  := k_iE_death_0  + (1- k_iE_pit_frac) * k_iE_art_max*(ART^h_art/((ART^h_art)+(ID50)^h_art))                          # in 1/days, vereinfacht in Austin(1998)  (0.025  Ma 2019)

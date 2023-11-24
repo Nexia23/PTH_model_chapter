@@ -60,31 +60,30 @@ class FitManager():
     def __init__(self, model, data: pd.DataFrame) -> None:
         self.model = model
         self.data = data
+        self.default_pre_t = 3
+
 
     def objective_function(self, **pars):
         procID = pars['process_id']
         del pars['process_id']
-        pre_t = pars['pre_t']
-        del pars['pre_t']
+        if 'pre_t' in pars:
+            pre_t = pars['pre_t']
+            del pars['pre_t']
+        else:
+            pre_t = self.default_pre_t
         # set model to steady state
         self.model = set_model_to_ss(self.model, pars)
         
-        # simluate infection before medication
-        #print('Start pre-simulation.')
-       # pre_t = self.model.t_ART_add
-        self.model.simulate(-pre_t, 0)
-        #print('End pre-simulation.')
-
-
-        # simulate after (first) medication
+        # simulate 
         t_max = self.data['Time'].max()
-        res = self.model.simulate(0, int(t_max), int(t_max + 1), selections=['time', 'Hb', 'LDH'])
+        res = self.model.simulate(-pre_t, int(t_max), int(t_max + pre_t + 1), selections=['time', 'Hb', '[LDH]'])
         res_df = pd.DataFrame(res, columns=res.colnames)
         
         # only keep timepoints which are in data
         res_df = res_df[res_df['time'].isin(self.data['Time'])]
 
-        Hb_error = ((self.data['Hb_mean'].values - res_df['Hb'].values) / self.data['Hb_mean'].mean())**2
-        LDH_error = ((self.data['LDH_mean'].values - res_df['LDH'].values )  / self.data['LDH_mean'].mean())**2
+        Hb_error = ((self.data['Hb_mean'].values - res_df['Hb'].values) / (self.data['Hb_mean'].max() - self.data['Hb_mean'].min()))**2
+        LDH_error = ((self.data['LDH_mean'].values - res_df['[LDH]'].values )  / (self.data['LDH_mean'].max() - self.data['LDH_mean'].min()))**2
         self.model.resetToOrigin()
+        print(Hb_error.sum(), LDH_error.sum())
         return Hb_error.sum() + LDH_error.sum()

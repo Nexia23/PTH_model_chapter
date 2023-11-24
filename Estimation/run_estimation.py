@@ -9,11 +9,11 @@ import json
 
 def get_params_bounds():
     bounds = OrderedDict({
-    'Hkt_init': (0.35, 0.55, False),   
-    'k_E_infect': (1e-7 , 1e-5, True),    #jetzt paramscan früher (1e-8 , 1e-4),
+   # 'Hkt_init': (0.35, 0.55, False),   
+    'k_E_infect': (1e-7 , 2.5e-6, True),    #jetzt paramscan früher (1e-8 , 1e-4),
 
-    's_P_d': (1e-6, 1e-1, True),     # sigmoid(1e-2, 1e2) ,      #linear #parameterscan zu unsensibel
-    'k_P_d0':  (1e-6, 1, True),      # sigmoid(1e-2,1e3) ,     #parameterscan zu unsensibel
+   # 's_P_d': (1e-6, 1e-1, True),     # sigmoid(1e-2, 1e2) ,      #linear #parameterscan zu unsensibel
+  #  'k_P_d0':  (1e-6, 1, True),      # sigmoid(1e-2,1e3) ,     #parameterscan zu unsensibel
 
 
     #'k_iE_pit_frac': (0, 1, False),            # Anteil der iE die durch ART gepitted werden, 0-1. Rest sterben durch ART
@@ -21,10 +21,10 @@ def get_params_bounds():
    # 'h_art' :(3, 6, False),                 # assume similar to in vitro: [1] R. K. Tyagi u. a., doi: 10.1186/s12916-018-1156-x.
     #'ID50': (1e-1, 1000),               #ART dosis bei der 50% der iE getötet werden, #parameterscan zu unsensibel       
 
-    's_BH': (5e-7, 5e-4, True),      # slope of linear function defining bystander heamolysis strength
+    's_BH': (1e-9, 1e-6, True),      # slope of linear function defining bystander heamolysis strength
  
-    'pre_t': (2,6, True),            # time of ART addition, 3 and 5 in medians in data for non-pth and pth respectively
-
+    #'pre_t': (2,6, True),            # time of ART addition, 3 and 5 in medians in data for non-pth and pth respectively
+    'LDH': (140, 280, False),       # LDH concentration in blood plasma
     })
     return bounds
 
@@ -50,7 +50,7 @@ def save_estimation(best_score, best_parameters, update_params,ParamEster, fit_d
             'full_cost_history': ParamEster.complete_cost_history}
 
 
-    t = time.strftime("%Y_%m_%d_%H")
+    t = time.strftime("%Y_%m_%d_%H_%M")
     name = t
     save_to = fit_data[:-4]
     os.makedirs(f'{save_to}', exist_ok=True)
@@ -71,7 +71,10 @@ def main():
     stds = calculate_cma_std(bounds)
     ParamEster.initialize(est_obj.objective_function, bounds)
     best_score, best_parameters, runtime = ParamEster.run(method='cma', iterations=20, run_id=run_id, n_lhs=1,optimizer_args={'CMA_stds': stds})
-    pre_t = best_parameters.pop('pre_t')
+    if 'pre_t' in best_parameters:  
+        pre_t = best_parameters.pop('pre_t')
+    else:
+        pre_t = est_obj.default_pre_t
     update_parameters = get_steady_state(model, best_parameters)
     best_parameters['pre_t'] = pre_t
     save_estimation(best_score, best_parameters, update_parameters,ParamEster, fit_data, bounds, run_id)

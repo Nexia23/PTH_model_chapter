@@ -173,7 +173,7 @@ def define_lct_oie_model(n: int = 12, l: float = 0.96333725)-> str:
     ##parameter für t1/2 von R und P #müssen gefittet werden
     t_R_a_max= 3.53276388
     s_R_a= 5.99745537
-    Hkt_0= 0.29658879
+    Hkt_0= 0.24658879
 
     ##Parameter für k_iE_pit, alles random zahlen müssen gefittet werden. egscP
     k_iE_pit_0   = 0      # 0.00001 Annahme. keine oiE ohne ART medikament    inhihition die stattfindet ohne ART
@@ -218,6 +218,8 @@ def fit_gamma(data: np.array = np.array([12, 7, 21])) -> list:
     res = minimize(objective_gamma, pars, args=(data), method='Nelder-Mead')
     print(res.message, res.x)  
     return res.x
+
+# TODO: write fit to t_R_aging "Data" 
 
 def save_model(model: str, name:str):
     with open(name, 'w') as w_file:

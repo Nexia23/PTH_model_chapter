@@ -2,7 +2,7 @@
     t_R_a_init =     t_R_a_max/ (1+exp (s_R_a*(Hkt_init - Hkt_0)))  #in days, Entwicklung von Stammzelle zum Retikulozyt dauert ca. 5-9 Tage, plus 3 Tage die er schon retikulozyte ist aber noch in Rückenmark
     t_P_a_init = 11-(t_R_a_max/ (1+exp (s_R_a*(Hkt_init - Hkt_0)))) 
     Hkt_init = 0.45
-    k_P_birth   = J_P_death + J_P_aging     # P *(k_P_death +k_P_aging)
+    k_P_birth   = J_P_death + J_P_aging      # P *(k_P_death +k_P_aging)
     LDH_RBC = (J_LDH_decay * Vol_blood) / (J_E_death +J_R_death ) #  U  (pro RBC)  #https://www.ncbi.nlm.nih.gov/books/NBK557536/?report=printable
 
     #species initiation
@@ -32,7 +32,7 @@
     ##erythropoisis
     Pbirth:        -> P     ; J_P_birth
     Pdeath:      P ->       ; J_P_death
-    Page:        P -> 1024R ; J_P_aging     # Precursor cells divide ~10 times -> 2**10
+    Page:        P -> 1024R ; J_P_aging      # Precursor cells divide ~10 times -> 2**10
     Rdeath:      R ->       ; J_R_death 
     Raging:      R -> E     ; J_R_aging        
     Edeath:      E ->       ; J_E_death       
@@ -40,7 +40,7 @@
     Rinfect:    R+M -> iE   ; J_R_infect
     Einfect:    E+M -> iE   ; J_E_infect     
     iEdeath:    iE ->       ; J_iE_death     
-    iErupture:  iE -> 16M   ; J_iE_rupture  # Tumwiine (2008) the 4 is kind of arbitrary, question is how many relaeased merozoits actually reinvade
+    iErupture:  iE -> 16M   ; J_iE_rupture   # Tumwiine (2008) the 4 is kind of arbitrary, question is how many relaeased merozoits actually reinvade
     deathofM:      M ->     ; J_M_death
     ##Artesunate treatment
     ARTdeath:  ART ->       ; J_ART_decay
@@ -64,61 +64,71 @@
     #HPprod:       -> HP     ; J_HP_prod
     #HPdecay:   HP ->        ; J_HP_decay
     #fHbrelease:   -> fHb    ; J_fHb_release
-    #HCCbind: fHb+HP-> HCC   ; J_HCC_binding   #2:1 stöchiometrie (Andersen, 2012)
+    #HCCbind: fHb+HP-> HCC   ; J_HCC_binding # 2:1 stöchiometrie (Andersen, 2012)
     #HCCdecay:  HCC->        ; J_HCC_decay  
 
     # Assignments, Fluxes
     ##Erythropoese
-    J_P_birth    = k_P_birth 
-    J_P_death   := P* k_P_death  
-    J_P_aging   := P * k_P_aging
-    J_R_death   := R * k_R_death 
-    J_R_aging   := R * k_R_aging
-    J_E_death   := E * k_E_death  
+    J_P_birth     = k_P_birth 
+    
+    J_P_death    := P* k_P_death
+    k_P_death    := s_P_d * Hb + k_P_d0
+
+    J_P_aging    := P * k_P_aging
+    k_P_aging    := ln(2) / (t_P_aging/2)    # in 1/days
+    t_P_aging    := 11-(t_R_a_max/ (1+exp (s_R_a*(Hkt - Hkt_0))))           #in days, Entwicklung R -> E dauert ca 4 Tage (3 tage knochenmark, 1 Tage im peripheren Blut)-> wir betrachten nur Retis in peripheren Blut, bei niedrigen Hkt verlassen Retis eher Knochenmark,  reifen länger im Blut
+
+    J_R_death    := R * k_R_death 
+    k_R_death    :=  0 + s_BH * J_oiE_death  # in 1/days,Annahme
+
+    J_R_aging    := R * k_R_aging
+    k_R_aging    := ln(2) / (t_R_aging/2)    # in 1/days 
+
+    J_E_death    := E * k_E_death  
+    k_E_death    := 2*ln(2) / (t_E_death) + s_BH * J_oiE_death
+
     ##Infection with parasite
-    J_R_infect  := R*M* k_R_infect 
-    J_E_infect  := E*M* k_E_infect       # einbezug parasit?, E ersmal als Abhängigkeit ausgelassen da am Anfang E >> M -> mit Jorin absprechen+
-    J_iE_death  := iE * k_iE_death       #einbezug antibodies, spleen
-    J_iE_rupture:= iE * k_iE_rupture     #16-32M s.Cowman 2016, Anderson 1989, Diebner 2000
-    J_M_death   := M  * k_M_death
+    J_R_infect   := R*M* k_R_infect 
+    J_E_infect   := E*M* k_E_infect          # einbezug parasit?, E ersmal als Abhängigkeit ausgelassen da am Anfang E >> M -> mit Jorin absprechen+
+    k_E_infect    = 1e-6                     # in 1/mikroliter*day ((Austin, 1997) 2e-6
+    k_R_infect    = k_E_infect                  
+    
+    J_iE_death   := iE * k_iE_death          # einbezug antibodies, spleen
+    k_iE_death   := k_iE_death_0  + (1- k_iE_pit_frac) * k_iE_art_max*(ART^h_art/((ART^h_art)+(ID50)^h_art))                          # in 1/days, vereinfacht in Austin(1998)  (0.025  Ma 2019)
+
+    J_iE_rupture := iE * k_iE_rupture        # 16-32M s.Cowman 2016, Anderson 1989, Diebner 2000
+    k_iE_rupture  = ln(2) / (t_iE_rupture/2) # CHECK/MAXIM: in 1/days, Austin(1998)
+    
+    J_M_death    := M  * k_M_death
+    k_M_death     = 48                       # 48 in 1/days 2010 Thi (48)
+
     ##Artesunate treatment
-    J_ART_decay := ART * k_ART_decay
-    J_iE_pit   := iE  * k_iE_pit       #einbezug artesunat
-    J_oiE_death := oiE_12*k_oiE_death;
+    J_ART_decay  := ART * k_ART_decay
+    k_ART_decay   = ln(2) / t_halb_ART_decay #ART hat 1h Halbwertszeit (Tilley 2016), andere Quellen 2h 
+
+    J_iE_pit     := iE  * k_iE_pit           # einbezug artesunat
+    k_iE_pit     := k_iE_pit_0 + k_iE_pit_frac * k_iE_art_max*(ART^h_art/((ART^h_art)+(ID50)^h_art)) #bei Medikamentengabe nach 8h Maximum an gepitteten RBCs
+
+    J_oiE_death  := oiE_12 * k_oiE_death;
+    k_oiE_death   = 0.9633372511245027       # from LCT              
+
     ##LDH
-    J_LDH_release := (LDH_RBC/ Vol_blood)* (J_R_death+ J_E_death + J_iE_death + J_iE_rupture + J_oiE_death) 
-    J_LDH_decay   := LDH * k_LDH_decay
+    J_LDH_release:= (LDH_RBC/ Vol_blood)* (J_R_death+ J_E_death + J_iE_death + J_iE_rupture + J_oiE_death) 
+    J_LDH_decay  := LDH * k_LDH_decay
+    k_LDH_decay   = ln(2) / t_halb_LDH_decay
+
     #Haptoglobin
-    #J_HP_prod      = J_HP_decay + J_HCC_binding           # 2* 6.799770420550107e+28 / (1+ exp(-1e-22*(fHb-9.33643410852713e+22)))  #J_HP_decay + J_HCC_binding  #wie viele verloren gehen durch #  #
-    #J_HP_decay     = HP * k_HP_decay 
-    #J_fHb_release  := J_fHb_release_R + J_fHb_release_E + J_fHb_release_iE + J_fHb_release_oiE
+    #J_HP_prod         = J_HP_decay + J_HCC_binding           # 2* 6.799770420550107e+28 / (1+ exp(-1e-22*(fHb-9.33643410852713e+22)))  #J_HP_decay + J_HCC_binding  #wie viele verloren gehen durch #  #
+    #J_HP_decay        = HP * k_HP_decay 
+    #J_fHb_release    := J_fHb_release_R + J_fHb_release_E + J_fHb_release_iE + J_fHb_release_oiE
     #J_fHb_release_R  := Hb_conc_R   * J_R_death   * Vol_R  / (M_Hb * Vol_plasma)
     #J_fHb_release_E  := Hb_conc_E   * J_E_death   * Vol_E  / (M_Hb * Vol_plasma)
     #J_fHb_release_iE := Hb_conc_iE  * J_iE_death  * Vol_iE / (M_Hb * Vol_plasma)
     #J_fHb_release_oiE:= Hb_conc_oiE * J_oiE_death * Vol_oiE/ (M_Hb * Vol_plasma)
-    #J_HCC_binding := HP * fHb * k_HCC_bind   # nicht dran rumspielen 
-    #J_HCC_decay   := HCC * k_HCC_decay
+    #J_HCC_binding    := HP * fHb * k_HCC_bind  # nicht dran rumspielen 
+    #J_HCC_decay      := HCC * k_HCC_decay
 
     # Rates
-    ##Erythropoese  
-    k_P_death  := s_P_d * Hb + k_P_d0       
-    k_P_aging  := ln(2) / (t_P_aging/2)     # in 1/days
-    k_R_death  :=  0 + s_BH * J_oiE_death  # in 1/days,Annahme
-    k_R_aging  := ln(2) / (t_R_aging/2)     # in 1/days 
-    k_E_death  := 2*ln(2) / (t_E_death) + s_BH * J_oiE_death
-   
-     ##infection with parasite  
-    k_R_infect  = k_E_infect                  
-    k_E_infect  = 1e-6                      # in 1/mikroliter*day ((Austin, 1997) 2e-6
-    k_iE_death  := k_iE_death_0  + (1- k_iE_pit_frac) * k_iE_art_max*(ART^h_art/((ART^h_art)+(ID50)^h_art))                          # in 1/days, vereinfacht in Austin(1998)  (0.025  Ma 2019)
-    k_iE_rupture= ln(2) / (t_iE_rupture/2)       # CHECK/MAXIM: in 1/days, Austin(1998)
-    k_M_death   = 48        #48 in 1/days 2010 Thi (48)
-    ##Artesunate treatment
-    k_ART_decay = ln(2) / t_halb_ART_decay  #ART hat 1h Halbwertszeit (Tilley 2016), andere Quellen 2h 
-    k_iE_pit  := k_iE_pit_0 + k_iE_pit_frac * k_iE_art_max*(ART^h_art/((ART^h_art)+(ID50)^h_art)) #bei Medikamentengabe nach 8h Maximum an gepitteten RBCs
-    k_oiE_death = 0.9633372511245027  # from LCT              
-    ##LDH
-    k_LDH_decay = ln(2) / t_halb_LDH_decay
     ##Haptoglobin
     #k_HP_decay  = ln(2)/ t_halb_HP_decay
     #k_HCC_bind  = J_fHb_release / (fHb * HP)      # nicht dran rumspielen  
@@ -159,7 +169,6 @@
     # parameters
     ##Erythropoese
     t_R_aging :=     t_R_a_max/ (1+exp (s_R_a*(Hkt - Hkt_0)))  #in days, Entwicklung von Stammzelle zum Retikulozyt dauert ca. 5-9 Tage, plus 3 Tage die er schon retikulozyte ist aber noch in Rückenmark
-    t_P_aging := 11-(t_R_a_max/ (1+exp (s_R_a*(Hkt - Hkt_0))))           #in days, Entwicklung R -> E dauert ca 4 Tage (3 tage knochenmark, 1 Tage im peripheren Blut)-> wir betrachten nur Retis in peripheren Blut, bei niedrigen Hkt verlassen Retis eher Knochenmark,  reifen länger im Blut
     t_E_death  = 120
     t_iE_rupture = 2                     # MAXIM: in days, dauert ca 4 Tage bis Ruptur, sinuskurvig (2010 Th)
     ##Artesunate treatment
@@ -183,9 +192,9 @@
     k_iE_pit_0   = 0      # 0.00001 Annahme. keine oiE ohne ART medikament    inhihition die stattfindet ohne ART
     k_iE_death_0 = 0
     k_iE_pit_frac = 0.33  # troph+schiz sterben direkt, rings zu oiE
-    k_iE_art_max = 15  #10 für Medikamentzuageb #8   #maximal inhibition-effect, reine Annahme
-    h_art    = 2.0      #Hill-coefficient, muss gefittet werden (Angus 2002)
-    ID50    = 20       # Annahme bei hälber konz. halbe inhibition; 0.6*75 inhibition-dosis (muss geschätzt werden, gerade gibt es die PC50 an, parasite clearance) in mg/kg (Angus 2002)* 75kg(Annahme ungefähr 75kg Gewicht)
+    k_iE_art_max = 15     # 10 für Medikamentzuageb #8   #maximal inhibition-effect, reine Annahme
+    h_art    = 2.0        # Hill-coefficient, muss gefittet werden (Angus 2002)
+    ID50    = 20          # Annahme bei hälber konz. halbe inhibition; 0.6*75 inhibition-dosis (muss geschätzt werden, gerade gibt es die PC50 an, parasite clearance) in mg/kg (Angus 2002)* 75kg(Annahme ungefähr 75kg Gewicht)
 
     #Parameter für k_E_death
     s_BH = 0.001

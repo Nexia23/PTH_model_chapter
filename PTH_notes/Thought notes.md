@@ -1,0 +1,1 @@
+Artemisinin drug administration correlates with is half life time in publication it was advised to use same time - N J White, Assessment of the Pharmacodynamic Properties of Antimalarial Drugs in Vivo., Antimicrobial Agents and Chemotherapy 41,  (July 1997).

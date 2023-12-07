@@ -84,7 +84,10 @@ def main():
         pre_t = best_parameters.pop('pre_t')
     else:
         pre_t = est_obj.default_pre_t
-    update_parameters = get_steady_state(model, best_parameters)
+    update_parameters={}    
+    for key in data.keys():
+        dummy_dict = get_steady_state(model, best_parameters)
+        update_parameters |= {k+"_"+key:v for k,v in dummy_dict.items() }
     best_parameters['pre_t'] = pre_t
     save_estimation(best_score, best_parameters, update_parameters,ParamEster, data, bounds, run_id)
 

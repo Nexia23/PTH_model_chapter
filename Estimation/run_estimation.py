@@ -1,5 +1,6 @@
 import sys
 sys.path.append('../../Parameter_Sampler/')
+
 from Estimator import ParameterEstimator
 from estimation import *
 from collections import OrderedDict
@@ -9,22 +10,27 @@ import json
 
 def get_params_bounds():
     bounds = OrderedDict({
-   # 'Hkt_init': (0.35, 0.55, False),   
+    # 'Hkt_init': (0.35, 0.55, False),   
     'k_E_infect': (1e-7 , 2.5e-6, True),    #jetzt paramscan früher (1e-8 , 1e-4),
 
-   # 's_P_d': (1e-6, 1e-1, True),     # sigmoid(1e-2, 1e2) ,      #linear #parameterscan zu unsensibel
-  #  'k_P_d0':  (1e-6, 1, True),      # sigmoid(1e-2,1e3) ,     #parameterscan zu unsensibel
+    # 's_P_d': (1e-6, 1e-1, True),     # sigmoid(1e-2, 1e2) ,      #linear #parameterscan zu unsensibel
+    # 'k_P_d0':  (1e-6, 1, True),      # sigmoid(1e-2,1e3) ,     #parameterscan zu unsensibel
 
 
-    #'k_iE_pit_frac': (0, 1, False),            # Anteil der iE die durch ART gepitted werden, 0-1. Rest sterben durch ART
-    #'k_iE_art_max': (1, 1000),             # maximale abtötrate von iE durch ART, #parameterscan zu unsensibel 
-   # 'h_art' :(3, 6, False),                 # assume similar to in vitro: [1] R. K. Tyagi u. a., doi: 10.1186/s12916-018-1156-x.
-    #'ID50': (1e-1, 1000),               #ART dosis bei der 50% der iE getötet werden, #parameterscan zu unsensibel       
+    # 'k_iE_pit_frac': (0, 1, False),            # Anteil der iE die durch ART gepitted werden, 0-1. Rest sterben durch ART
+    # 'k_iE_art_max': (1, 1000),             # maximale abtötrate von iE durch ART, #parameterscan zu unsensibel 
+    # 'h_art' :(3, 6, False),                 # assume similar to in vitro: [1] R. K. Tyagi u. a., doi: 10.1186/s12916-018-1156-x.
+    # 'ID50': (1e-1, 1000),               #ART dosis bei der 50% der iE getötet werden, #parameterscan zu unsensibel       
 
-    's_BH': (1e-9, 1e-6, True),      # slope of linear function defining bystander heamolysis strength
+    's_BH_pth': (1e-9, 1e-6, True),      # slope of linear function defining bystander heamolysis strength
  
-    #'pre_t': (2,6, True),            # time of ART addition, 3 and 5 in medians in data for non-pth and pth respectively
-    'LDH': (140, 280, False),       # LDH concentration in blood plasma
+    # 'pre_t': (2,6, True),            # time of ART addition, 3 and 5 in medians in data for non-pth and pth respectively
+    'LDH_pth': (140, 280, False),       # LDH concentration in blood plasma
+    's_BH_non': (1e-9, 1e-6, True),      # slope of linear function defining bystander heamolysis strength
+ 
+    # 'pre_t': (2,6, True),            # time of ART addition, 3 and 5 in medians in data for non-pth and pth respectively
+    'LDH_non': (140, 280, False),       # LDH concentration in blood plasma
+    
     })
     return bounds
 
@@ -60,11 +66,14 @@ def save_estimation(best_score, best_parameters, update_params,ParamEster, fit_d
 
 
 def main():
-    fit_data = sys.argv[1]
-    run_id = sys.argv[2]
+    # fit_data = sys.argv[1]
+    run_id = sys.argv[1]
     model = te.loada('../LCT_model/LCT_OIE.ant')
+
+    #data = pd.read_csv(fit_data)
+    data = {"pth":pd.read_csv("pth.csv"),       
+            "non":pd.read_csv("non_pth.csv")}
     
-    data = pd.read_csv(fit_data)
     est_obj = FitManager(model, data)
     ParamEster = ParameterEstimator()
     bounds = get_params_bounds()
@@ -77,8 +86,7 @@ def main():
         pre_t = est_obj.default_pre_t
     update_parameters = get_steady_state(model, best_parameters)
     best_parameters['pre_t'] = pre_t
-    save_estimation(best_score, best_parameters, update_parameters,ParamEster, fit_data, bounds, run_id)
-
+    save_estimation(best_score, best_parameters, update_parameters,ParamEster, data, bounds, run_id)
 
     print(best_score, best_parameters, runtime)
 

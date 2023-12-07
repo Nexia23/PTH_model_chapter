@@ -57,7 +57,7 @@ def set_model_to_ss(model, pars: dict):
 
 class FitManager():
 
-    def __init__(self, model, data: pd.DataFrame) -> None:
+    def __init__(self, model, data ) -> None:
         self.model = model
         self.data = data
         self.default_pre_t = 3
@@ -65,25 +65,36 @@ class FitManager():
 
     def objective_function(self, **pars):
         procID = pars['process_id']
+
         del pars['process_id']
         if 'pre_t' in pars:
             pre_t = pars['pre_t']
             del pars['pre_t']
         else:
             pre_t = self.default_pre_t
-        # set model to steady state
-        self.model = set_model_to_ss(self.model, pars)
         
-        # simulate 
-        t_max = self.data['Time'].max()
-        res = self.model.simulate(-pre_t, int(t_max), int(t_max + pre_t + 1), selections=['time', 'Hb', '[LDH]'])
-        res_df = pd.DataFrame(res, columns=res.colnames)
-        
-        # only keep timepoints which are in data
-        res_df = res_df[res_df['time'].isin(self.data['Time'])]
+        # from here loop for both models
+        error_sum = 0
+        k_E_inf = pars.pop('k_E_infect') # same in both models
+        for key in self.data:
+            usedpars = {k.replace("_"+key,""):v for k,v in pars.items() if key in k}
+            usedpars['k_E_infect'] = k_E_inf
 
-        Hb_error = ((self.data['Hb_mean'].values - res_df['Hb'].values) / (self.data['Hb_mean'].max() - self.data['Hb_mean'].min()))**2
-        LDH_error = ((self.data['LDH_mean'].values - res_df['[LDH]'].values )  / (self.data['LDH_mean'].max() - self.data['LDH_mean'].min()))**2
-        self.model.resetToOrigin()
-        print(Hb_error.sum(), LDH_error.sum())
-        return Hb_error.sum() + LDH_error.sum()
+            # set model to steady state
+            self.model = set_model_to_ss(self.model, usedpars)
+            
+            # simulate 
+            t_max = self.data[key]['Time'].max()
+            res = self.model.simulate(-pre_t, int(t_max), int(t_max + pre_t + 1), selections=['time', 'Hb', '[LDH]'])
+            res_df = pd.DataFrame(res, columns=res.colnames)
+            
+            # only keep timepoints which are in data
+            res_df = res_df[res_df['time'].isin(self.data[key]['Time'])]
+            # TODO loop over data columns?
+            Hb_error = ((self.data[key]['Hb_mean'].values - res_df['Hb'].values) / (self.data[key]['Hb_mean'].max() - self.data[key]['Hb_mean'].min()))**2
+            LDH_error = ((self.data[key]['LDH_mean'].values - res_df['[LDH]'].values )  / (self.data[key]['LDH_mean'].max() - self.data[key]['LDH_mean'].min()))**2
+
+            self.model.resetToOrigin()
+            print(Hb_error.sum(), LDH_error.sum())
+            error_sum = Hb_error.sum() + LDH_error.sum()
+        return error_sum

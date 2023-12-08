@@ -75,10 +75,9 @@ class FitManager():
         
         # from here loop for both models
         error_sum = 0
-        k_E_inf = pars.pop('k_E_infect') # same in both models
         for key in self.data:
             usedpars = {k.replace("_"+key,""):v for k,v in pars.items() if key in k}
-            usedpars['k_E_infect'] = k_E_inf
+            usedpars['k_E_infect'] = pars["k_E_infect"]
 
             # set model to steady state
             self.model = set_model_to_ss(self.model, usedpars)
@@ -90,11 +89,12 @@ class FitManager():
             
             # only keep timepoints which are in data
             res_df = res_df[res_df['time'].isin(self.data[key]['Time'])]
-            # TODO loop over data columns?
+            # TODO: loop over data columns?
             Hb_error = ((self.data[key]['Hb_mean'].values - res_df['Hb'].values) / (self.data[key]['Hb_mean'].max() - self.data[key]['Hb_mean'].min()))**2
             LDH_error = ((self.data[key]['LDH_mean'].values - res_df['[LDH]'].values )  / (self.data[key]['LDH_mean'].max() - self.data[key]['LDH_mean'].min()))**2
 
             self.model.resetToOrigin()
             #print(Hb_error.sum(), LDH_error.sum())
+            # TODO: weighted sum?
             error_sum = Hb_error.sum() + LDH_error.sum()
         return error_sum

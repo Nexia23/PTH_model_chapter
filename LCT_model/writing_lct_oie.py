@@ -221,19 +221,21 @@ def fit_gamma(data: np.array = np.array([12, 7, 21])) -> list:
     return res.x
 
 def logistic_function(x, slope, midpoint, scale) -> list:
-    """Takes slope max and midpoint.  """
+    """Calculates values of logistic function. Takes slope max and midpoint."""
     val = scale / (1 + np.exp(slope * (x - midpoint)))
     return val   
 
 def objective_rpi_logistic(pars, data_hct: np.array, data_rpi:np.array = np.array([2.5,2,1.5,1])) -> list:
-    scale = pars[0]
-    slope = pars[1]
+    """ Returns quadratic error of logistic function with parameters slope, max_value and midpoint."""
+    slope = pars[0]
+    scale = pars[1]
     midpoint = pars[2]
     residues = (data_rpi-logistic_function(data_hct,slope, midpoint, scale))**2
     return residues.sum()
 
 def fit_rpi_logistic(data_hct: np.array = np.array([0.1,0.2,0.3,0.4]),
                      data_rpi:np.array = np.array([2.5,2,1.5,1])) -> list:
+    """Fits and then Returns parameters for logistic function"""
     res = minimize(objective_rpi_logistic,x0=[1,1,1],args=(data_hct,data_rpi,))
     return res.x   
 

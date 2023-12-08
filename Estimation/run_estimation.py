@@ -48,21 +48,25 @@ def calculate_cma_std(bounds):
     return stds
     
 
-def save_estimation(best_score, best_parameters, update_params,ParamEster, fit_data:str, bounds: OrderedDict, run_id:int):
-    result_dict = {'fitted_data': fit_data, 'parameter_space': bounds, 'run_id': run_id,
-            'best_score': best_score, 'best_parameters': best_parameters, 'update_parameters': update_params,
-            'cost_history': ParamEster.cost_history,
-            'function_calls': ParamEster.function_calls,
-            'full_cost_history': ParamEster.complete_cost_history}
+def save_estimation(best_score, best_parameters, update_params, ParamEster, fit_data:str, 
+                    bounds: OrderedDict, run_id:int):
+    for key in update_params:
+        result_dict = {'fitted_data': fit_data, 'parameter_space': bounds, 'run_id': run_id,
+                    'best_score': best_score, 'best_parameters': best_parameters, 
+                    'update_parameters': update_params[key], 'cost_history': ParamEster.cost_history,
+                    'function_calls': ParamEster.function_calls,
+                    'full_cost_history': ParamEster.complete_cost_history}
 
+        t = time.strftime("%Y_%m_%d_%H_%M")
+        name = t
 
-    t = time.strftime("%Y_%m_%d_%H_%M")
-    name = t
-    save_to = fit_data[:-4]
-    os.makedirs(f'{save_to}', exist_ok=True)
+        save_to = key
+        if key == "non": save_to ="non_pth"
+        
+        os.makedirs(f'{save_to}', exist_ok=True)
 
-    with open(f'{save_to}/{name}_{run_id}.json', "w") as write_file:
-        json.dump(result_dict, write_file, indent=4)
+        with open(f'{save_to}/{name}_{run_id}.json', "w") as write_file:
+            json.dump(result_dict, write_file, indent=4)
 
 
 def main():
@@ -73,7 +77,8 @@ def main():
     #data = pd.read_csv(fit_data)
     data = {"pth":pd.read_csv("pth.csv"),       
             "non":pd.read_csv("non_pth.csv")}
-    
+    data_used =["pth.csv","non_pth.csv"]
+
     est_obj = FitManager(model, data)
     ParamEster = ParameterEstimator()
     bounds = get_params_bounds()
@@ -84,12 +89,16 @@ def main():
         pre_t = best_parameters.pop('pre_t')
     else:
         pre_t = est_obj.default_pre_t
-    update_parameters={}    
+    
+    update_parameters={} 
     for key in data.keys():
-        dummy_dict = get_steady_state(model, best_parameters)
-        update_parameters |= {k+"_"+key:v for k,v in dummy_dict.items() }
+        usedpars = {k.replace("_"+key,""):v for k,v in best_parameters.items() if key in k}
+        dummy_dict = get_steady_state(model, usedpars)
+        update_parameters[key] = {k+"_"+key:v for k,v in dummy_dict.items() }
+    
     best_parameters['pre_t'] = pre_t
-    save_estimation(best_score, best_parameters, update_parameters,ParamEster, data, bounds, run_id)
+    save_estimation(best_score, best_parameters, update_parameters, ParamEster,
+                    data_used, bounds, run_id)
 
     print(best_score, best_parameters, runtime)
 

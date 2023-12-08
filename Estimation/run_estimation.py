@@ -51,8 +51,10 @@ def calculate_cma_std(bounds):
 def save_estimation(best_score, best_parameters, update_params, ParamEster, fit_data:str, 
                     bounds: OrderedDict, run_id:int):
     for key in update_params:
+        best_pars = {k.replace("_"+key,""):v for k,v in best_parameters.items() if key in k}
+        best_pars["k_E_infect"] = best_parameters["k_E_infect"]
         result_dict = {'fitted_data': fit_data, 'parameter_space': bounds, 'run_id': run_id,
-                    'best_score': best_score, 'best_parameters': best_parameters, 
+                    'best_score': best_score, 'best_parameters': best_pars, 
                     'update_parameters': update_params[key], 'cost_history': ParamEster.cost_history,
                     'function_calls': ParamEster.function_calls,
                     'full_cost_history': ParamEster.complete_cost_history}
@@ -94,7 +96,7 @@ def main():
     for key in data.keys():
         usedpars = {k.replace("_"+key,""):v for k,v in best_parameters.items() if key in k}
         dummy_dict = get_steady_state(model, usedpars)
-        update_parameters[key] = {k+"_"+key:v for k,v in dummy_dict.items() }
+        update_parameters[key] = {k:v for k,v in dummy_dict.items() }
     
     best_parameters['pre_t'] = pre_t
     save_estimation(best_score, best_parameters, update_parameters, ParamEster,

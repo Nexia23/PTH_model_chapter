@@ -94,7 +94,7 @@ class FitManager():
             LDH_error = ((self.data[key]['LDH_mean'].values - res_df['[LDH]'].values )  / (self.data[key]['LDH_mean'].max() - self.data[key]['LDH_mean'].min()))**2
 
             self.model.resetToOrigin()
-            #print(Hb_error.sum(), LDH_error.sum())
+            # print(Hb_error.sum(), LDH_error.sum())
             # TODO: weighted sum?
-            error_sum = Hb_error.sum() + LDH_error.sum()
+            error_sum += Hb_error.sum() + LDH_error.sum()
         return error_sum

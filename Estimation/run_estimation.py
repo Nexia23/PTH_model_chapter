@@ -94,6 +94,7 @@ def main():
     best_score, best_parameters, runtime = ParamEster.run(method='cma', iterations=20,
                                                           run_id=run_id, n_lhs=1,
                                                           optimizer_args={'CMA_stds': stds})
+    # Saving of estimation results
     if 'pre_t' in best_parameters:  
         pre_t = best_parameters.pop('pre_t')
     else:

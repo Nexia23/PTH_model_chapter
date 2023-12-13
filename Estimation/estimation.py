@@ -73,7 +73,7 @@ class FitManager():
         else:
             pre_t = self.default_pre_t
         
-        # from here loop for both models
+        # from here loop over data set keys for both models
         error_sum = 0
         for key in self.data:
             usedpars = {k.replace("_"+key,""):v for k,v in pars.items() if key in k}
@@ -84,17 +84,23 @@ class FitManager():
             
             # simulate 
             t_max = self.data[key]['Time'].max()
-            res = self.model.simulate(-pre_t, int(t_max), int(t_max + pre_t + 1), selections=['time', 'Hb', '[LDH]'])
+            res = self.model.simulate(-pre_t, int(t_max), int(t_max + pre_t + 1),
+                                      selections=['time', 'Hb', '[LDH]', '[R]'])
             res_df = pd.DataFrame(res, columns=res.colnames)
             
             # only keep timepoints which are in data
             res_df = res_df[res_df['time'].isin(self.data[key]['Time'])]
             # TODO: loop over data columns?
-            Hb_error = ((self.data[key]['Hb_mean'].values - res_df['Hb'].values) / (self.data[key]['Hb_mean'].max() - self.data[key]['Hb_mean'].min()))**2
-            LDH_error = ((self.data[key]['LDH_mean'].values - res_df['[LDH]'].values )  / (self.data[key]['LDH_mean'].max() - self.data[key]['LDH_mean'].min()))**2
+            Hb_error = ((self.data[key]['Hb_mean'].values - res_df['Hb'].values) 
+                        / (self.data[key]['Hb_mean'].max() - self.data[key]['Hb_mean'].min()))**2
+            LDH_error = ((self.data[key]['LDH_mean'].values - res_df['[LDH]'].values )  
+                         / (self.data[key]['LDH_mean'].max() - self.data[key]['LDH_mean'].min()))**2
+            R_error = ((self.data[key]['[R]_mean'].values - res_df['[R]'].values )  
+                       / (self.data[key]['[R]_mean'].max() - self.data[key]['[R]_mean'].min()))**2
 
             self.model.resetToOrigin()
             # print(Hb_error.sum(), LDH_error.sum())
             # TODO: weighted sum?
-            error_sum += Hb_error.sum() + LDH_error.sum()
+            error_sum += Hb_error.sum() + LDH_error.sum() + R_error.sum()
         return error_sum
+    

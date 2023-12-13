@@ -1,7 +1,6 @@
 import numpy as np
-from scipy.stats import gamma, erlang
+from scipy.stats import gamma
 from scipy.optimize import minimize
-import matplotlib.pyplot as plt
 
 def define_lct_oie_model(n: int = 12, l: float = 0.96333725, slope_rpi:float = 3.53276388,
                          scale_rpi:float= 5.99745537, midpoint_rpi:float= 0.24658879)-> str:
@@ -225,7 +224,7 @@ def logistic_function(x, slope, midpoint, scale) -> list:
     val = scale / (1 + np.exp(slope * (x - midpoint)))
     return val   
 
-def objective_rpi_logistic(pars, data_hct: np.array, data_rpi:np.array = np.array([2.5,2,1.5,1])) -> list:
+def objective_rpi_logistic(pars, data_hct: np.array, data_rpi:np.array = np.array([2.5,2,1.5,1])) -> float:
     """ Returns quadratic error of logistic function with parameters slope, max_value and midpoint."""
     slope = pars[0]
     scale = pars[1]

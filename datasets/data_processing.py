@@ -127,7 +127,7 @@ if __name__=='__main__':
     data_df = pd.read_excel('datasets/haemolysismodel_conRetis.xlsx')   #import Data von Pinkus 
     df =long_format(data_df)
     df.to_csv('datasets/OIE_data.csv', index=False)    
-    pth, non_pth = extract_fitting_data(df) 
+    pth, non_pth = extract_fitting_data(df, ['Hb', 'LDH','[R]']) 
     pth.to_csv('Estimation/pth.csv', index=False)
     non_pth.to_csv('Estimation/non_pth.csv', index=False)
 

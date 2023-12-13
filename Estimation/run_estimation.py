@@ -58,11 +58,11 @@ def save_estimation(best_score, best_parameters, update_params, ParamEster, fit_
         best_pars["pre_t"] = best_parameters["pre_t"]
        
         result_dict = {'fitted_data': fit_data, 'parameter_space': bounds, 'run_id': run_id,
-                    'best_score': best_score, 'best_parameters': best_pars, 
-                    'update_parameters':save_dict,
-                    'cost_history': ParamEster.cost_history,
-                    'function_calls': ParamEster.function_calls,
-                    'full_cost_history': ParamEster.complete_cost_history}
+                       'best_score': best_score, 'best_parameters': best_pars, 
+                       'update_parameters':save_dict,
+                       'cost_history': ParamEster.cost_history,
+                       'function_calls': ParamEster.function_calls,
+                       'full_cost_history': ParamEster.complete_cost_history}
 
         t = time.strftime("%Y_%m_%d_%H_%M")
         name = t
@@ -91,7 +91,9 @@ def main():
     bounds = get_params_bounds()
     stds = calculate_cma_std(bounds)
     ParamEster.initialize(est_obj.objective_function, bounds)
-    best_score, best_parameters, runtime = ParamEster.run(method='cma', iterations=20, run_id=run_id, n_lhs=1,optimizer_args={'CMA_stds': stds})
+    best_score, best_parameters, runtime = ParamEster.run(method='cma', iterations=20,
+                                                          run_id=run_id, n_lhs=1,
+                                                          optimizer_args={'CMA_stds': stds})
     if 'pre_t' in best_parameters:  
         pre_t = best_parameters.pop('pre_t')
     else:

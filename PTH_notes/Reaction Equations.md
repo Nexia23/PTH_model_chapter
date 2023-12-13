@@ -1,4 +1,4 @@
-$\frac{dP}{dt}=k_{P,b}-P\cdot(s_{P,d}\cdot[Hb]+k_{R,d0})-2P\cdot ln(2)\cdot (t_{P,a,0}-\frac{t_{R,a,max}}{1+e^{-k_{R,a}\cdot(Hkt-Hkt_0)}})^{-1}$ 
+$\frac{dP}{dt}=k_{P,b}-P\cdot(s_{P,d}\cdot[Hb]+k_{P,d0})-2P\cdot ln(2)\cdot (t_{P,a,0}-\frac{t_{R,a,max}}{1+e^{-k_{R,a}\cdot(Hkt-Hkt_0)}})^{-1}$ 
 $\frac{dR}{dt}=2P\cdot ln(2)\cdot (t_{P,a,0}-\frac{t_{R,a,max}}{1+e^{-k_{R,a}\cdot(Hkt-Hkt_0)}})^{-1}-2R\cdot ln(2)\cdot(\frac{t_{R,a,max}}{1+e^{-k_{R,a}\cdot(Hkt-Hkt_0)}})^{-1}-R\cdot M\cdot k_{inf}-R\cdot(k_{R,d}+s_{BH}\cdot oiE_{12}),k_{R,d}=0$
 $\frac{dE}{dt}=2R\cdot ln(2)\cdot(\frac{t_{R,a,max}}{1+e^{-k_{R,a}\cdot(Hkt-Hkt_0)}})^{-1}-E\cdot M\cdot k_{inf}-E\cdot(k_{E,d}+s_{BH}\cdot oiE_{12})$
 $\frac{dLDH}{dt}=\frac{LDH_{Blood}}{V_{Blood}}\cdot(P\cdot(s_{P,d}\cdot[Hb]+k_{R,d0})+R\cdot(k_{R,d}+s_{BH}\cdot oiE_{12})+E\cdot(k_{E,d}+s_{BH}\cdot oiE_{12} ))-LDH\cdot \frac{ln(2)}{t_{hl,LDH,d}}$, no real idea of degradation time of LDH
@@ -16,7 +16,7 @@ $\frac{dART}{dt}=ART\cdot\frac{ln(2)}{t_{ART,decay}}$
 	- $t_{P,a}=t_{P,a,0}-\frac{t_{R,a,max}}{1+e^{-k_{R,a}\cdot(Hkt-Hkt_0)}}$ with $t_{P,a,0}=11$ #TODO why 11 not 12
 - Precursors death rate: #TODO Where are these values coming from?
 	$s_{P,d} = 0.00071535$   slope of P death increase
-	$k_{P,d0} =  0.48924947$ default death rate of Precursors
+	$k_{P,d0} =  0.48924947$  default death rate of Precursors
 - Reticocyotes aging time:
 	- $t_{R,a}=t_{R,a,0}+\frac{t_{R,a,max}}{1+e^{-k_{R,a}\cdot(Hkt-Hkt_0)}}$, with $t_{R,a0}=0$
 -  $LDH_{Blood}=140-280 \frac{U}{L}$ only value of LDH,  [link](https://www.ncbi.nlm.nih.gov/books/NBK557536/?report=printable)

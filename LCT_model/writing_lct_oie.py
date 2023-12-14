@@ -2,8 +2,8 @@ import numpy as np
 from scipy.stats import gamma
 from scipy.optimize import minimize
 
-def define_lct_oie_model(n: int = 12, l: float = 0.96333725, slope_rpi:float = 3.53276388,
-                         scale_rpi:float= 5.99745537, midpoint_rpi:float= 0.24658879)-> str:
+def define_lct_oie_model(n: int = 12, l: float = 0.96333725, slope_rpi:float = 5.99745537,
+                         scale_rpi:float=3.53276388, midpoint_rpi:float= 0.24658879)-> str:
     model = f"""# steady state 
     t_R_a_init =     t_R_a_max/ (1+exp (s_R_a*(Hkt_init - Hkt_0)))  #in days, Entwicklung von Stammzelle zum Retikulozyt dauert ca. 5-9 Tage, plus 3 Tage die er schon retikulozyte ist aber noch in Rückenmark
     t_P_a_init = 11-(t_R_a_max/ (1+exp (s_R_a*(Hkt_init - Hkt_0)))) 
@@ -171,9 +171,9 @@ def define_lct_oie_model(n: int = 12, l: float = 0.96333725, slope_rpi:float = 3
     k_P_d0 =  0.48924947  # default death rate of Precusors
 
     ##parameter für t1/2 von R und P #müssen gefittet werden
-    t_R_a_max= {slope_rpi}
-    s_R_a= {scale_rpi}
-    Hkt_0= {midpoint_rpi}
+    t_R_a_max = {scale_rpi}
+    s_R_a = {slope_rpi}
+    Hkt_0 = {midpoint_rpi}
 
     ##Parameter für k_iE_pit, alles random zahlen müssen gefittet werden. egscP
     k_iE_pit_0   = 0      # 0.00001 Annahme. keine oiE ohne ART medikament    inhihition die stattfindet ohne ART
@@ -227,8 +227,8 @@ def logistic_function(x, slope, midpoint, scale) -> list:
 def objective_rpi_logistic(pars, data_hct: np.array, data_rpi:np.array = np.array([2.5,2,1.5,1])) -> float:
     """ Returns quadratic error of logistic function with parameters slope, max_value and midpoint."""
     slope = pars[0]
-    scale = pars[1]
-    midpoint = pars[2]
+    midpoint = pars[1]
+    scale = pars[2]
     residues = (data_rpi-logistic_function(data_hct,slope, midpoint, scale))**2
     return residues.sum()
 
@@ -250,7 +250,7 @@ def main():
     # fit RPI to logistic function
     data_h = np.array([0.1,0.2,0.3,0.4])
     data_r = np.array([2.5,2,1.5,1])
-    slope, scale, mid = fit_rpi_logistic(data_h, data_r)
+    slope, mid, scale = fit_rpi_logistic(data_h, data_r)
     model = define_lct_oie_model(n=int(np.round(pars[0])), l=pars[1], # round alpha to int and use beta as l; round because n is number of oiE states
                                  slope_rpi=slope, scale_rpi=scale, midpoint_rpi=mid)  
     save_model(model, 'LCT_model/LCT_OIE.ant')

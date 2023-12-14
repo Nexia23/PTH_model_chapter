@@ -75,9 +75,9 @@ class FitManager():
         
         # from here loop over data set keys for both models
         error_sum = 0
+        keys = self.data.keys()
         for key in self.data:
-            usedpars = {k.replace("_"+key,""):v for k,v in pars.items() if key in k}
-            usedpars['k_E_infect'] = pars["k_E_infect"]
+            usedpars = {k.replace("_"+key,""):v for k,v in pars.items() if key in k or not k.split('_')[-1] in keys}
 
             # set model to steady state
             self.model = set_model_to_ss(self.model, usedpars)

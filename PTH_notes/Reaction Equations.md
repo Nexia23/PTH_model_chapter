@@ -1,5 +1,5 @@
 $\frac{dP}{dt}=k_{P,b}-P\cdot(s_{P,d}\cdot[Hb]+k_{P,d0})-2P\cdot ln(2)\cdot (t_{P,a,0}-\frac{t_{R,a,max}}{1+e^{-k_{R,a}\cdot(Hkt-Hkt_0)}})^{-1}$ 
-$\frac{dR}{dt}=2P\cdot ln(2)\cdot (t_{P,a,0}-\frac{t_{R,a,max}}{1+e^{-k_{R,a}\cdot(Hkt-Hkt_0)}})^{-1}-2R\cdot ln(2)\cdot(\frac{t_{R,a,max}}{1+e^{-k_{R,a}\cdot(Hkt-Hkt_0)}})^{-1}-R\cdot M\cdot k_{inf}-R\cdot(k_{R,d}+s_{BH}\cdot oiE_{12}),k_{R,d}=0$
+$\frac{dR}{dt}=2P\cdot ln(2)\cdot (t_{P,a,0}-\frac{t_{R,a,max}}{1+e^{-k_{R,a}\cdot(Hkt-Hkt_0)}})^{-1}-2R\cdot ln(2)\cdot(\frac{t_{R,a,max}}{1+e^{-k_{R,a}\cdot(Hkt-Hkt_0)}})^{-1}-R\cdot M\cdot k_{inf}-R\cdot(k_{R,d}+s_{BH}\cdot oiE_{12}),with k_{R,d}=0$
 $\frac{dE}{dt}=2R\cdot ln(2)\cdot(\frac{t_{R,a,max}}{1+e^{-k_{R,a}\cdot(Hkt-Hkt_0)}})^{-1}-E\cdot M\cdot k_{inf}-E\cdot(k_{E,d}+s_{BH}\cdot oiE_{12})$
 $\frac{dLDH}{dt}=\frac{LDH_{Blood}}{V_{Blood}}\cdot(P\cdot(s_{P,d}\cdot[Hb]+k_{R,d0})+R\cdot(k_{R,d}+s_{BH}\cdot oiE_{12})+E\cdot(k_{E,d}+s_{BH}\cdot oiE_{12} ))-LDH\cdot \frac{ln(2)}{t_{hl,LDH,d}}$, no real idea of degradation time of LDH
 

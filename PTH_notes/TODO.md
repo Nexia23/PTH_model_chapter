@@ -1,0 +1,6 @@
+- [ ] Step function for Reti maturation time
+- [ ] k_P_birth does have to be constant from steady state calc?
+	- reti number low and idea was to fit this as other half life times are more known or already fitted in case of maturation time 
+	- it helps fitting if estimator can guess
+	- estimation result higher than calculated value
+		-> 294 calculation vs. 356 pth or 385 non-pth

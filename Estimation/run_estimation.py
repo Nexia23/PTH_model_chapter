@@ -16,20 +16,20 @@ def get_params_bounds():
     # 's_P_d': (1e-6, 1e-1, True),     # sigmoid(1e-2, 1e2) ,      #linear #parameterscan zu unsensibel
     # 'k_P_d0':  (1e-6, 1, True),      # sigmoid(1e-2,1e3) ,     #parameterscan zu unsensibel
 
-
     # 'k_iE_pit_frac': (0, 1, False),            # Anteil der iE die durch ART gepitted werden, 0-1. Rest sterben durch ART
     # 'k_iE_art_max': (1, 1000),             # maximale abtötrate von iE durch ART, #parameterscan zu unsensibel 
     # 'h_art' :(3, 6, False),                 # assume similar to in vitro: [1] R. K. Tyagi u. a., doi: 10.1186/s12916-018-1156-x.
     # 'ID50': (1e-1, 1000),               #ART dosis bei der 50% der iE getötet werden, #parameterscan zu unsensibel       
-
+    # 'pre_t': (2,6, True),            # time of ART addition, 3 and 5 in medians in data for non-pth and pth respectively
+    # Pth specific parameteres
     's_BH_pth': (1e-9, 1e-5, True),      # slope of linear function defining bystander heamolysis strength
- 
-    # 'pre_t': (2,6, True),            # time of ART addition, 3 and 5 in medians in data for non-pth and pth respectively
     'LDH_pth': (140, 280, False),       # LDH concentration in blood plasma
-    's_BH_non': (1e-9, 1e-6, True),      # slope of linear function defining bystander heamolysis strength
- 
-    # 'pre_t': (2,6, True),            # time of ART addition, 3 and 5 in medians in data for non-pth and pth respectively
+    'k_P_birth_pth':(50, 500, False),       # [R] number to small when running model -> idea increase P number  
+
+    # non-Pth specific parameteres
+    's_BH_non': (1e-9, 1e-5, True),      # slope of linear function defining bystander heamolysis strength
     'LDH_non': (140, 280, False),       # LDH concentration in blood plasma
+    'k_P_birth_non':(50, 500, False),       # [R] number to small when running model -> idea increase P number  
     
     })
     return bounds
@@ -50,9 +50,10 @@ def calculate_cma_std(bounds):
 
 def save_estimation(best_score, best_parameters, update_params, ParamEster, fit_data:str, 
                     bounds: OrderedDict, run_id:int):
+    keys = update_params.keys()
     for key in update_params:
-        best_pars = {k.replace("_"+key,""):v for k,v in best_parameters.items() if key in k}
-        best_pars["k_E_infect"] = best_parameters["k_E_infect"]
+        best_pars = {k.replace("_"+key,""):v for k,v in best_parameters.items() if key in k or not k.split('_')[-1] in keys}
+        best_pars.pop("pre_t")
         save_dict = update_params[key]
         save_dict.update(best_pars)
         best_pars["pre_t"] = best_parameters["pre_t"]

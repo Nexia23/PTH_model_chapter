@@ -2,7 +2,7 @@
     t_R_a_init =     t_R_a_max/ (1+exp (s_R_a*(Hkt_init - Hkt_0)))  #in days, Entwicklung von Stammzelle zum Retikulozyt dauert ca. 5-9 Tage, plus 3 Tage die er schon retikulozyte ist aber noch in Rückenmark
     t_P_a_init = 11-(t_R_a_max/ (1+exp (s_R_a*(Hkt_init - Hkt_0)))) 
     Hkt_init = 0.45
-    k_P_birth   = J_P_death + J_P_aging      # P *(k_P_death +k_P_aging)
+    k_P_birth   =  J_P_death + J_P_aging      # P *(k_P_death +k_P_aging)
     LDH_RBC = (J_LDH_decay * Vol_blood) / (J_E_death +J_R_death ) #  U  (pro RBC)  #https://www.ncbi.nlm.nih.gov/books/NBK557536/?report=printable
 
     #species initiation
@@ -69,7 +69,7 @@
 
     # Assignments, Fluxes
     ##Erythropoese
-    J_P_birth     = k_P_birth 
+    J_P_birth    := k_P_birth 
     
     J_P_death    := P* k_P_death
     k_P_death    := s_P_d * Hb + k_P_d0
@@ -179,7 +179,7 @@
     #t_halb_HP_decay = 5         # 2-5 Tage zotero, 1Quellen: https://link.springer.com/chapter/10.1007/978-3-662-48986-4_1389 und weiterverfolgen https://archive.org/stream/WilliamsHematology9thEditionMcGrawHill_201805/Williams%20Hematology%2C%209th%20Edition%20McGraw-Hill_djvu.txt
     #t_halb_HCC_decay = 0.00694  #in days,  ca 10min Springer (Gressner, 2019)
 
-    #Parameter für J_P_death
+    # Parameter für J_P_death # fitted data from patient 
     s_P_d = 0.00071535    # slope of P death increase, will be multiplied with Hb
     k_P_d0 =  0.48924947  # default death rate of Precusors
 

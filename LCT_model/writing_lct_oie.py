@@ -65,7 +65,7 @@ def define_lct_oie_model(n: int = 12, l: float = 0.96333725, slope_rpi:float = 3
 
     # Assignments, Fluxes
     ##Erythropoese
-    J_P_birth    = k_P_birth 
+    J_P_birth   := k_P_birth 
     J_P_death   := P* k_P_death  
     J_P_aging   := P * k_P_aging
     J_R_death   := R * k_R_death 

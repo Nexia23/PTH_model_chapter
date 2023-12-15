@@ -1,4 +1,5 @@
-- [ ] Step function for Reti maturation time
+- [x] Step function for Reti maturation time
+	- [x] include in model
 - [ ] k_P_birth does have to be constant from steady state calc?
 	- reti number low and idea was to fit this as other half life times are more known or already fitted in case of maturation time 
 	- it helps fitting if estimator can guess

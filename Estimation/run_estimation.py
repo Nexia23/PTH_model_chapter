@@ -27,9 +27,9 @@ def get_params_bounds():
     'k_P_birth_pth':(50, 500, False),       # [R] number to small when running model -> idea increase P number  
 
     # non-Pth specific parameteres
-    's_BH_non': (1e-9, 1e-5, True),      # slope of linear function defining bystander heamolysis strength
+    's_BH_non': (1e-11, 1e-7, True),      # slope of linear function defining bystander heamolysis strength
     'LDH_non': (140, 280, False),       # LDH concentration in blood plasma
-    'k_P_birth_non':(50, 500, False),       # [R] number to small when running model -> idea increase P number  
+    'k_P_birth_non':(50, 2500, False),       # [R] number to small when running model -> idea increase P number  
     
     })
     return bounds

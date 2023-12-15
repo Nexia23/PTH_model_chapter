@@ -1,6 +1,11 @@
 # steady state 
-    t_R_a_init =     t_R_a_max/ (1+exp (s_R_a*(Hkt_init - Hkt_0)))  #in days, Entwicklung von Stammzelle zum Retikulozyt dauert ca. 5-9 Tage, plus 3 Tage die er schon retikulozyte ist aber noch in Rückenmark
-    t_P_a_init = 11-(t_R_a_max/ (1+exp (s_R_a*(Hkt_init - Hkt_0)))) 
+
+    #t_R_a_init =     t_R_a_max/ (1+exp (s_R_a*(Hkt_init - Hkt_0)))  #in days, Entwicklung von Stammzelle zum Retikulozyt dauert ca. 5-9 Tage, plus 3 Tage die er schon retikulozyte ist aber noch in Rückenmark
+    t_R_a_init =     1 + scale_rpi/ (1+exp(slope_rpi*(Hkt_init - step_1)))+ scale_rpi/ (1+exp(slope_rpi*(Hkt_init - step_2)))+ scale_rpi/ (1+exp(slope_rpi*(Hkt_init - step_3)))  #in days, Entwicklung von Stammzelle zum Retikulozyt dauert ca. 5-9 Tage, plus 3 Tage die er schon retikulozyte ist aber noch in Rückenmark
+
+    #t_P_a_init = 11-(t_R_a_max/ (1+exp (s_R_a*(Hkt_init - Hkt_0)))) 
+    t_P_a_init = 11 - 1 + scale_rpi/ (1+exp(slope_rpi*(Hkt_init - step_1)))+ scale_rpi/ (1+exp(slope_rpi*(Hkt_init - step_2)))+ scale_rpi/ (1+exp(slope_rpi*(Hkt_init - step_3)))
+
     Hkt_init = 0.45
     k_P_birth   =  J_P_death + J_P_aging      # P *(k_P_death +k_P_aging)
     LDH_RBC = (J_LDH_decay * Vol_blood) / (J_E_death +J_R_death ) #  U  (pro RBC)  #https://www.ncbi.nlm.nih.gov/books/NBK557536/?report=printable
@@ -76,13 +81,15 @@
 
     J_P_aging    := P * k_P_aging
     k_P_aging    := ln(2) / (t_P_aging/2)    # in 1/days
-    t_P_aging    := 11-(t_R_a_max/ (1+exp (s_R_a*(Hkt - Hkt_0))))           #in days, Entwicklung R -> E dauert ca 4 Tage (3 tage knochenmark, 1 Tage im peripheren Blut)-> wir betrachten nur Retis in peripheren Blut, bei niedrigen Hkt verlassen Retis eher Knochenmark,  reifen länger im Blut
+    #t_P_aging    := 11-(t_R_a_max/ (1+exp (s_R_a*(Hkt - Hkt_0))))           #in days, Entwicklung R -> E dauert ca 4 Tage (3 tage knochenmark, 1 Tage im peripheren Blut)-> wir betrachten nur Retis in peripheren Blut, bei niedrigen Hkt verlassen Retis eher Knochenmark,  reifen länger im Blut
+    t_P_aging    := 11 - rpi_step_func
 
     J_R_death    := R * k_R_death 
     k_R_death    :=  0 + s_BH * J_oiE_death  # in 1/days,Annahme
 
     J_R_aging    := R * k_R_aging
-    k_R_aging    := ln(2) / (t_R_aging/2)    # in 1/days 
+    #k_R_aging    := ln(2) / (t_R_aging/2)    # in 1/days 
+    k_R_aging    := ln(2) / (rpi_step_func/2)    # in 1/days 
 
     J_E_death    := E * k_E_death  
     k_E_death    := 2*ln(2) / (t_E_death) + s_BH * J_oiE_death
@@ -162,13 +169,15 @@
     ## Parasitemie and RPI
     parasitemia := iE*100 / (E + R + iE + oiE )          # in percent, bsp 0.5
     R_percent   := 100*R / (R + E + iE + oiE )           # in % bsp. 50%
-    RPI         := R_percent * Hkt/ (t_R_aging * 0.45) 
+    #RPI         := R_percent * Hkt/ (t_R_aging * 0.45) 
+    RPI         := R_percent * Hkt/ (rpi_step_func * 0.45) 
+
     oiE :=  oiE_1+oiE_2+oiE_3+oiE_4+oiE_5+oiE_6+oiE_7+oiE_8+oiE_9+oiE_10+oiE_11+oiE_12;
     oiE_percent := oiE*100 / (R + E + iE + oiE )         # in %
 
     # parameters
     ##Erythropoese
-    t_R_aging :=     t_R_a_max/ (1+exp (s_R_a*(Hkt - Hkt_0)))  #in days, Entwicklung von Stammzelle zum Retikulozyt dauert ca. 5-9 Tage, plus 3 Tage die er schon retikulozyte ist aber noch in Rückenmark
+    #t_R_aging :=     t_R_a_max/ (1+exp (s_R_a*(Hkt - Hkt_0)))  #in days, Entwicklung von Stammzelle zum Retikulozyt dauert ca. 5-9 Tage, plus 3 Tage die er schon retikulozyte ist aber noch in Rückenmark
     t_E_death  = 120
     t_iE_rupture = 2                     # MAXIM: in days, dauert ca 4 Tage bis Ruptur, sinuskurvig (2010 Th)
     ##Artesunate treatment
@@ -187,7 +196,13 @@
     t_R_a_max= 3.53276388
     s_R_a= 5.99745537
     Hkt_0= 0.24658879
-
+    ## Stepfunction idea
+    slope_rpi = 250
+    scale_rpi = 0.5
+    step_1 = 0.15
+    step_2 = 0.25
+    step_3 = 0.35
+    rpi_step_func := 1 + scale_rpi/ (1+exp(slope_rpi*(Hkt - step_1)))+ scale_rpi/ (1+exp(slope_rpi*(Hkt - step_2)))+ scale_rpi/ (1+exp(slope_rpi*(Hkt - step_3)))
     ##Parameter für k_iE_pit, alles random zahlen müssen gefittet werden. egscP
     k_iE_pit_0   = 0      # 0.00001 Annahme. keine oiE ohne ART medikament    inhihition die stattfindet ohne ART
     k_iE_death_0 = 0

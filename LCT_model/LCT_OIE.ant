@@ -76,7 +76,7 @@
     ##Erythropoese
     J_P_birth    := k_P_birth 
     
-    J_P_death    := P* k_P_death
+    J_P_death    := P * k_P_death
     k_P_death    := s_P_d * Hb + k_P_d0
 
     J_P_aging    := P * k_P_aging
@@ -98,7 +98,8 @@
     J_R_infect   := R*M* k_R_infect 
     J_E_infect   := E*M* k_E_infect          # einbezug parasit?, E ersmal als Abhängigkeit ausgelassen da am Anfang E >> M -> mit Jorin absprechen+
     k_E_infect    = 1e-6                     # in 1/mikroliter*day ((Austin, 1997) 2e-6
-    k_R_infect    = k_E_infect                  
+    tropism       = 1                       # P.falciparum has preference for Retis ~2-12 more likely infected
+    k_R_infect    = tropism*k_E_infect                  
     
     J_iE_death   := iE * k_iE_death          # einbezug antibodies, spleen
     k_iE_death   := k_iE_death_0  + (1- k_iE_pit_frac) * k_iE_art_max*(ART^h_art/((ART^h_art)+(ID50)^h_art))                          # in 1/days, vereinfacht in Austin(1998)  (0.025  Ma 2019)

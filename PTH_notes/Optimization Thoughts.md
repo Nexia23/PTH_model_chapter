@@ -1,0 +1,4 @@
+- as of know Hkt_init value for both models very close]
+	- could the parameter covariance be a problem?
+- it seems clear that the Reticulocytes number is too low 
+	- as of now only parameter governing Precursors improve cost function 

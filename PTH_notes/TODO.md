@@ -2,6 +2,10 @@
 	- [x] include in model
 - [ ] k_P_birth does have to be constant from steady state calc?
 	- reti number low and idea was to fit this as other half life times are more known or already fitted in case of maturation time 
-	- it helps fitting if estimator can guess
-	- estimation result higher than calculated value
-		-> 294 calculation vs. 356 pth or 385 non-pth
+		- if estimator can guess better score
+		- estimation result higher than calculated value
+			-> 294 calculation vs. 356 pth or 385 non-pth
+		- but stable state for Hb and all cell types way to high
+	**-> logistic function or something implemented?**
+- [ ] plot Fluxes of R and Ps to see where the low is 
+- [ ] 

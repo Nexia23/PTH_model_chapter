@@ -2,3 +2,5 @@
 	- could the parameter covariance be a problem?
 - it seems clear that the Reticulocytes number is too low 
 	- as of now only parameter governing Precursors improve cost function 
+- #tropism change k_R_infect to be 12 higher than k_E_infect as literature suggests preferential infection of Retis 
+	- pushes most values into a very close position of the data  

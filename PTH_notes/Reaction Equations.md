@@ -21,9 +21,10 @@ $\frac{dART}{dt}=ART\cdot\frac{ln(2)}{t_{ART,decay}}$
 	- $t_{R,a}=t_{R,a,0}+\frac{t_{R,a,max}}{1+e^{-k_{R,a}\cdot(Hkt-Hkt_0)}}$, with $t_{R,a0}=0$
 -  $LDH_{Blood}=140-280 \frac{U}{L}$ only value of LDH,  [link](https://www.ncbi.nlm.nih.gov/books/NBK557536/?report=printable)
 - $t_{hl,LDH,d}$ = 4  bad citation for **in** erythrocytes [3-5 Tage](https://www.medicoconsult.de/ldh/) #TODO find better citation
-**Infection**
+
+**Infection:**
 - $k_{iE,rupture}=\frac{2\cdot ln(2)}{t_{iE,rupture}}$ , 
-	- $t_{iE,rupture=2\lor 4}$ CHECK/MAXIM: in 1/days, 
+	- $t_{iE,rupture=2\lor 4}$ CHECK/MAXIM: in 1/days, anything higher than 2 makes little sense as it is used like the half life time meaning 1/2 maximal value reached at this time point but rupture is synchronize and all rupture after 2 days. 
 - $k_{iE,pit}=k_{iE,pit,0} + k_{iE,pit,frac} \cdot \frac{k_{iE, ART_{max}}\cdot ART^{h_{ART}}}{ART^{h_{ART}}+ID_{50}^{h_{ART}}}$
 	- $k_{iE,pit,0}= 0$, assumption no pitting without ART, actually a little pitting happens
 		- Pierre A. Buffet et al., [Retention of Erythrocytes in the Spleen: A Double-Edged Process in Human Malaria, Current Opinion in Hematology](https://doi.org/10.1097/MOH.0b013e32832a1d4b) (May 2009)
@@ -40,7 +41,7 @@ $\frac{dART}{dt}=ART\cdot\frac{ln(2)}{t_{ART,decay}}$
 		- $BH=\frac{J_{oiE,d}^h}{BH_{max}\cdot J_{oiE,d}^h+K_m^h}$
 - Linear chain trick used to model oiE (life span 7-20 days), as Florian talked about delayed death, with 12 species and $k_{oiE,d}\approx 0.963$ both values from fitting gamma distribution
 
-**Medication**
+**Medication**:
 - As a model event at t=0, ART is set to 400, since medication given to patient at the beginning of data collection
 - $t_{ART,d}=1/12 days$ or 2h $\approx$ matches findings in N. J. White, [Clinical Pharmacokinetics and Pharmacodynamics of Artemisinin and Derivatives](https://doi.org/10.1016/0035-9203(94)90471-5), (June 1994) 
 ### Steady state

@@ -11,11 +11,11 @@ import json
 def get_params_bounds():
     bounds = OrderedDict({
     #'Hkt_init': (0.35, 0.55, False),   
-    'k_E_infect': (1e-7 , 2.5e-6, True),    #jetzt paramscan früher (1e-8 , 1e-4),
-    'tropism': (2,16, False),
-    # 's_P_d': (1e-8, 1e-5, True),     # sigmoid(1e-2, 1e2) ,      #linear #parameterscan zu unsensibel
-    # 'k_P_d0':  (1e-6, 1, True),      # sigmoid(1e-2,1e3) ,     #parameterscan zu unsensibel
-
+    'k_E_infect': (1e-7 , 4.5e-6, True),    #jetzt paramscan früher (1e-8 , 1e-4),
+    'tropism': (2,6, False),
+    #'a_P_d': (15.6e1, 60e3, True),     
+    #'k_P_d':  (1e-3, 1, True),      
+    #'r_P_d': (4,10, False),
     # 'k_iE_pit_frac': (0, 1, False),            # Anteil der iE die durch ART gepitted werden, 0-1. Rest sterben durch ART
     # 'k_iE_art_max': (1, 1000),             # maximale abtötrate von iE durch ART, #parameterscan zu unsensibel 
     # 'h_art' :(3, 6, False),                 # assume similar to in vitro: [1] R. K. Tyagi u. a., doi: 10.1186/s12916-018-1156-x.
@@ -27,7 +27,7 @@ def get_params_bounds():
     # 'k_P_birth_pth':(50, 500, False),       # [R] number too small when running model -> idea increase P number  
     #'Hkt_init_pth': (0.35, 0.55, False),   
     # non-Pth specific parameteres
-    's_BH_non': (1e-11, 1e-7, True),      # slope of linear function defining bystander heamolysis strength
+    's_BH_non': (1e-11, 1e-8, True),      # slope of linear function defining bystander heamolysis strength
     'LDH_non': (140, 280, False),       # LDH concentration in blood plasma
     #'k_P_birth_non':(50, 2500, False),       # [R] number too small when running model -> idea increase P number  
     #'Hkt_init_non': (0.35, 0.55, False),   
@@ -104,10 +104,10 @@ def main():
     
     update_parameters={} 
     for key in data.keys():
-        usedpars = {k.replace("_"+key,""):v for k,v in best_parameters.items() if key in k}
+        usedpars = {k.replace("_"+key,""):v for k,v in best_parameters.items() if key in k or not k.split('_')[-1] in data.keys()}
         dummy_dict = get_steady_state(model, usedpars)
         update_parameters[key] = {k:v for k,v in dummy_dict.items() }
-    
+
     best_parameters['pre_t'] = pre_t
     save_estimation(best_score, best_parameters, update_parameters, ParamEster,
                     data_used, bounds, run_id)

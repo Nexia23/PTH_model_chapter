@@ -1,11 +1,48 @@
 - [x] Step function for Reti maturation time
 	- [x] include in model
+- [x] plot Fluxes of R and Ps to see where the low is 
 - [ ] k_P_birth does have to be constant from steady state calc?
 	- reti number low and idea was to fit this as other half life times are more known or already fitted in case of maturation time 
 		- if estimator can guess better score
 		- estimation result higher than calculated value
 			-> 294 calculation vs. 356 pth or 385 non-pth
 		- but stable state for Hb and all cell types way to high
-	**-> logistic function or something implemented?**
-- [ ] plot Fluxes of R and Ps to see where the low is 
-- [ ] 
+	**-> logistic function or something implement?**
+- [ ] update [[Reaction Equations]] for hill function of P_death
+## Chapter Text
+- [ ] **Introduction:**
+	- [ ] Read about Erythropoiesis and modeling efforts to find better k_P_birth and J_P_death representations #model_extension 
+	- [ ] read about malaria infection models, obviously Rebeccas stuff is good start
+		- [ ] look at immune responses or medication
+	- [ ] read about PADH 
+		- [ ] what is the definition
+		- [ ] first formulation and hypothesis for this effect
+- [ ] **Results:**
+	- [ ] describe model and chosen parameters
+		- [ ] improve model .svg of rebacca
+		- [ ] reaction equations
+		- [ ] parameter table (markdown or pandas?)
+			- just time parameters or k values?
+	- [ ] Paragraphs and plots:
+		- [ ] show 'normal' cyclic infection + medication
+		- [ ] show infection +/- BH 
+			- [ ] analysis of effect
+	- [ ] Parameterscan and/or sensitivity analysis
+		- [ ] interesting parameters risk factors plot in Rebeccas BA
+			- [ ] find out if actually risk factors or just named so as they have big impact of dynamics
+			- [ ] find clinical risk factors
+				- [ ] factor connection to model parameter
+- [ ] **Discussion:**
+	- [ ] research reasons for bystander Haemolysis and model them
+		- [ ] Haptoglobin incapable to buffer oiE substance release
+			- [ ] Candidate Haemozoin 
+			- [ ] ROS: degraded haemoglobin
+			- [ ] release of surface proteins
+				- [ ] what happens to oiEs at death
+					- [ ] digested by marcophage
+					- [ ] disintegrate so release of substance has higher probability
+			- [ ] include in model Haptoglobin incapable to buffer #model_extension
+		- [ ] immune system 
+			- [ ] over priming of immune cells in response to infection?
+				- [ ] short term cells of higher interest
+			- [ ] build small immune response in model #model_extension 

@@ -1,4 +1,4 @@
-- Should P birth and death be more dynamic?
+- Should P birth and death be more dynamic? -> Hill function for regulation of J_P_death 
 - Artemisinin drug administration correlates with is half life time in publication it was advised to use same time - N J White, Assessment of the Pharmacodynamic Properties of Antimalarial Drugs in Vivo., Antimicrobial Agents and Chemotherapy 41,  (July 1997).
 - Found a paper Plasmodium falciparum rhoptry protein RSP2 triggers destruction of the erythroid lineage, this instead of haptoglobin as trigger or together 
 	- [Suppression of erythropoiesis in malarial anemia is associated with hemozoin in vitro and in vivo'](https://ashpublications.org/blood/article/108/8/2569/22589/Suppression-of-erythropoiesis-in-malarial-anemia)

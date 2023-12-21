@@ -8,9 +8,11 @@ def get_steady_state(model, pars: dict):
     for p in pars:
         model.setValue(p, pars[p])
     
+    rpi_step_func = 1 + model.scale_rpi/ (1+np.exp(model.slope_rpi*(model.Hkt_init - model.step_1)))+ model.scale_rpi/ (1+np.exp(model.slope_rpi*(model.Hkt_init - model.step_2)))+ model.scale_rpi/ (1+np.exp(model.slope_rpi*(model.Hkt_init - model.step_3)))
+
     # setting Hkt defeins aging times of precursors (P) and reticulocytes (R)      
-    t_R_a_init = model.t_R_a_max/ (1+np.exp (model.s_R_a*(model.Hkt_init - model.Hkt_0)))     # t_R_a_max, s_R_a, Hkt_0 stem from fitting, see plot_dependencies.ipynb (RPI)
-    t_P_a_init = 11-(model.t_R_a_max/ (1+np.exp (model.s_R_a*(model.Hkt_init - model.Hkt_0)))) 
+    t_R_a_init = rpi_step_func     # t_R_a_max, s_R_a, Hkt_0 stem from fitting, see plot_dependencies.ipynb (RPI)
+    t_P_a_init = model.t_mat_P-rpi_step_func 
 
     # E_init determined by Hkt_init, t_R_a_init and t_E_death (fixed)
     E_init = (model.Hkt_init * model.Vol_blood) / (model.Vol_E + (t_R_a_init/model.t_E_death)*model.Vol_R)
@@ -23,7 +25,7 @@ def get_steady_state(model, pars: dict):
     Hb_init = (model.Vol_E * E_init * model.Hb_conc_E + model.Vol_R * R_init * model.Hb_conc_R) / (10*model.Vol_blood)  # conc unit from g/l to g/dl, thus div. by 10
 
     # equilibrating precursors (P)
-    J_P_death_init = P_init * (model.s_P_d * Hb_init + model.k_P_d0 )
+    J_P_death_init = P_init * (model.a_P_d / ( 1 + model.k_P_d * Hb_init**model.r_P_d))**(-1)
     J_P_aging_init = P_init * np.log(2) / (t_P_a_init/2)
     k_P_birth_init   = J_P_death_init + J_P_aging_init
 

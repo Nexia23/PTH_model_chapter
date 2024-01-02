@@ -8,12 +8,12 @@
 			-> 294 calculation vs. 356 pth or 385 non-pth
 		- but stable state for Hb and all cell types way to high
 	**-> logistic function or something implement?**
-- [ ] update [[Reaction Equations]] for hill function of P_death
+- [x] update [[Reaction Equations]] for hill function of P_death
 ## Chapter Text
 - [ ] **Introduction:**
 	- [ ] Read about Erythropoiesis and modeling efforts to find better k_P_birth and J_P_death representations #model_extension 
 	- [ ] read about malaria infection models, obviously Rebeccas stuff is good start
-		- [ ] look at immune responses or medication
+		- [ ] look at immune responses or medication addition
 	- [ ] read about PADH 
 		- [ ] what is the definition
 		- [ ] first formulation and hypothesis for this effect
@@ -35,11 +35,11 @@
 - [ ] **Discussion:**
 	- [ ] research reasons for bystander Haemolysis and model them
 		- [ ] Haptoglobin incapable to buffer oiE substance release
-			- [ ] Candidate Haemozoin 
-			- [ ] ROS: degraded haemoglobin
+			- [ ] ROS: degraded haemoglobin and artesunate
+				- absent or low haptoglobin levels are a clinical parameter for finding PADH in Sawettachai Jaita et al., Post-Artesunate Delayed Hemolysis: A Review of Current Evidence,Tropical Medicine and Infectious Diseas 2023 https://doi.org/10.3390/tropicalmed8010049
 			- [ ] release of surface proteins
 				- [ ] what happens to oiEs at death
-					- [ ] digested by marcophage
+					- [x] digested by marcophage
 					- [ ] disintegrate so release of substance has higher probability
 			- [ ] include in model Haptoglobin incapable to buffer #model_extension
 		- [ ] immune system 

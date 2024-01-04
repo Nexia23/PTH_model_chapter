@@ -98,7 +98,7 @@
     J_R_infect   := R*M* k_R_infect 
     J_E_infect   := E*M* k_E_infect          # einbezug parasit?, E ersmal als Abhängigkeit ausgelassen da am Anfang E >> M -> mit Jorin absprechen+
     k_E_infect    = 2.02e-6                   # in 1/mikroliter*day ((Austin, 1997) 2e-6
-    tropism       = 1                        # P.falciparum has preference for Retis ~2-12 more likely infected
+    tropism       = 6                        # P.falciparum has preference for Retis ~2-12 more likely infected
     k_R_infect    = tropism*k_E_infect                  
     
     J_iE_death   := iE * k_iE_death          # einbezug antibodies, spleen
@@ -200,7 +200,7 @@
     t_R_a_max= 3.53276388
     s_R_a= 5.99745537
     Hkt_0= 0.24658879
-    ## Stepfunction idea
+    ## Stepfunction for R maturation time
     slope_rpi = 250
     scale_rpi = 0.5
     step_1 = 0.15

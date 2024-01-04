@@ -15,8 +15,8 @@
 	- [ ] read about malaria infection models, obviously Rebeccas stuff is good start
 		- [ ] look at immune responses or medication addition
 	- [ ] read about PADH 
-		- [ ] what is the definition
-		- [ ] first formulation and hypothesis for this effect
+		- [x] what is the definition
+		- [x] first formulation and hypothesis for this effect
 - [ ] **Results:**
 	- [ ] describe model and chosen parameters
 		- [ ] improve model .svg of rebacca

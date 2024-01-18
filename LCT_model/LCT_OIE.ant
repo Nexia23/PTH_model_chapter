@@ -95,11 +95,10 @@
     k_E_death    := 2*ln(2) / (t_E_death) + s_BH * J_oiE_death
 
     ##Infection with parasite
-    J_R_infect   := R*M* k_R_infect 
+    J_R_infect   := R*M* tropism * k_E_infect
     J_E_infect   := E*M* k_E_infect          # einbezug parasit?, E ersmal als Abhängigkeit ausgelassen da am Anfang E >> M -> mit Jorin absprechen+
     k_E_infect    = 2.02e-6                   # in 1/mikroliter*day ((Austin, 1997) 2e-6
-    tropism       = 6                        # P.falciparum has preference for Retis ~2-12 more likely infected
-    k_R_infect    = tropism*k_E_infect                  
+    tropism       = 6                        # P.falciparum has preference for Retis ~2-12 more likely infected                  
     
     J_iE_death   := iE * k_iE_death          # einbezug antibodies, spleen
     k_iE_death   := k_iE_death_0  + (1- k_iE_pit_frac) * k_iE_art_max*(ART^h_art/((ART^h_art)+(ID50)^h_art))                          # in 1/days, vereinfacht in Austin(1998)  (0.025  Ma 2019)
@@ -227,4 +226,4 @@
     ACT_dose2: at((time>=t_ART_add +1)&&events_medication_on): ART = ART+400; 
     ACT_dose3: at((time>=t_ART_add +2)&&events_medication_on): ART = ART+400;
 
-    QN_InhReinfection: at((M<=1000)&&(time>=t_ART_add)&&(events_medication_on==true)): k_E_infect=0, k_R_infect=0;
+    QN_InhReinfection: at((M<=1000)&&(time>=t_ART_add)&&(events_medication_on==true)): k_E_infect=0;

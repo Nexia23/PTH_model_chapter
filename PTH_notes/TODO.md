@@ -12,17 +12,28 @@
 - [ ] write pandas table for parameters of model or MD at least
 - [ ] improve Data analysis
 	- [ ] divide patient groups by descent and/or immunity 
+		-> possible groups: NaN(non-African), non-immune(African decent), semi-immune(African decent)
 - [ ] change Parameters:
 	- [ ] infection is too fast and strong
-		- [ ] patient take longer to come to clinic:
-			- [ ] longer pre time ~10 days or longer
-		- [ ] lower parasitemia after pre_time days ~1% max. 3%
-			- [ ] possibly start with lower M_init 
-			- [ ] lower infection rate
+		- [x] patient take longer to come to clinic:
+			- [x] longer pre time ~10 days or longer
+				-> possible but lower infection rate and M_init needed to work
+			- [x] achieve lower parasitemia after pre_time days ~1% max. 3%
+				- [x] possibly start with lower M_init 
+					-> M_init = 1000
+				- [x] lower infection rate
+					-> ~1.2-1.45e-6 with higher tropism matches retis but parasitemia to high
+					-> at lower end good parasitemia but nearly no change in retis
+
 	- [ ] higher RPI, thus higher Reticulocytes
 		- [ ] parameter scan Hkt_init
-		- [ ] check Hb influence on J_P_death, maybe has to be stronger?
+		- [x] check Hb influence on J_P_death, maybe has to be stronger?
+			-> Hill kinetic is already strong, maybe parameter scan 
+		- [x] higher tropism
+			-> now 14 better Reti curve
 		- [ ] check steady state calculation for Retis
 			- [ ] set manually higher, by extra factor 
-	- [ ] longer oiE life span
+	- [x] longer oiE life span
+		-> if set for 7-28 (before 7-21), lowers number of groups to 7 and slower k value
+		-> less groups but slower aging
 - [ ] read about immune system reaction to PS and anitPS, could be reason for immune answer 

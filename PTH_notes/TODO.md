@@ -10,3 +10,19 @@
 	**-> logistic function or something implement?**
 - [x] update [[Reaction Equations]] for hill function of P_death
 - [ ] write pandas table for parameters of model or MD at least
+- [ ] improve Data analysis
+	- [ ] divide patient groups by descent and/or immunity 
+- [ ] change Parameters:
+	- [ ] infection is too fast and strong
+		- [ ] patient take longer to come to clinic:
+			- [ ] longer pre time ~10 days or longer
+		- [ ] lower parasitemia after pre_time days ~1% max. 3%
+			- [ ] possibly start with lower M_init 
+			- [ ] lower infection rate
+	- [ ] higher RPI, thus higher Reticulocytes
+		- [ ] parameter scan Hkt_init
+		- [ ] check Hb influence on J_P_death, maybe has to be stronger?
+		- [ ] check steady state calculation for Retis
+			- [ ] set manually higher, by extra factor 
+	- [ ] longer oiE life span
+- [ ] read about immune system reaction to PS and anitPS, could be reason for immune answer 

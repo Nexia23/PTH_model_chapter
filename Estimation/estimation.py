@@ -103,6 +103,6 @@ class FitManager():
             self.model.resetToOrigin()
             # print(Hb_error.sum(), LDH_error.sum())
             # TODO: weighted sum?
-            error_sum += Hb_error.sum() + LDH_error.sum() + R_error.sum()
+            error_sum += Hb_error.sum() + LDH_error.sum() + 10*R_error.sum()
         return error_sum
     

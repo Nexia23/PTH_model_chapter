@@ -62,7 +62,7 @@ class FitManager():
     def __init__(self, model, data ) -> None:
         self.model = model
         self.data = data
-        self.default_pre_t = 3
+        self.default_pre_t = 10
 
 
     def objective_function(self, **pars):

@@ -13,7 +13,7 @@ $\frac{dART}{dt}=ART\cdot\frac{ln(2)}{t_{ART,decay}}$
 ## Parameters
 **Erythropoiesis**
 - Precursors half life aging:
-	- $t_{P,a}=t_{P,a,0}-\frac{t_{R,a,max}}{1+e^{-k_{R,a}\cdot(Hkt-Hkt_0)}}$ with $t_{P,a,0}=11$ #TODO why 11 not 12
+	- $t_{P,a}=t_{P,a,0}-\frac{t_{R,a,max}}{1+e^{-k_{R,a}\cdot(Hkt-Hkt_0)}}$ with $t_{P,a,0}=7$ #TODO why 11 not 12
 - Precursors death rate: 
 	- hill function first mentioned in [here](https://pubmed.ncbi.nlm.nih.gov/7606142/): explanation usual enzymatic function and data linear in semi-logarithmic scale so exponential suspected
 - Reticulocytes aging time:
@@ -54,7 +54,5 @@ In model or estimation calculated during initialization of model .ant file for S
 	$LDH_{Blood}=\frac{[LDH] \cdot \frac{ln(2)} {t_{hlf,LDH,d}} \cdot Vol_{blood}}{[E]\cdot \frac{2 \cdot ln(2)}{t_{E,d}} +\underbrace{J_{R,d}}_{=0}}$ 
 
 - Birth rate of precursor cells, calculated from steady state and then set for whole time 
-	$k_{P,b}= P\cdot \frac{( 1 + k_{P,d} * Hb^{r_{P,d}})} {a_{P,d}}-P(\frac{2\cdot ln(2)}{t_{P,a}})$ 
+	$k_{P,b}= P\cdot \frac{( 1 + k_{P,d} * Hb^{r_{P,d}})} {a_{P,d}}+P(\frac{2\cdot ln(2)}{t_{P,a}})$ 
 	$Hb_{init} = \frac{(Vol_E \cdot E_{init} * Hb_{conc,E} + Vol_R \cdot R_{init} \cdot Hb_{conc,R})}{(10 \cdot Vol_{blood})}$ in model change of concentration unit from g/l to g/dl, thus div. by 10
-
-

@@ -12,10 +12,14 @@ def get_params_bounds():
     bounds = OrderedDict({
     #'Hkt_init': (0.35, 0.55, False),   
     'k_E_infect': (1e-7 , 4.5e-6, True),    #jetzt paramscan früher (1e-8 , 1e-4),
-    'tropism': (2,6, False),
-    #'a_P_d': (15.6e1, 60e3, True),     
-    #'k_P_d':  (1e-3, 1, True),      
-    #'r_P_d': (4,10, False),
+    'tropism': (2, 200, False),
+    'M':  (1e2, 4e3, True),
+    'a_P_d': (15.6e1, 60e3, True),     
+    'k_P_d':  (1e-3, 1, True),      
+    'r_P_d': (4, 10, False),
+    'fac_R_d': (0, 1, False),
+    'k_M_death': (30, 100, False),
+    't_E_death': (90, 130, False),
     # 'k_iE_pit_frac': (0, 1, False),            # Anteil der iE die durch ART gepitted werden, 0-1. Rest sterben durch ART
     # 'k_iE_art_max': (1, 1000),             # maximale abtötrate von iE durch ART, #parameterscan zu unsensibel 
     # 'h_art' :(3, 6, False),                 # assume similar to in vitro: [1] R. K. Tyagi u. a., doi: 10.1186/s12916-018-1156-x.

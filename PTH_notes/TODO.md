@@ -13,27 +13,33 @@
 - [ ] improve Data analysis
 	- [ ] divide patient groups by descent and/or immunity 
 		-> possible groups: NaN(non-African), non-immune(African decent), semi-immune(African decent)
+			-> for further Hb level or male female
 - [ ] change Parameters:
-	- [ ] infection is too fast and strong
+	- [x] infection is too fast and strong
 		- [x] patient take longer to come to clinic:
 			- [x] longer pre time ~10 days or longer
-				-> possible but lower infection rate and M_init needed to work
 			- [x] achieve lower parasitemia after pre_time days ~1% max. 3%
 				- [x] possibly start with lower M_init 
-					-> M_init = 1000
 				- [x] lower infection rate
-					-> ~1.2-1.45e-6 with higher tropism matches retis but parasitemia to high
-					-> at lower end good parasitemia but nearly no change in retis
-
-	- [ ] higher RPI, thus higher Reticulocytes
-		- [ ] parameter scan Hkt_init
+	-> possible but lower infection rate and M_init needed to work
+	-> M_init = 1000
+	-> k_infect lowered to ~1.2-1.45e-6 with higher tropism matches retis more but parasitemia too high
+	-> at lower end good parasitemia but nearly no change in retis
+	- [ ] higher RPI, thus higher Reticulocytes -> needs separate parameter optimization, as scans and guessing shows promising results
+		- [x] parameter scan Hkt_init
+		-> scan shows very different model behavior depending on Hkt_int
+		-> higher Hkt means more cells thus more infections resulting in higher downstream values 
+			pre_t_new = 10 & update_parameters= {"k_E_infect": 1.052041851367283e-06, "tropism": 104.429542038768788, "k_M_death": 70, 's_BH': 1.961151210723645e-06, "a_P_d": 59999.97948625444, "k_P_d": 0.010000000517527397, "r_P_d": 5.870264855546418, "fac_R_d": 0.0, "t_E_death":100, "LDH":197.37366622040253}![[Hkt_init_scan.png]]
 		- [x] check Hb influence on J_P_death, maybe has to be stronger?
-			-> Hill kinetic is already strong, maybe parameter scan 
+		-> Hill kinetic is already strong, maybe parameter estimation could refine response  
 		- [x] higher tropism
-			-> now 14 better Reti curve
-		- [ ] check steady state calculation for Retis
-			- [ ] set manually higher, by extra factor 
+		-> now 104 better for Reti curve, first reti drop now kind of achievable but first Hb drop much stronger than before 
+		- [x] check steady state calculation for Retis
+			- [x] set manually higher, by extra factor 
+			- [x] manipulate Reti calculation
+		->  might help but with current parameters first drop of Hb stronger than second one caused by BH
+		-> t_E_death governs the Reti amount in relation to Erys if lowered RPI becomes higher 
 	- [x] longer oiE life span
-		-> if set for 7-28 (before 7-21), lowers number of groups to 7 and slower k value
+		-> if set for 7-28 (before 7-21), lowers number of groups to 7 (before 12) and slower k value
 		-> less groups but slower aging
 - [ ] read about immune system reaction to PS and anitPS, could be reason for immune answer 

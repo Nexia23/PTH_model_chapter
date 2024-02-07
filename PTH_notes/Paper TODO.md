@@ -1,4 +1,4 @@
-,0## Chapter Text
+## Chapter Text
 - [ ] **Introduction:**
 	- [ ] Read about Erythropoiesis and modeling efforts to find better 
 		- [x] basic biology 
@@ -18,11 +18,13 @@
 			- just time parameters or k values?
 	- [ ] Paragraphs and plots:
 		- [x] 10% erythrocytes reduction show recovery
+			- ![[E_reduction_10percent.png]]
 		- [x] show 'normal' cyclic infection + medication
 			- parameter set has to be slightly changed
 				- tropism = 1, as it damps the oscillation to near none if higher >2
 					- interesting discussion point
 				- higher k_M_death  * 2 = 96 or could lower k_E_infect * 1/2
+				- ![[Oscillation.png]]
 		- [x] show infection +/- BH 
 			- [ ] analysis of effect
 	- [ ] Parameterscan and/or sensitivity analysis

@@ -78,14 +78,14 @@
     
     J_P_death    := P * k_P_death
     #k_P_death   := s_P_d * Hb + k_P_d0
-    k_P_death    := (a_P_d / ( 1 + k_P_d * Hb^r_P_d))^(-1) # Hill function idea
+    k_P_death    := (a_P_d / ( 1 + k_P_d * Hb^r_P_d))^(-1) + k_P_art_max*(ART^h_art/((ART^h_art)+(ID50)^h_art)) # Hill function idea
     J_P_aging    := P * k_P_aging
     k_P_aging    := ln(2) / (t_P_aging/2)    # in 1/days
     #t_P_aging   := 11-(t_R_a_max/ (1+exp (s_R_a*(Hkt - Hkt_0))))           #in days, Entwicklung R -> E dauert ca 4 Tage (3 tage knochenmark, 1 Tage im peripheren Blut)-> wir betrachten nur Retis in peripheren Blut, bei niedrigen Hkt verlassen Retis eher Knochenmark,  reifen länger im Blut
     t_P_aging    := t_mat_P - rpi_step_func
 
     J_R_death    := R * k_R_death 
-    k_R_death    :=  0 + s_BH * J_oiE_death  # in 1/days,Annahme
+    k_R_death    :=  0 + fac_R_d * s_BH * J_oiE_death   # in 1/days,Annahme
 
     J_R_aging    := R * k_R_aging
     #k_R_aging    := ln(2) / (t_R_aging/2)   # in 1/days 
@@ -187,14 +187,15 @@
     #Haptoglobin, fHb
     #t_halb_HP_decay = 5         # 2-5 Tage zotero, 1Quellen: https://link.springer.com/chapter/10.1007/978-3-662-48986-4_1389 und weiterverfolgen https://archive.org/stream/WilliamsHematology9thEditionMcGrawHill_201805/Williams%20Hematology%2C%209th%20Edition%20McGraw-Hill_djvu.txt
     #t_halb_HCC_decay = 0.00694  #in days,  ca 10min Springer (Gressner, 2019)
-
+    # Reti BH reduction factor
+    fac_R_d = 1
     # Parameter für J_P_death # fitted data from patient 
     s_P_d = 0.71535    # slope of P death increase, will be multiplied with Hb
     k_P_d0 =  0.48924947  # default death rate of Precusors
     # Hill function idea
-    a_P_d = 15600
-    k_P_d = 0.0382
-    r_P_d = 6.96
+    a_P_d = 59999.97948625444
+    k_P_d = 0.010000000517527397
+    r_P_d = 5.87026485554641
     ##parameter für t1/2 von R und P #müssen gefittet werden
     t_R_a_max= 3.53276388
     s_R_a= 5.99745537
@@ -211,6 +212,7 @@
     k_iE_death_0 = 0
     k_iE_pit_frac = 0.33  # troph+schiz sterben direkt, rings zu oiE
     k_iE_art_max = 15     # 10 für Medikamentzuageb #8   #maximal inhibition-effect, reine Annahme
+    k_P_art_max = 0.01    # adverse effect of ART on reticulocytes, maybe attacks Precursor
     h_art    = 2.0        # Hill-coefficient, muss gefittet werden (Angus 2002)
     ID50    = 20          # Annahme bei hälber konz. halbe inhibition; 0.6*75 inhibition-dosis (muss geschätzt werden, gerade gibt es die PC50 an, parasite clearance) in mg/kg (Angus 2002)* 75kg(Annahme ungefähr 75kg Gewicht)
 

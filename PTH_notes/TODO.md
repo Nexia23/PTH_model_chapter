@@ -14,7 +14,13 @@
 	- [ ] divide patient groups by descent and/or immunity 
 		-> possible groups: NaN(non-African), non-immune(African decent), semi-immune(African decent)
 			-> for further Hb level or male female
-- [ ] change Parameters:
+- [x] change Parameters:
+	-> new parameter estimation -> improved cost function
+		- weighted error function 10 * R_error
+		- t_E_death, k_M_death fitted separately for both cohorts
+			-> idea different immune response or so
+		- k_P_death includes term relating to ART administration
+		-  included factor fac_R_d for strength of the BH effect on Retis estimator chooses close to 0
 	- [x] infection is too fast and strong
 		- [x] patient take longer to come to clinic:
 			- [x] longer pre time ~10 days or longer
@@ -24,7 +30,7 @@
 	-> possible but lower infection rate and M_init needed to work
 	-> M_init = 1000
 	-> k_infect lowered to ~1.2-1.45e-6 with higher tropism matches retis more but parasitemia too high
-	-> at lower end good parasitemia but nearly no change in retis
+		-> at lower end good parasitemia but nearly no change in retis
 	- [ ] higher RPI, thus higher Reticulocytes -> needs separate parameter optimization, as scans and guessing shows promising results
 		- [x] parameter scan Hkt_init
 		-> scan shows very different model behavior depending on Hkt_int

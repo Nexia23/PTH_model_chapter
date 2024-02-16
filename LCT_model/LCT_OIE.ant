@@ -216,6 +216,8 @@
     h_art    = 2.0        # Hill-coefficient, muss gefittet werden (Angus 2002)
     ID50    = 20          # Annahme bei hälber konz. halbe inhibition; 0.6*75 inhibition-dosis (muss geschätzt werden, gerade gibt es die PC50 an, parasite clearance) in mg/kg (Angus 2002)* 75kg(Annahme ungefähr 75kg Gewicht)
 
+    t_E_death_inf = 80
+    t_E_death_health = 120
     #Parameter für k_E_death
     s_BH = 1e-6
  
@@ -227,5 +229,7 @@
     ACT_dose1: at((time>=t_ART_add)   &&events_medication_on): ART = 400;        #ART in gramm
     ACT_dose2: at((time>=t_ART_add +1)&&events_medication_on): ART = ART+400; 
     ACT_dose3: at((time>=t_ART_add +2)&&events_medication_on): ART = ART+400;
-
+    
+    #Infection_E_life_reduction: at(M>=10): t_E_death = t_E_death_inf;
     QN_InhReinfection: at((M<=1000)&&(time>=t_ART_add)&&(events_medication_on==true)): k_E_infect=0;
+    #Healthy: at(M<=10): t_E_death=t_E_death_health;

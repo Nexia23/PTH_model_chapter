@@ -77,7 +77,7 @@ class FitManager():
         
         # from here loop over data set keys for both models
         error_sum = 0
-        keys = self.data.keys()
+        keys = ['pth','non']    # has to be explict to work for singel runs
         for key in self.data:
             usedpars = {k.replace("_"+key,""):v for k,v in pars.items() if key in k or not k.split('_')[-1] in keys}
 

@@ -1,3 +1,5 @@
+- What if the mean life time of healthy red blood cells changes with parasite burden?
+	- implemented as event it does work well, cost function worse and without event, also the graphs look bad
 - Should P birth and death be more dynamic? 
 	--> Hill function for regulation of J_P_death
 	- run delay model has nice graphs but unrealistically high fluxes, here either ignore and claim ignorance or unknown regulation

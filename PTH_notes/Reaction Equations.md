@@ -22,7 +22,7 @@ $\frac{dART}{dt}=ART\cdot\frac{ln(2)}{t_{ART,decay}}$
 - $t_{hl,LDH,d}$ = 4  bad citation for **in** erythrocytes [3-5 Tage](https://www.medicoconsult.de/ldh/) #TODO find better citation
 
 **Infection:**
-- $k_{inf}:=$ infection rate, to be estimated and since #tropism $k_{inf,R}= x \cdot k_{inf}$
+- $k_{inf}:=$ infection rate, to be estimated and since #tropism $k_{inf,R}= trop \cdot k_{inf}$[# Erythrocyte tropism of malarial parasites: The reticulocyte appeal, Leong et al. 2022, review]([https://doi.org/10.3389/fmicb.2022.1022828](https://doi.org/10.3389/fmicb.2022.1022828))
 - $k_{iE,rupture}=\frac{2\cdot ln(2)}{t_{iE,rupture}}$ , 
 	- $t_{iE,rupture}=2$: in 1/days, anything higher than 2 makes little sense as it is used like the half life time meaning 1/2 maximal value reached at this time point but most observed rupture is synchronize and all rupture after 2 days. 
 - $k_{iE,pit}=k_{iE,pit,0} + k_{iE,pit,frac} \cdot \frac{k_{iE, ART_{max}}\cdot ART^{h_{ART}}}{ART^{h_{ART}}+ID_{50}^{h_{ART}}}$

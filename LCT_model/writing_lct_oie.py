@@ -5,8 +5,10 @@ from scipy.optimize import minimize
 def define_lct_oie_model(n: int = 12, l: float = 0.96333725, slope_rpi:float = 5.99745537,
                          scale_rpi:float=3.53276388, midpoint_rpi:float= 0.24658879)-> str:
     model = f"""# steady state 
-    t_R_a_init =     t_R_a_max/ (1+exp (s_R_a*(Hkt_init - Hkt_0)))  #in days, Entwicklung von Stammzelle zum Retikulozyt dauert ca. 5-9 Tage, plus 3 Tage die er schon retikulozyte ist aber noch in Rückenmark
-    t_P_a_init = 11-(t_R_a_max/ (1+exp (s_R_a*(Hkt_init - Hkt_0)))) 
+    t_mat_P = 7
+    t_R_a_init =     1 + scale_rpi/ (1+exp(slope_rpi*(Hkt_init - step_1)))+ scale_rpi/ (1+exp(slope_rpi*(Hkt_init - step_2)))+ scale_rpi/ (1+exp(slope_rpi*(Hkt_init - step_3)))  #in days, Entwicklung von Stammzelle zum Retikulozyt dauert ca. 5-9 Tage, plus 3 Tage die er schon retikulozyte ist aber noch in Rückenmark
+    t_P_a_init = t_mat_P - 1 + scale_rpi/ (1+exp(slope_rpi*(Hkt_init - step_1)))+ scale_rpi/ (1+exp(slope_rpi*(Hkt_init - step_2)))+ scale_rpi/ (1+exp(slope_rpi*(Hkt_init - step_3)))
+    
     Hkt_init = 0.45
     k_P_birth   = J_P_death + J_P_aging     # P *(k_P_death +k_P_aging)
     LDH_RBC = (J_LDH_decay * Vol_blood) / (J_E_death +J_R_death ) #  U  (pro RBC)  #https://www.ncbi.nlm.nih.gov/books/NBK557536/?report=printable
@@ -14,7 +16,7 @@ def define_lct_oie_model(n: int = 12, l: float = 0.96333725, slope_rpi:float = 5
     #species initiation
     ##erythropoisis
     P   = (R * (k_R_death + log(2)/(t_R_a_init/2)))/ (2^10 *log(2) / (t_P_a_init/2))     #453.04169624571756  k_R_death -> for ss = 0 since no ioE
-    R   =  E* t_R_a_init/ t_E_death                                                            #46696.30405453991 
+    R   =  E * t_R_a_init/ t_E_death                                                            #46696.30405453991 
     E   = (Hkt_init * Vol_blood * (t_E_death/2))/ ( ((t_E_death/2)* Vol_E) + ((t_R_a_init/2)*Vol_R)) #5566629.619931825  #    cells, bezieht sich auf gesamtvolumen 1 mikroliter
     ##parasite lifecircle 
     M   = 40e3     #Merozoiten,(Austin, 1997) pro mikroliter (10^6 cells/ml => 10^3 cells/mikroliter)
@@ -65,56 +67,64 @@ def define_lct_oie_model(n: int = 12, l: float = 0.96333725, slope_rpi:float = 5
 
     # Assignments, Fluxes
     ##Erythropoese
-    J_P_birth   := k_P_birth 
-    J_P_death   := P* k_P_death  
-    J_P_aging   := P * k_P_aging
-    J_R_death   := R * k_R_death 
-    J_R_aging   := R * k_R_aging
-    J_E_death   := E * k_E_death  
+    J_P_birth    := k_P_birth 
+    J_P_death    := P* k_P_death 
+    k_P_death    := (a_P_d / ( 1 + k_P_d * Hb^r_P_d))^(-1) + k_P_art_max*(ART^h_art/((ART^h_art)+(ID50)^h_art)) # Hill function idea
+ 
+    J_P_aging    := P * k_P_aging
+    k_P_aging    := ln(2) / (t_P_aging/2)    # in 1/days
+    t_P_aging    := t_mat_P - rpi_step_func
+
+    J_R_death    := R * k_R_death 
+    k_R_death    :=  0 + fac_R_d * s_BH * J_oiE_death   # in 1/days,Annahme
+
+    J_R_aging    := R * k_R_aging
+    k_R_aging    := ln(2) / (rpi_step_func/2)    # in 1/days 
+    rpi_step_func := 1 + scale_rpi/ (1+exp(slope_rpi*(Hkt - step_1)))+ scale_rpi/ (1+exp(slope_rpi*(Hkt - step_2)))+ scale_rpi/ (1+exp(slope_rpi*(Hkt - step_3)))
+
+    J_E_death    := E * k_E_death 
+    k_E_death    := 2*ln(2) / (t_E_death) + s_BH * J_oiE_death
+ 
     ##Infection with parasite
-    J_R_infect  := R*M* k_R_infect 
-    J_E_infect  := E*M* k_E_infect       # einbezug parasit?, E ersmal als Abhängigkeit ausgelassen da am Anfang E >> M -> mit Jorin absprechen+
-    J_iE_death  := iE * k_iE_death       #einbezug antibodies, spleen
-    J_iE_rupture:= iE * k_iE_rupture     #16-32M s.Cowman 2016, Anderson 1989, Diebner 2000
-    J_M_death   := M  * k_M_death
+    J_R_infect   := R * M * tropism * k_E_infect 
+    J_E_infect   := E * M * k_E_infect       # einbezug parasit?, E ersmal als Abhängigkeit ausgelassen da am Anfang E >> M -> mit Jorin absprechen+
+    k_E_infect    = 2.02e-6                   # in 1/mikroliter*day ((Austin, 1997) 2e-6
+    tropism       = 6                        # P.falciparum has preference for Retis ~2-12 more likely infected                  
+    
+    J_iE_death   := iE * k_iE_death       #einbezug antibodies, spleen
+    k_iE_death   := k_iE_death_0  + (1- k_iE_pit_frac) * k_iE_art_max*(ART^h_art/((ART^h_art)+(ID50)^h_art))                          # in 1/days, vereinfacht in Austin(1998)  (0.025  Ma 2019)
+
+    J_iE_rupture := iE * k_iE_rupture     #16-32M s.Cowman 2016, Anderson 1989, Diebner 2000
+    k_iE_rupture  = ln(2) / (t_iE_rupture/2)
+
+    J_M_death    := M  * k_M_death
+    k_M_death     = 48                       # 48 in 1/days 2010 Thi (48)
+
     ##Artesunate treatment
-    J_ART_decay := ART * k_ART_decay
-    J_iE_pit   := iE  * k_iE_pit       #einbezug artesunat
-    J_oiE_death := oiE_{n}*k_oiE_death;
+    J_ART_decay  := ART * k_ART_decay
+    k_ART_decay   = ln(2) / t_halb_ART_decay #ART hat 1h Halbwertszeit (Tilley 2016), andere Quellen 2h 
+
+    J_iE_pit     := iE  * k_iE_pit       #einbezug artesunat
+    k_iE_pit     := k_iE_pit_0 + k_iE_pit_frac * k_iE_art_max*(ART^h_art/((ART^h_art)+(ID50)^h_art)) #bei Medikamentengabe nach 8h Maximum an gepitteten RBCs
+
+    J_oiE_death  := oiE_{n}*k_oiE_death;
+    k_oiE_death  := {l}
     ##LDH
-    J_LDH_release := (LDH_RBC/ Vol_blood)* (J_R_death+ J_E_death + J_iE_death + J_iE_rupture + J_oiE_death) 
-    J_LDH_decay   := LDH * k_LDH_decay
+    J_LDH_release:= (LDH_RBC/ Vol_blood)* (J_R_death+ J_E_death + J_iE_death + J_iE_rupture + J_oiE_death) 
+    J_LDH_decay  := LDH * k_LDH_decay
+    k_LDH_decay   = ln(2) / t_halb_LDH_decay
     #Haptoglobin
-    #J_HP_prod      = J_HP_decay + J_HCC_binding           # 2* 6.799770420550107e+28 / (1+ exp(-1e-22*(fHb-9.33643410852713e+22)))  #J_HP_decay + J_HCC_binding  #wie viele verloren gehen durch #  #
-    #J_HP_decay     = HP * k_HP_decay 
-    #J_fHb_release  := J_fHb_release_R + J_fHb_release_E + J_fHb_release_iE + J_fHb_release_oiE
+    #J_HP_prod         = J_HP_decay + J_HCC_binding           # 2* 6.799770420550107e+28 / (1+ exp(-1e-22*(fHb-9.33643410852713e+22)))  #J_HP_decay + J_HCC_binding  #wie viele verloren gehen durch #  #
+    #J_HP_decay        = HP * k_HP_decay 
+    #J_fHb_release    := J_fHb_release_R + J_fHb_release_E + J_fHb_release_iE + J_fHb_release_oiE
     #J_fHb_release_R  := Hb_conc_R   * J_R_death   * Vol_R  / (M_Hb * Vol_plasma)
     #J_fHb_release_E  := Hb_conc_E   * J_E_death   * Vol_E  / (M_Hb * Vol_plasma)
     #J_fHb_release_iE := Hb_conc_iE  * J_iE_death  * Vol_iE / (M_Hb * Vol_plasma)
     #J_fHb_release_oiE:= Hb_conc_oiE * J_oiE_death * Vol_oiE/ (M_Hb * Vol_plasma)
-    #J_HCC_binding := HP * fHb * k_HCC_bind   # nicht dran rumspielen 
-    #J_HCC_decay   := HCC * k_HCC_decay
+    #J_HCC_binding    := HP * fHb * k_HCC_bind   # nicht dran rumspielen 
+    #J_HCC_decay      := HCC * k_HCC_decay
 
     # Rates
-    ##Erythropoese  
-    k_P_death  := s_P_d * Hb + k_P_d0       
-    k_P_aging  := ln(2) / (t_P_aging/2)     # in 1/days
-    k_R_death  :=  0 + s_BH * J_oiE_death  # in 1/days,Annahme
-    k_R_aging  := ln(2) / (t_R_aging/2)     # in 1/days 
-    k_E_death  := 2*ln(2) / (t_E_death) + s_BH * J_oiE_death
-   
-     ##infection with parasite  
-    k_R_infect  = k_E_infect                  
-    k_E_infect  = 1e-6                      # in 1/mikroliter*day ((Austin, 1997) 2e-6
-    k_iE_death  := k_iE_death_0  + (1- k_iE_pit_frac) * k_iE_art_max*(ART^h_art/((ART^h_art)+(ID50)^h_art))                          # in 1/days, vereinfacht in Austin(1998)  (0.025  Ma 2019)
-    k_iE_rupture= ln(2) / (t_iE_rupture/2)       # CHECK/MAXIM: in 1/days, Austin(1998)
-    k_M_death   = 48        #48 in 1/days 2010 Thi (48)
-    ##Artesunate treatment
-    k_ART_decay = ln(2) / t_halb_ART_decay  #ART hat 1h Halbwertszeit (Tilley 2016), andere Quellen 2h 
-    k_iE_pit  := k_iE_pit_0 + k_iE_pit_frac * k_iE_art_max*(ART^h_art/((ART^h_art)+(ID50)^h_art)) #bei Medikamentengabe nach 8h Maximum an gepitteten RBCs
-    k_oiE_death = {l}  # from LCT              
-    ##LDH
-    k_LDH_decay = ln(2) / t_halb_LDH_decay
     ##Haptoglobin
     #k_HP_decay  = ln(2)/ t_halb_HP_decay
     #k_HCC_bind  = J_fHb_release / (fHb * HP)      # nicht dran rumspielen  
@@ -148,16 +158,19 @@ def define_lct_oie_model(n: int = 12, l: float = 0.96333725, slope_rpi:float = 5
     ## Parasitemie and RPI
     parasitemia := iE*100 / (E + R + iE + oiE )          # in percent, bsp 0.5
     R_percent   := 100*R / (R + E + iE + oiE )           # in % bsp. 50%
-    RPI         := R_percent * Hkt/ (t_R_aging * 0.45) 
+    RPI         := R_percent * Hkt/ (rpi_step_func * 0.45) 
     oiE :=  {'+'.join(['oiE_'+str(i) for i in range(1, n+1)])};
     oiE_percent := oiE*100 / (R + E + iE + oiE )         # in %
 
     # parameters
     ##Erythropoese
-    t_R_aging :=     t_R_a_max/ (1+exp (s_R_a*(Hkt - Hkt_0)))  #in days, Entwicklung von Stammzelle zum Retikulozyt dauert ca. 5-9 Tage, plus 3 Tage die er schon retikulozyte ist aber noch in Rückenmark
-    t_P_aging := 11-(t_R_a_max/ (1+exp (s_R_a*(Hkt - Hkt_0))))           #in days, Entwicklung R -> E dauert ca 4 Tage (3 tage knochenmark, 1 Tage im peripheren Blut)-> wir betrachten nur Retis in peripheren Blut, bei niedrigen Hkt verlassen Retis eher Knochenmark,  reifen länger im Blut
     t_E_death  = 120
     t_iE_rupture = 2                     # MAXIM: in days, dauert ca 4 Tage bis Ruptur, sinuskurvig (2010 Th)
+    ##EPO - Hill function
+    a_P_d = 59999.97948625444
+    k_P_d = 0.010000000517527397
+    r_P_d = 5.87026485554641
+
     ##Artesunate treatment
     t_halb_ART_decay = 1/12   #Halbwertszeit von 2h -> verlässliche quelle noch suchen
     ##LDH
@@ -165,27 +178,34 @@ def define_lct_oie_model(n: int = 12, l: float = 0.96333725, slope_rpi:float = 5
     #Haptoglobin, fHb
     #t_halb_HP_decay = 5         # 2-5 Tage zotero, 1Quellen: https://link.springer.com/chapter/10.1007/978-3-662-48986-4_1389 und weiterverfolgen https://archive.org/stream/WilliamsHematology9thEditionMcGrawHill_201805/Williams%20Hematology%2C%209th%20Edition%20McGraw-Hill_djvu.txt
     #t_halb_HCC_decay = 0.00694  #in days,  ca 10min Springer (Gressner, 2019)
-
-    #Parameter für J_P_death
-    s_P_d = 0.00071535    # slope of P death increase, will be multiplied with Hb
-    k_P_d0 =  0.48924947  # default death rate of Precusors
-
+    
     ##parameter für t1/2 von R und P #müssen gefittet werden
     t_R_a_max = {scale_rpi}
     s_R_a = {slope_rpi}
     Hkt_0 = {midpoint_rpi}
-
+    ## Stepfunction for R maturation time
+    slope_rpi = 250
+    scale_rpi = 0.5
+    step_1 = 0.15
+    step_2 = 0.25
+    step_3 = 0.35
+    
     ##Parameter für k_iE_pit, alles random zahlen müssen gefittet werden. egscP
     k_iE_pit_0   = 0      # 0.00001 Annahme. keine oiE ohne ART medikament    inhihition die stattfindet ohne ART
     k_iE_death_0 = 0
     k_iE_pit_frac = 0.33  # troph+schiz sterben direkt, rings zu oiE
     k_iE_art_max = 15  #10 für Medikamentzuageb #8   #maximal inhibition-effect, reine Annahme
+    k_P_art_max = 0.01    # adverse effect of ART on precursors, maybe attacks Precursor
+
     h_art    = 2.0      #Hill-coefficient, muss gefittet werden (Angus 2002)
     ID50    = 20       # Annahme bei hälber konz. halbe inhibition; 0.6*75 inhibition-dosis (muss geschätzt werden, gerade gibt es die PC50 an, parasite clearance) in mg/kg (Angus 2002)* 75kg(Annahme ungefähr 75kg Gewicht)
 
     #Parameter für k_E_death
     s_BH = 0.001
- 
+    fac_R_d = 0.00001
+    #Parameter for event changed t_E_death
+    #t_E_death_inf = 80
+    #t_E_death_health = 120
 
     # Events
     ## ART Zugabe, 3x im Abstand von 3h Zugabe von 40mg DHA= Dihydroartemisinin
@@ -194,8 +214,11 @@ def define_lct_oie_model(n: int = 12, l: float = 0.96333725, slope_rpi:float = 5
     ACT_dose1: at((time>=t_ART_add)   &&events_medication_on): ART = 400;        #ART in gramm
     ACT_dose2: at((time>=t_ART_add +1)&&events_medication_on): ART = ART+400; 
     ACT_dose3: at((time>=t_ART_add +2)&&events_medication_on): ART = ART+400;
+    ## Life span of healthy 
+    #Healthy: at(M<10): t_E_death=t_E_death_health;
+    #Infection_E_life_reduction: at(M>=10): t_E_death = t_E_death_inf;
 
-    QN_InhReinfection: at((M<=1000)&&(time>=t_ART_add)&&(events_medication_on==true)): k_E_infect=0, k_R_infect=0;"""
+    QN_InhReinfection: at((M<=1000)&&(time>=t_ART_add)&&(events_medication_on==true)): k_E_infect=0;"""
 
     model = model.replace('xxxx', '\n\t')
     return model
@@ -245,7 +268,7 @@ def save_model(model: str, name:str):
 
 def main():
     # fit gamma distribution    
-    data = np.array([12, 7, 21])  # median, low, high
+    data = np.array([12, 7, 28])  # median, low, high
     pars = fit_gamma(data)  # alpha, beta
     # fit RPI to logistic function
     data_h = np.array([0.1,0.2,0.3,0.4])

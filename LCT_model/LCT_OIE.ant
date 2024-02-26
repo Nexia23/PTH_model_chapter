@@ -200,7 +200,7 @@
 
     #Parameter für k_E_death
     s_BH = 0.001
-    fac_R_d = 0.00001
+    fac_R_d = 0.0
     #Parameter for event changed t_E_death
     #t_E_death_inf = 80
     #t_E_death_health = 120

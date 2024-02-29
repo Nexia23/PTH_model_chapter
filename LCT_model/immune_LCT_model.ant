@@ -1,0 +1,219 @@
+# steady state 
+    t_mat_P = 7
+    t_R_a_init = 1 + scale_rpi/ (1+exp(slope_rpi*(Hkt_init - step_1)))+ scale_rpi/ (1+exp(slope_rpi*(Hkt_init - step_2)))+ scale_rpi/ (1+exp(slope_rpi*(Hkt_init - step_3)))  #in days, Entwicklung von Stammzelle zum Retikulozyt dauert ca. 5-9 Tage, plus 3 Tage die er schon retikulozyte ist aber noch in Rückenmark
+    t_P_a_init = t_mat_P - t_R_a_init
+    
+    Hkt_init = 0.45
+    k_P_birth   = J_P_death + J_P_aging     # P *(k_P_death +k_P_aging)
+    LDH_RBC = (J_LDH_decay * Vol_blood) / (J_E_death +J_R_death ) #  U  (pro RBC)  #https://www.ncbi.nlm.nih.gov/books/NBK557536/?report=printable
+
+    #species initiation
+    ##erythropoisis
+    P   = (R * (k_R_death + log(2)/(t_R_a_init/2)))/ (2^10 *log(2) / (t_P_a_init/2))     #453.04169624571756  k_R_death -> for ss = 0 since no ioE
+    R   =  E * t_R_a_init/ t_E_death                                                            #46696.30405453991 
+    E   = (Hkt_init * Vol_blood * (t_E_death/2))/ ( ((t_E_death/2)* Vol_E) + ((t_R_a_init/2)*Vol_R)) #5566629.619931825  #    cells, bezieht sich auf gesamtvolumen 1 mikroliter
+    ##parasite lifecircle 
+    M   = 40e3     #Merozoiten,(Austin, 1997) pro mikroliter (10^6 cells/ml => 10^3 cells/mikroliter)
+    iE  = 0        # in cells/(kg body weight*10^11)
+    ##Artesunate treatment
+    ART = 0        # in gramm
+    oiE = 0        # once-infected Erys
+    ##LDH, Hapto, fHb
+    LDH = 180      # in U/l
+
+    #Reactions 
+    ##erythropoisis
+    Pbirth:          -> P     ; J_P_birth
+    Pdeath:        P ->       ; J_P_death
+    Page:          P -> 1024R ; J_P_aging     # Precursor cells divide ~10 times -> 2**10
+    Rdeath:        R ->       ; J_R_death 
+    Raging:        R -> E     ; J_R_aging        
+    Edeath:   E+Ttox -> Ttox  ; J_E_death       
+    ##parasite lifecircle 
+    Rinfect:     R+M -> iE    ; J_R_infect
+    Einfect:     E+M -> iE    ; J_E_infect     
+    iEdeath: iE+Ttox -> Ttox  ; J_iE_death     
+    iErupture:    iE -> 16M   ; J_iE_rupture  # Tumwiine (2008) the 4 is kind of arbitrary, question is how many relaeased merozoits actually reinvade
+    deathofM: M+Ttox -> Ttox  ; J_M_death
+    ##Artesunate treatment
+    ARTdeath:    ART ->       ; J_ART_decay
+    iE_treat:     iE -> oiE_1 ; J_iE_pit     
+    oiE_1=> oiE_2; oiE_1*k_oiE_death;
+	oiE_2=> oiE_3; oiE_2*k_oiE_death;
+	oiE_3=> oiE_4; oiE_3*k_oiE_death;
+	oiE_4=> oiE_5; oiE_4*k_oiE_death;
+	oiE_5=> oiE_6; oiE_5*k_oiE_death;
+    oiE_6+Ttox => Ttox; J_oiE_death;
+    ##LDH
+    LDHrelease:    -> LDH   ; J_LDH_release   
+    LDHdecay:  LDH ->       ; J_LDH_decay 
+    ## Immune response
+    Treg_birth:     -> Treg ; J_Treg_prod
+    Treg_decay: Treg->      ; J_Treg_decay
+    Ttox_birth:     -> Ttox ; J_Ttox_birth
+    Ttox_decay: Ttox->      ; J_Ttox_decay
+    #Fluxes
+    J_Treg_prod  := beta_Treg * (E) + beta_in_Treg * (M+iE+oiE_5+oiE_6)
+    J_Treg_decay := delta_Treg * Treg
+    J_Ttox_birth := J_Ttox_prod + J_Ttox_pfeed
+    J_Ttox_prod  := mu_tox * (E)/Treg + mu_in_tox*(M+iE+oiE_5+oiE_6)/Treg
+    J_Ttox_pfeed := (V_f*Ttox^2) / (K_f+Ttox)
+    J_Ttox_decay := delta_Ttox * Ttox + epsilon * Ttox^2
+    
+    #Immune Parameter
+    Treg = 500
+    Ttox = 500
+    k_digest_E  = k_E_death/Ttox
+    k_digest_iE = 10 * k_digest_E 
+    k_digest_M  = k_digest_E
+    k_digest_oiE  = k_oiE_death/Ttox
+    k_digest_R  = 0 
+    beta_Treg    = 0.01
+    beta_in_Treg = 0.02
+    delta_Treg   = 109
+    mu_tox       = 22
+    mu_in_tox    = 1e4
+    V_f          = 60
+    K_f          = 2
+    delta_Ttox   = 1/20
+    epsilon      = 0.8
+
+    # Assignments, Fluxes
+    ##Erythropoese
+    J_P_birth    := k_P_birth 
+    J_P_death    := P* k_P_death 
+    k_P_death    := (a_P_d / ( 1 + k_P_d * Hb^r_P_d))^(-1) + k_P_art_max*(ART^h_art/((ART^h_art)+(ID50)^h_art)) # Hill function idea
+ 
+    J_P_aging    := P * k_P_aging
+    k_P_aging    := ln(2) / (t_P_aging/2)    # in 1/days
+    t_P_aging    := t_mat_P - rpi_step_func
+
+    J_R_death    := R * k_R_death 
+    k_R_death    := 0 + fac_R_d * k_digest_R * Ttox   # in 1/days,Annahme
+
+    J_R_aging    := R * k_R_aging
+    k_R_aging    := ln(2) / (rpi_step_func/2)    # in 1/days 
+    rpi_step_func:= 1 + scale_rpi/ (1+exp(slope_rpi*(Hkt - step_1)))+ scale_rpi/ (1+exp(slope_rpi*(Hkt - step_2)))+ scale_rpi/ (1+exp(slope_rpi*(Hkt - step_3)))
+
+    J_E_death    := E * k_digest_E * Ttox
+    k_E_death     = 2*ln(2) / (t_E_death)
+ 
+    ##Infection with parasite
+    J_R_infect   := R * M * tropism * k_E_infect 
+    J_E_infect   := E * M * k_E_infect       # einbezug parasit?, E ersmal als Abhängigkeit ausgelassen da am Anfang E >> M -> mit Jorin absprechen+
+    k_E_infect    = 2.02e-6                   # in 1/mikroliter*day ((Austin, 1997) 2e-6
+    tropism       = 6                        # P.falciparum has preference for Retis ~2-12 more likely infected                  
+    
+    J_iE_death   := iE * k_iE_death       #einbezug antibodies, spleen
+    k_iE_death   := k_digest_iE * Ttox + (1- k_iE_pit_frac) * k_iE_art_max*(ART^h_art/((ART^h_art)+(ID50)^h_art))                          # in 1/days, vereinfacht in Austin(1998)  (0.025  Ma 2019)
+
+    J_iE_rupture := iE * k_iE_rupture     #16-32M s.Cowman 2016, Anderson 1989, Diebner 2000
+    k_iE_rupture  = ln(2) / (t_iE_rupture/2)
+
+    J_M_death    := M  * k_M_death
+    k_M_death     = 48 * k_digest_M * Ttox                     # 48 in 1/days 2010 Thi (48)
+
+    ##Artesunate treatment
+    J_ART_decay  := ART * k_ART_decay
+    k_ART_decay   = ln(2) / t_halb_ART_decay #ART hat 1h Halbwertszeit (Tilley 2016), andere Quellen 2h 
+
+    J_iE_pit     := iE  * k_iE_pit       #einbezug artesunat
+    k_iE_pit     := k_iE_pit_0 + k_iE_pit_frac * k_iE_art_max*(ART^h_art/((ART^h_art)+(ID50)^h_art)) #bei Medikamentengabe nach 8h Maximum an gepitteten RBCs
+
+    J_oiE_death  := oiE_6 * k_digest_oiE * Ttox;
+    
+    k_oiE_death  := 0.443960624771928 
+    ##LDH
+    J_LDH_release:= (LDH_RBC/ Vol_blood)* (J_R_death+ J_E_death + J_iE_death + J_iE_rupture + J_oiE_death) 
+    J_LDH_decay  := LDH * k_LDH_decay
+    k_LDH_decay   = ln(2) / t_halb_LDH_decay
+    
+    #Messwerte
+    N_A = 6.022e23            # 1/mol Avogadokonstante
+    ##Hämoglobin
+    ###Volumen
+    Vol_R       = 100e-15        #in l, Jorin
+    Vol_E       = 80e-15         #=80 fL, in l, =MCH
+    Vol_iE      = 80e-15         #in lk_E_infect
+    Vol_oiE     = 50e-15         #in l
+    Vol_blood   = 1e-6           # =1µl, in l, gesamtes Blutvolumen 
+    Vol_plasma := (1-Hkt)* Vol_blood
+    ###Hb Konzentrationen in g/l
+    Hb_conc_R   = 300        #in g/l (Piva,2014)   #niedriger conc. aber Hb-content ist höher wegen dem hohen Volumen
+    Hb_conc_E   = 322.5      #in g/l,  =MCHC, 5mM (Hanssen 2012), (Francis 1997))  
+    Hb_conc_iE  = 209.625    # CHECK: avg over ring, troph, schiz?in g/l, orin meinte80, Aber 60-80% (Francis 1997) 65% (Krugliak 2002)- 80% (Coronado 2014) von Hb bis rupture wird aufgebraucht -> nur 20-35% bleiben übrig , durchschnittlich 65% des Hb von E
+    Hb_conc_oiE = 316.05     # CHECK: same amoutn different volume?:Annahme: gleiche Hb wie ringstage Ery, 4.9mM (Hanssen 2012), noch nicht alles Hb verbraucht
+
+    ## Hkt, Hb
+    #https://www.labopart.de/einsender/formelberechnungen/rpi/
+    Hkt := (Vol_E * E + Vol_R * R + Vol_iE * iE + Vol_oiE * oiE) / Vol_blood            #0.4 ~ 40 %, #hier fehlen noch MCHC von infected Zellen https://www.charite.de/fileadmin/user_upload/microsites/m_cc05/ilp/referenzdb/30451.htm    https://www.labor-und-diagnose-2020.de/k15.html
+    Hb  := (Vol_E * E * Hb_conc_E + Vol_R * R * Hb_conc_R +  Vol_iE * iE * Hb_conc_iE + Vol_oiE * oiE * Hb_conc_oiE  ) / (10*Vol_blood)     #in g/dl      https://www.charite.de/fileadmin/user_upload/microsites/m_cc05/ilp/referenzdb/30459.htm
+
+    ## HP, fHb
+    #M_Hb = 64500              # g/mol, Molare Masse 
+    #M_HP = 1e5                # Molare Masse von HP # https://link.springer.com/chapter/10.1007/978-3-662-48986-4_1389
+
+    ## Parasitemie and RPI
+    parasitemia := iE*100 / (E + R + iE + oiE )          # in percent, bsp 0.5
+    R_percent   := 100*R / (R + E + iE + oiE )           # in % bsp. 50%
+    RPI         := R_percent * Hkt/ (rpi_step_func * 0.45) 
+    oiE :=  oiE_1+oiE_2+oiE_3+oiE_4+oiE_5+oiE_6;
+    oiE_percent := oiE*100 / (R + E + iE + oiE )         # in %
+
+    # parameters
+    ##Erythropoese
+    t_E_death  = 120
+    t_iE_rupture = 2                     # MAXIM: in days, dauert ca 4 Tage bis Ruptur, sinuskurvig (2010 Th)
+    ##EPO - Hill function
+    a_P_d = 59999.97948625444
+    k_P_d = 0.010000000517527397
+    r_P_d = 5.87026485554641
+
+    ##Artesunate treatment
+    t_halb_ART_decay = 1/12   #Halbwertszeit von 2h -> verlässliche quelle noch suchen
+    ##LDH
+    t_halb_LDH_decay = 4      #(3-5 Tage), https://www.medicoconsult.de/ldh/
+    #Haptoglobin, fHb
+    #t_halb_HP_decay = 5         # 2-5 Tage zotero, 1Quellen: https://link.springer.com/chapter/10.1007/978-3-662-48986-4_1389 und weiterverfolgen https://archive.org/stream/WilliamsHematology9thEditionMcGrawHill_201805/Williams%20Hematology%2C%209th%20Edition%20McGraw-Hill_djvu.txt
+    #t_halb_HCC_decay = 0.00694  #in days,  ca 10min Springer (Gressner, 2019)
+    
+    ##parameter für t1/2 von R und P #müssen gefittet werden
+    t_R_a_max = 3.5327734516666713
+    s_R_a = 5.997437274180615
+    Hkt_0 = 0.24658779053348504
+    ## Stepfunction for R maturation time
+    slope_rpi = 250
+    scale_rpi = 0.5
+    step_1 = 0.15
+    step_2 = 0.25
+    step_3 = 0.35
+    
+    ##Parameter für k_iE_pit, alles random zahlen müssen gefittet werden. egscP
+    k_iE_pit_0   = 0      # 0.00001 Annahme. keine oiE ohne ART medikament    inhihition die stattfindet ohne ART
+    k_iE_death_0 = 0
+    k_iE_pit_frac = 0.33  # troph+schiz sterben direkt, rings zu oiE
+    k_iE_art_max = 15  #10 für Medikamentzuageb #8   #maximal inhibition-effect, reine Annahme
+    k_P_art_max = 0.01    # adverse effect of ART on precursors, maybe attacks Precursor
+
+    h_art    = 2.0      #Hill-coefficient, muss gefittet werden (Angus 2002)
+    ID50    = 20       # Annahme bei hälber konz. halbe inhibition; 0.6*75 inhibition-dosis (muss geschätzt werden, gerade gibt es die PC50 an, parasite clearance) in mg/kg (Angus 2002)* 75kg(Annahme ungefähr 75kg Gewicht)
+
+    #Parameter für k_E_death
+    s_BH = 0.001
+    fac_R_d = 0.0
+    #Parameter for event changed t_E_death
+    #t_E_death_inf = 80
+    #t_E_death_health = 120
+
+    # Events
+    ## ART Zugabe, 3x im Abstand von 3h Zugabe von 40mg DHA= Dihydroartemisinin
+    events_medication_on = true
+    t_ART_add = 0
+    ACT_dose1: at((time>=t_ART_add)   &&events_medication_on): ART = 400;        #ART in gramm
+    ACT_dose2: at((time>=t_ART_add +1)&&events_medication_on): ART = ART+400; 
+    ACT_dose3: at((time>=t_ART_add +2)&&events_medication_on): ART = ART+400;
+    ## Life span of uninfected E
+    #Healthy: at(M<10): t_E_death=t_E_death_health;
+    #Infection_E_life_reduction: at(M>=10): t_E_death = t_E_death_inf;
+
+    QN_InhReinfection: at((M<=1000)&&(time>=t_ART_add)&&(events_medication_on==true)): k_E_infect=0;

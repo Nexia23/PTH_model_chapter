@@ -9,7 +9,6 @@ $\frac{dM}{dt}=16\cdot iE\cdot k_{iE,rupture}-M\cdot k_{M,d}$
 $\frac{doiE}{dt}=iE\cdot k_{iE,pit}-oiE_{12}\cdot k_{oiE,d}$ , as only real death rest of oiE species age
 **Medication**
 $\frac{dART}{dt}=ART\cdot\frac{ln(2)}{t_{ART,decay}}$
-
 ## Parameters
 **Erythropoiesis**
 - Precursors half life aging:

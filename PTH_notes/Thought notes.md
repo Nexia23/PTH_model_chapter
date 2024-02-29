@@ -1,3 +1,4 @@
+- [Link](https://www.ncbi.nlm.nih.gov/books/NBK26919/table/A4143/?report=objectonly)to table with number of cells in blood for T cell number as estimate for macrophages as immune response to phagocytise red blood cells
 - What if the mean life time of healthy red blood cells changes with parasite burden?
 	- implemented as event it does work well, cost function worse and without event, also the graphs look bad
 - Should P birth and death be more dynamic? 

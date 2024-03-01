@@ -6,7 +6,10 @@ import tellurium as te
 
 def get_steady_state(model, pars: dict):
     for p in pars:
-        model.setValue(p, pars[p])
+        try:
+            model.setValue(p, pars[p])    # CAUTION: if you include a volume which is not 1 in the model, species might get fucked up
+        except RuntimeError:
+            continue
     
     rpi_step_func = 1 + model.scale_rpi/ (1+np.exp(model.slope_rpi*(model.Hkt_init - model.step_1)))+ model.scale_rpi/ (1+np.exp(model.slope_rpi*(model.Hkt_init - model.step_2)))+ model.scale_rpi/ (1+np.exp(model.slope_rpi*(model.Hkt_init - model.step_3)))
 
@@ -51,7 +54,10 @@ def get_steady_state(model, pars: dict):
 def set_model_to_ss(model, pars: dict):
     update_pars = get_steady_state(model, pars)
     for p in update_pars:
-        model.setValue(p, update_pars[p])    # CAUTION: if you include a volume which is not 1 in the model, species might get fucked up
+        try:
+            model.setValue(p, update_pars[p])    # CAUTION: if you include a volume which is not 1 in the model, species might get fucked up
+        except RuntimeError:
+            continue
    # print(update_pars)
     return model
 
@@ -102,7 +108,7 @@ class FitManager():
 
             self.model.resetToOrigin()
             # print(Hb_error.sum(), LDH_error.sum())
-            # TODO: weighted sum?
+            # weighted sum -> works better
             error_sum += Hb_error.sum() + LDH_error.sum() + 10*R_error.sum()
         return error_sum
     

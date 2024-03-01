@@ -52,30 +52,30 @@
     Treg_decay: Treg->      ; J_Treg_decay
     Ttox_birth:     -> Ttox ; J_Ttox_birth
     Ttox_decay: Ttox->      ; J_Ttox_decay
-    #Fluxes
-    J_Treg_prod  := beta_Treg * (E) + beta_in_Treg * (M+iE+oiE_5+oiE_6)
+    #Immune Fluxes
+    J_Treg_prod  := beta_Treg * (E+oiE_5+oiE_6) + beta_in_Treg * (M+iE+oiE_5+oiE_6)
     J_Treg_decay := delta_Treg * Treg
     J_Ttox_birth := J_Ttox_prod + J_Ttox_pfeed
-    J_Ttox_prod  := mu_tox * (E)/Treg + mu_in_tox*(M+iE+oiE_5+oiE_6)/Treg
+    J_Ttox_prod  := mu_tox * (E+oiE_5+oiE_6)/Treg + mu_in_tox*(M+iE+oiE_5+oiE_6)/Treg
     J_Ttox_pfeed := (V_f*Ttox^2) / (K_f+Ttox)
     J_Ttox_decay := delta_Ttox * Ttox + epsilon * Ttox^2
     
     #Immune Parameter
     Treg = 500
     Ttox = 500
-    k_digest_E  = k_E_death/Ttox
-    k_digest_iE = 10 * k_digest_E 
-    k_digest_M  = k_digest_E
-    k_digest_oiE  = k_oiE_death/Ttox
-    k_digest_R  = 0 
+    k_digest_E   = k_E_death/Ttox
+    k_digest_iE  = 10 * k_digest_E 
+    k_digest_M   = k_digest_E
+    k_digest_oiE = k_oiE_death/Ttox
+    k_digest_R   = 0 
     beta_Treg    = 0.01
     beta_in_Treg = 0.02
     delta_Treg   = 109
     mu_tox       = 22
-    mu_in_tox    = 1e4
-    V_f          = 60
-    K_f          = 2
-    delta_Ttox   = 1/20
+    mu_in_tox    = 1e5
+    V_f          = 165
+    K_f          = 20
+    delta_Ttox   = 0.6
     epsilon      = 0.8
 
     # Assignments, Fluxes
@@ -121,8 +121,8 @@
     k_iE_pit     := k_iE_pit_0 + k_iE_pit_frac * k_iE_art_max*(ART^h_art/((ART^h_art)+(ID50)^h_art)) #bei Medikamentengabe nach 8h Maximum an gepitteten RBCs
 
     J_oiE_death  := oiE_6 * k_digest_oiE * Ttox;
-    
-    k_oiE_death  := 0.443960624771928 
+    k_oiE_death   = 0.443960624771928 
+
     ##LDH
     J_LDH_release:= (LDH_RBC/ Vol_blood)* (J_R_death+ J_E_death + J_iE_death + J_iE_rupture + J_oiE_death) 
     J_LDH_decay  := LDH * k_LDH_decay
@@ -149,10 +149,6 @@
     Hkt := (Vol_E * E + Vol_R * R + Vol_iE * iE + Vol_oiE * oiE) / Vol_blood            #0.4 ~ 40 %, #hier fehlen noch MCHC von infected Zellen https://www.charite.de/fileadmin/user_upload/microsites/m_cc05/ilp/referenzdb/30451.htm    https://www.labor-und-diagnose-2020.de/k15.html
     Hb  := (Vol_E * E * Hb_conc_E + Vol_R * R * Hb_conc_R +  Vol_iE * iE * Hb_conc_iE + Vol_oiE * oiE * Hb_conc_oiE  ) / (10*Vol_blood)     #in g/dl      https://www.charite.de/fileadmin/user_upload/microsites/m_cc05/ilp/referenzdb/30459.htm
 
-    ## HP, fHb
-    #M_Hb = 64500              # g/mol, Molare Masse 
-    #M_HP = 1e5                # Molare Masse von HP # https://link.springer.com/chapter/10.1007/978-3-662-48986-4_1389
-
     ## Parasitemie and RPI
     parasitemia := iE*100 / (E + R + iE + oiE )          # in percent, bsp 0.5
     R_percent   := 100*R / (R + E + iE + oiE )           # in % bsp. 50%
@@ -173,10 +169,7 @@
     t_halb_ART_decay = 1/12   #Halbwertszeit von 2h -> verlässliche quelle noch suchen
     ##LDH
     t_halb_LDH_decay = 4      #(3-5 Tage), https://www.medicoconsult.de/ldh/
-    #Haptoglobin, fHb
-    #t_halb_HP_decay = 5         # 2-5 Tage zotero, 1Quellen: https://link.springer.com/chapter/10.1007/978-3-662-48986-4_1389 und weiterverfolgen https://archive.org/stream/WilliamsHematology9thEditionMcGrawHill_201805/Williams%20Hematology%2C%209th%20Edition%20McGraw-Hill_djvu.txt
-    #t_halb_HCC_decay = 0.00694  #in days,  ca 10min Springer (Gressner, 2019)
-    
+
     ##parameter für t1/2 von R und P #müssen gefittet werden
     t_R_a_max = 3.5327734516666713
     s_R_a = 5.997437274180615
@@ -198,13 +191,9 @@
     h_art    = 2.0      #Hill-coefficient, muss gefittet werden (Angus 2002)
     ID50    = 20       # Annahme bei hälber konz. halbe inhibition; 0.6*75 inhibition-dosis (muss geschätzt werden, gerade gibt es die PC50 an, parasite clearance) in mg/kg (Angus 2002)* 75kg(Annahme ungefähr 75kg Gewicht)
 
-    #Parameter für k_E_death
-    s_BH = 0.001
+    #Parameter für J_R_death
     fac_R_d = 0.0
-    #Parameter for event changed t_E_death
-    #t_E_death_inf = 80
-    #t_E_death_health = 120
-
+    
     # Events
     ## ART Zugabe, 3x im Abstand von 3h Zugabe von 40mg DHA= Dihydroartemisinin
     events_medication_on = true
@@ -212,8 +201,5 @@
     ACT_dose1: at((time>=t_ART_add)   &&events_medication_on): ART = 400;        #ART in gramm
     ACT_dose2: at((time>=t_ART_add +1)&&events_medication_on): ART = ART+400; 
     ACT_dose3: at((time>=t_ART_add +2)&&events_medication_on): ART = ART+400;
-    ## Life span of uninfected E
-    #Healthy: at(M<10): t_E_death=t_E_death_health;
-    #Infection_E_life_reduction: at(M>=10): t_E_death = t_E_death_inf;
 
     QN_InhReinfection: at((M<=1000)&&(time>=t_ART_add)&&(events_medication_on==true)): k_E_infect=0;

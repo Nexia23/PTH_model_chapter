@@ -4,7 +4,7 @@ import pandas as pd
 import tellurium as te
 
 
-def get_steady_state(model, pars: dict):
+def get_steady_state(model, pars: dict, model_name: str ='general'):
     for p in pars:
         try:
             model.setValue(p, pars[p])    # CAUTION: if you include a volume which is not 1 in the model, species might get fucked up
@@ -37,9 +37,22 @@ def get_steady_state(model, pars: dict):
     J_E_death_init = E_init * 2*np.log(2) / model.t_E_death
     J_R_death_init = R_init * model.k_R_death
     LDH_RBC_init = (J_LDH_decay_init * model.Vol_blood) / (J_E_death_init + J_R_death_init ) 
+    
+    eq_dict = {}
+    # Immune response in steady state
+    if model_name == 'immune':
+        k_digest_E_init   = model.k_E_death/model.Ttox
+        k_digest_iE_init  = 10 * k_digest_E_init 
+        k_digest_M_init   = k_digest_E_init
+        k_digest_oiE_init = model.k_oiE_death/model.Ttox
+
+        eq_dict['k_digest_E']  = k_digest_E_init
+        eq_dict['k_digest_iE'] = k_digest_iE_init
+        eq_dict['k_digest_M']  = k_digest_M_init
+        eq_dict['k_digest_oiE'] = k_digest_oiE_init
 
     # setting initial values/params
-    eq_dict = {}
+    
     eq_dict['E'] = E_init
     eq_dict['R'] = R_init
     eq_dict['P'] = P_init
@@ -51,8 +64,8 @@ def get_steady_state(model, pars: dict):
 
     return eq_dict
 
-def set_model_to_ss(model, pars: dict):
-    update_pars = get_steady_state(model, pars)
+def set_model_to_ss(model, pars: dict, model_name: str ='general'):
+    update_pars = get_steady_state(model, pars, model_name)
     for p in update_pars:
         try:
             model.setValue(p, update_pars[p])    # CAUTION: if you include a volume which is not 1 in the model, species might get fucked up
@@ -65,10 +78,11 @@ def set_model_to_ss(model, pars: dict):
 
 class FitManager():
 
-    def __init__(self, model, data ) -> None:
+    def __init__(self, model, data, name) -> None:
         self.model = model
         self.data = data
         self.default_pre_t = 10
+        self.model_name = name
 
 
     def objective_function(self, **pars):
@@ -88,7 +102,7 @@ class FitManager():
             usedpars = {k.replace("_"+key,""):v for k,v in pars.items() if key in k or not k.split('_')[-1] in keys}
 
             # set model to steady state
-            self.model = set_model_to_ss(self.model, usedpars)
+            self.model = set_model_to_ss(self.model, usedpars, self.model_name)
             
             # simulate 
             t_max = self.data[key]['Time'].max()

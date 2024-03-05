@@ -53,10 +53,10 @@
     Ttox_birth:     -> Ttox ; J_Ttox_birth
     Ttox_decay: Ttox->      ; J_Ttox_decay
     #Immune Fluxes
-    J_Treg_prod  := beta_Treg * (E+oiE_5+oiE_6) + beta_in_Treg * (M+iE+oiE_5+oiE_6)
+    J_Treg_prod  := beta_Treg * (E+oiE_5+oiE_6) + beta_in_Treg * (M+iE+oiE)
     J_Treg_decay := delta_Treg * Treg
     J_Ttox_birth := J_Ttox_prod + J_Ttox_pfeed
-    J_Ttox_prod  := mu_tox * (E+oiE_5+oiE_6)/Treg + mu_in_tox*(M+iE+oiE_5+oiE_6)/Treg
+    J_Ttox_prod  := mu_tox * (E+oiE_5+oiE_6)/Treg + mu_in_tox*(M+iE+oiE)/Treg
     J_Ttox_pfeed := (V_f*Ttox^2) / (K_f+Ttox)
     J_Ttox_decay := delta_Ttox * Ttox + epsilon * Ttox^2
     

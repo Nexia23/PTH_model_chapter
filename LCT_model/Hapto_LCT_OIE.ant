@@ -39,11 +39,11 @@
     Raging:      R -> E     ; J_R_aging        
     Edeath:      E ->       ; J_E_death       
     ##parasite lifecircle 
-    Rinfect:    R+M -> iE   ; J_R_infect
-    Einfect:    E+M -> iE   ; J_E_infect     
+    Rinfect:   R+M -> iE    ; J_R_infect
+    Einfect:   E+M -> iE    ; J_E_infect     
     iEdeath:    iE ->       ; J_iE_death     
     iErupture:  iE -> 16M   ; J_iE_rupture  # Tumwiine (2008) the 4 is kind of arbitrary, question is how many relaeased merozoits actually reinvade
-    deathofM:      M ->     ; J_M_death
+    deathofM:    M ->       ; J_M_death
     ##Artesunate treatment
     ARTdeath:  ART ->       ; J_ART_decay
     iE_treat:   iE -> oiE_1 ; J_iE_pit     
@@ -54,14 +54,14 @@
 	oiE_5 => oiE_6; oiE_5*k_oiE_death;
     oiE_6 =>; J_oiE_death;
     ##LDH
-    LDHrelease:    -> LDH   ; J_LDH_release   
-    LDHdecay:  LDH ->       ; J_LDH_decay 
+    LDHrelease:     -> LDH   ; J_LDH_release   
+    LDHdecay:  LDH  ->       ; J_LDH_decay 
     ## fHb, Haptoglobin
-    HPprod:        -> HP    ; J_HP_prod
-    HPdecay:    HP ->       ; J_HP_decay
-    fHbrelease:    -> fHb   ; J_fHb_release
+    HPprod:         -> HP    ; J_HP_prod
+    HPdecay:    HP  ->       ; J_HP_decay
+    fHbrelease:     -> fHb   ; J_fHb_release
     HCCbind: 5fHb+HP-> HCC   ; J_HCC_binding   #2:1 stöchiometrie (Andersen, 2012)
-    HCCdecay:  HCC ->       ; J_HCC_decay  
+    HCCdecay:   HCC ->       ; J_HCC_decay  
 
     # Assignments, Fluxes
     ##Erythropoese
@@ -74,16 +74,16 @@
     t_P_aging    := t_mat_P - rpi_step_func
 
     J_R_death    := R * k_R_death 
-    k_R_death    :=  0 + fac_R_d * s_BH * (k_switch_fHb) #J_oiE_death   # in 1/days,Annahme
+    k_R_death    := 0 + fac_R_d * s_BH * (k_switch_fHb) #J_oiE_death   # in 1/days,Annahme
 
     J_R_aging    := R * k_R_aging
     k_R_aging    := ln(2) / (rpi_step_func/2)    # in 1/days 
-    rpi_step_func := 1 + scale_rpi/ (1+exp(slope_rpi*(Hkt - step_1)))+ scale_rpi/ (1+exp(slope_rpi*(Hkt - step_2)))+ scale_rpi/ (1+exp(slope_rpi*(Hkt - step_3)))
+    rpi_step_func:= 1 + scale_rpi/ (1+exp(slope_rpi*(Hkt - step_1)))+ scale_rpi/ (1+exp(slope_rpi*(Hkt - step_2)))+ scale_rpi/ (1+exp(slope_rpi*(Hkt - step_3)))
 
     J_E_death    := E * k_E_death 
     k_E_death    := 2*ln(2) / (t_E_death) + s_BH * (k_switch_fHb) #J_oiE_death
     
-    k_switch_fHb:= switch_fHb / (1+exp(-par1_fHb * (fHb - par2_fHb-(1000* fHb_conc_0 / M_Hb))))
+    k_switch_fHb := switch_fHb / (1+exp(-par1_fHb * (fHb - par2_fHb-(1000* fHb_conc_0 / M_Hb))))
     par1_fHb = 1e5
     par2_fHb = 2e-4
     switch_fHb = 6e3
@@ -118,7 +118,7 @@
     k_LDH_decay   = ln(2) / t_halb_LDH_decay
     #Haptoglobin
     J_HP_prod         = J_HP_decay + J_HCC_binding           # 2* 6.799770420550107e+28 / (1+ exp(-1e-22*(fHb-9.33643410852713e+22)))  #J_HP_decay + J_HCC_binding  #wie viele verloren gehen durch #  #
-    J_HP_decay        = HP * k_HP_decay 
+    J_HP_decay       := HP * k_HP_decay 
     J_fHb_release    := J_fHb_release_R + J_fHb_release_E + J_fHb_release_iE + J_fHb_release_oiE
     J_fHb_release_R  := Hb_conc_R   * J_R_death   * Vol_R  / (M_Hb * Vol_plasma)
     J_fHb_release_E  := Hb_conc_E   * J_E_death   * Vol_E  / (M_Hb * Vol_plasma)

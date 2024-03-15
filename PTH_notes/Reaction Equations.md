@@ -6,7 +6,7 @@ $\frac{dLDH}{dt}=\frac{LDH_{Blood}}{V_{Blood}}\cdot((P \cdot \frac{( 1 + k_{P,d}
 **Infection**
 $\frac{diE}{dt}= M\cdot(E+R)-iE\cdot (k_{iE,d,0} + (1-k_{iE,pit,frac}) \cdot \frac{k_{iE, ART_{max}} \cdot (ART^{h_{ART}}}{ART^{h_{ART}}+ID_{50}^{h_{ART}}})-iE\cdot k_{iE,rupture}$
 $\frac{dM}{dt}=16\cdot iE\cdot k_{iE,rupture}-M\cdot k_{M,d}$
-$\frac{doiE}{dt}=iE\cdot k_{iE,pit}-oiE_{12}\cdot k_{oiE,d}$ , as only real death rest of oiE species age
+$\frac{doiE}{dt}=iE\cdot k_{iE,pit}-oiE_{6}\cdot k_{oiE,d}$ , as only real death rest of oiE species age
 **Medication**
 $\frac{dART}{dt}=ART\cdot\frac{ln(2)}{t_{ART,decay}}$
 ## Parameters

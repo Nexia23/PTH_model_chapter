@@ -11,7 +11,7 @@ import json
 def get_params_bounds(model_name):
     bounds = OrderedDict({
         #'Hkt_init': (0.35, 0.55, False),   
-        'k_E_infect': (7e-7 , 4.5e-5, True),    # jetzt paramscan früher (1e-8 , 1e-4),
+        'k_E_infect': (7e-7 , 4.5e-5, True),    # jetzt paramscan frueher (1e-8 , 1e-4),
         'tropism': (2, 200, False),
         'M':  (1e2, 5e3, True),
         'a_P_d': (15.6e1, 1e7, True),        
@@ -159,7 +159,10 @@ def main():
             "non":pd.read_csv("non_pth.csv")}
     data_used =["pth.csv",
                 "non_pth.csv"]
-
+    # Estimation 
+    pop =  30
+    if model_name=='immune':
+        pop = 100
     est_obj = FitManager(model, data, model_name)    
     ParamEster = ParameterEstimator()
     bounds = get_params_bounds(model_name)
@@ -168,7 +171,7 @@ def main():
     best_score, best_parameters, runtime = ParamEster.run(method='cma', iterations=20,
                                                           run_id=run_id, n_lhs=1,
                                                           optimizer_args={'CMA_stds': stds,
-                                                                          'popsize': 30})
+                                                                          'popsize': pop})
     # Saving of estimation results
     if 'pre_t' in best_parameters:  
         pre_t = best_parameters.pop('pre_t')

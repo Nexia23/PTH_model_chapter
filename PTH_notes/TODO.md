@@ -1,19 +1,22 @@
+- [ ] #CHECK Hapto model, should release of fHb impact all Erythrocytes types? Seems logical 
 - [ ] write pandas table for parameters of model or MD at least
-- [ ] #CHECK estimation of immune system model results in weird Hkt_init values, why does it need such values?
-	-> could the steady state calc be wrong, as of now idea is $k_{E,digest} = \frac{k_{E,death}}{T_{tot,init}}$, so that there is no difference, is that somehow wrong?
 - [ ] #CHECK haptoglobin steady state calc might be wrong, since little fHB present in the beginning, but fHb actually at zero in model at steady state so probably not relevant 
 - [ ] read about immune system reaction to PS and anitPS, could be reason for immune answer 
 
+- [x] #CHECK estimation of immune system model results in weird Hkt_init values, why does it need such values?
+	-> could the steady state calc be wrong, as of now idea is $k_{E,digest} = \frac{k_{E,death}}{T_{tot,init}}$, so that there is no difference, is that somehow wrong?
+	-> steady state calc was wrong used [[SymPy]] to solve 
 - [x] Step function for Reti maturation time
 	- [x] include in model
 - [x] plot Fluxes of R and Ps to see where the low is 
-- [ ] k_P_birth does have to be constant from steady state calc?
+- [x] k_P_birth does have to be constant from steady state calc?
 	- reti number low and idea was to fit this as other half life times are more known or already fitted in case of maturation time 
 		- if estimator can guess better score
 		- estimation result higher than calculated value
 			-> 294 calculation vs. 356 pth or 385 non-pth
 		- but stable state for Hb and all cell types way to high
 	**-> logistic function or something implement?**
+	-> stays constant, less work
 - [x] update [[Reaction Equations]] for hill function of P_death
 
 - [ ] improve Data analysis

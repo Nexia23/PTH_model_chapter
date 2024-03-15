@@ -2,7 +2,7 @@ import sys
 import numpy as np
 import pandas as pd
 import tellurium as te
-
+from sympy import solveset, S, symbols
 
 def get_steady_state(model, pars: dict, model_name: str ='general'):
     for p in pars:
@@ -41,11 +41,25 @@ def get_steady_state(model, pars: dict, model_name: str ='general'):
     eq_dict = {}
     # Immune response in steady state
     if model_name == 'immune':
-        k_digest_E_init   = model.k_E_death/model.Ttox
+        Treg_init = model.beta_Treg/model.delta_Treg * E_init
+        
+        T = symbols('T')
+        M = model.mu_tox * E_init / Treg_init # model.mu_tox * model.delta_Treg / model.beta_Treg # 
+        A = -model.epsilon
+        B = model.V_f - model.delta_Ttox - model.K_f * model.epsilon
+        C = M - model.delta_Ttox * model.K_f
+        D = M * model.K_f
+        p = solveset(A*T**3 +B*T**2 + C*T + D,T, domain=S.Reals)
+        Ttox_init = float(list(p)[-1])
+
+        print(Ttox_init)
+        k_digest_E_init   = model.k_E_death/Ttox_init
         k_digest_iE_init  = 10 * k_digest_E_init 
         k_digest_M_init   = k_digest_E_init
-        k_digest_oiE_init = model.k_oiE_death/model.Ttox
+        k_digest_oiE_init = model.k_oiE_death/Ttox_init
 
+        eq_dict['Treg']  = Treg_init
+        eq_dict['Ttox']  = Ttox_init 
         eq_dict['k_digest_E']  = k_digest_E_init
         eq_dict['k_digest_iE'] = k_digest_iE_init
         eq_dict['k_digest_M']  = k_digest_M_init
@@ -64,13 +78,15 @@ def get_steady_state(model, pars: dict, model_name: str ='general'):
 
     return eq_dict
 
-def set_model_to_ss(model, pars: dict, model_name: str ='general'):
+def set_model_to_ss(model, pars: dict, model_name: str='general'):
     update_pars = get_steady_state(model, pars, model_name)
     for p in update_pars:
         try:
             model.setValue(p, update_pars[p])    # CAUTION: if you include a volume which is not 1 in the model, species might get fucked up
         except RuntimeError:
             continue
+        except TypeError:
+            print(p, update_pars[p])
    # print(update_pars)
     return model
 

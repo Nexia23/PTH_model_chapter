@@ -65,6 +65,8 @@ def get_params_bounds(model_name):
     extra_bounds = {}
     if model_name == 'Hapto':
         extra_bounds = {
+            't_halb_HP_decay' : (2, 6, False),         # 2-5 Tage zotero, 1Quellen: https://link.springer.com/chapter/10.1007/978-3-662-48986-4_1389 und weiterverfolgen https://archive.org/stream/WilliamsHematology9thEditionMcGrawHill_201805/Williams%20Hematology%2C%209th%20Edition%20McGraw-Hill_djvu.txt
+            't_halb_HCC_decay': (3e-3, 9e-3, False), 
             # Pth specific parameteres
             'par1_fHb_pth': (4e3, 6e3, False),
             'par2_fHb_pth': (4e-4, 4e-3, False),
@@ -93,12 +95,12 @@ def get_params_bounds(model_name):
             'epsilon':(1e-6, 2e0, True),#     = 0.8
             
             # Pth specific parameteres
-            'Hkt_init_pth': (0.35, 0.55, False),
-            'beta_in_Treg_pth':(2e-4, 2e0, True),
+            #'Hkt_init_pth': (0.35, 0.55, False),
+            'beta_in_Treg_pth':(2e-4, 2e2, True),
             'mu_in_tox_pth':(1e0,1e8, True),      # 1e5
             # non-Pth specific parameteres
-            'Hkt_init_non': (0.35, 0.55, False),
-            'beta_in_Treg_non':(2e-4, 2e0, True),
+            #'Hkt_init_non': (0.35, 0.55, False),
+            'beta_in_Treg_non':(2e-4, 2e2, True),
             'mu_in_tox_non':(1e0,1e8, True),      # 1e5
             }
     bounds.update(extra_bounds)

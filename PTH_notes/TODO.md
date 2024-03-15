@@ -1,3 +1,9 @@
+- [ ] write pandas table for parameters of model or MD at least
+- [ ] #CHECK estimation of immune system model results in weird Hkt_init values, why does it need such values?
+	-> could the steady state calc be wrong, as of now idea is $k_{E,digest} = \frac{k_{E,death}}{T_{tot,init}}$, so that there is no difference, is that somehow wrong?
+- [ ] #CHECK haptoglobin steady state calc might be wrong, since little fHB present in the beginning, but fHb actually at zero in model at steady state so probably not relevant 
+- [ ] read about immune system reaction to PS and anitPS, could be reason for immune answer 
+
 - [x] Step function for Reti maturation time
 	- [x] include in model
 - [x] plot Fluxes of R and Ps to see where the low is 
@@ -9,11 +15,12 @@
 		- but stable state for Hb and all cell types way to high
 	**-> logistic function or something implement?**
 - [x] update [[Reaction Equations]] for hill function of P_death
-- [ ] write pandas table for parameters of model or MD at least
+
 - [ ] improve Data analysis
-	- [ ] divide patient groups by descent and/or immunity 
-		-> possible groups: NaN(non-African), non-immune(African decent), semi-immune(African decent)
-			-> for further Hb level or male female
+	- [x] divide patient groups by descent and/or immunity 
+		- possible groups: NaN(non-African), non-immune(African decent), semi-immune(African decent)
+		-> data set per group very small, minor changes in quality #CHECK  
+		-> for further Hb level or male female
 - [x] change Parameters:
 	-> new parameter estimation -> improved cost function
 		- weighted error function 10 * R_error
@@ -48,4 +55,4 @@
 	- [x] longer oiE life span
 		-> if set for 7-28 (before 7-21), lowers number of groups to 7 (before 12) and slower k value
 		-> less groups but slower aging
-- [ ] read about immune system reaction to PS and anitPS, could be reason for immune answer 
+- [x] implement Akaike information criterion calc to evaluate models

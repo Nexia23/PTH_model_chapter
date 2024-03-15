@@ -1,11 +1,11 @@
 # steady state 
-    t_mat_P = 7
+    t_mat_P    = 7
     t_R_a_init =     1 + scale_rpi/ (1+exp(slope_rpi*(Hkt_init - step_1)))+ scale_rpi/ (1+exp(slope_rpi*(Hkt_init - step_2)))+ scale_rpi/ (1+exp(slope_rpi*(Hkt_init - step_3)))  #in days, Entwicklung von Stammzelle zum Retikulozyt dauert ca. 5-9 Tage, plus 3 Tage die er schon retikulozyte ist aber noch in Rückenmark
     t_P_a_init = t_mat_P - t_R_a_init
     
-    Hkt_init = 0.45
-    k_P_birth   = J_P_death + J_P_aging     # P *(k_P_death +k_P_aging)
-    LDH_RBC = (J_LDH_decay * Vol_blood) / (J_E_death +J_R_death ) #  U  (pro RBC)  #https://www.ncbi.nlm.nih.gov/books/NBK557536/?report=printable
+    Hkt_init  = 0.45
+    k_P_birth = J_P_death + J_P_aging     # P *(k_P_death +k_P_aging)
+    LDH_RBC   = (J_LDH_decay * Vol_blood) / (J_E_death +J_R_death ) #  U  (pro RBC)  #https://www.ncbi.nlm.nih.gov/books/NBK557536/?report=printable
 
     #species initiation
     ##erythropoisis
@@ -84,8 +84,8 @@
     k_E_death    := 2*ln(2) / (t_E_death) + s_BH * (k_switch_fHb) #J_oiE_death
     
     k_switch_fHb := switch_fHb / (1+exp(-par1_fHb * (fHb - par2_fHb-(1000* fHb_conc_0 / M_Hb))))
-    par1_fHb = 1e5
-    par2_fHb = 2e-4
+    par1_fHb   = 1e5
+    par2_fHb   = 2e-4
     switch_fHb = 6e3
 
     ##Infection with parasite
@@ -203,7 +203,7 @@
     h_art    = 2.0      #Hill-coefficient, muss gefittet werden (Angus 2002)
     ID50    = 20       # Annahme bei hälber konz. halbe inhibition; 0.6*75 inhibition-dosis (muss geschätzt werden, gerade gibt es die PC50 an, parasite clearance) in mg/kg (Angus 2002)* 75kg(Annahme ungefähr 75kg Gewicht)
 
-    #Parameter für k_E_death
+    #Parameter für k_E or R_death
     s_BH = 0.001
     fac_R_d = 0.0
     #Parameter for event changed t_E_death

@@ -42,18 +42,20 @@ def get_steady_state(model, pars: dict, model_name: str ='general'):
     # Immune response in steady state
     if model_name == 'immune':
         Treg_init = model.beta_Treg/model.delta_Treg * E_init
-        
+        # Calc T_tox_init from equation
         T = symbols('T')
         M = model.mu_tox * E_init / Treg_init # model.mu_tox * model.delta_Treg / model.beta_Treg # 
         A = -model.epsilon
         B = model.V_f - model.delta_Ttox - model.K_f * model.epsilon
         C = M - model.delta_Ttox * model.K_f
         D = M * model.K_f
+        # Use SymPy to find only the real solutions for T_init
         p = solveset(A*T**3 +B*T**2 + C*T + D,T, domain=S.Reals)
+        # Take last value as often only positve and highest value
         Ttox_init = float(list(p)[-1])
 
-        print(Ttox_init)
-        k_digest_E_init   = model.k_E_death/Ttox_init
+        #print(Ttox_init)
+        k_digest_E_init   = model.k_R_aging * R_init/(E_init*Ttox_init) #model.k_E_death / 546.8315756308999
         k_digest_iE_init  = 10 * k_digest_E_init 
         k_digest_M_init   = k_digest_E_init
         k_digest_oiE_init = model.k_oiE_death/Ttox_init

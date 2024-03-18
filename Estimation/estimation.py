@@ -66,7 +66,7 @@ def get_steady_state(model, pars: dict, model_name: str ='general'):
         eq_dict['k_digest_iE'] = k_digest_iE_init
         eq_dict['k_digest_M']  = k_digest_M_init
         eq_dict['k_digest_oiE'] = k_digest_oiE_init
-    # Hapto in steady state
+    # Hapto in steady state k_deaths change
     elif model_name == 'Hapto':
         # E_init determined by Hkt_init, t_R_a_init and t_E_death (fixed)
         E_init = (model.Hkt_init * model.Vol_blood) / (model.Vol_E + (model.k_E_death/(2*np.log(2)/t_R_a_init))*model.Vol_R)

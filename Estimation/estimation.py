@@ -56,7 +56,7 @@ def get_steady_state(model, pars: dict, model_name: str ='general'):
 
         #print(Ttox_init)
         k_digest_E_init   = model.k_R_aging * R_init/(E_init*Ttox_init) #model.k_E_death / 546.8315756308999
-        k_digest_iE_init  = 10 * k_digest_E_init 
+        k_digest_iE_init  = 48 * k_digest_E_init 
         k_digest_M_init   = k_digest_E_init
         k_digest_oiE_init = model.k_oiE_death/Ttox_init
 
@@ -66,9 +66,30 @@ def get_steady_state(model, pars: dict, model_name: str ='general'):
         eq_dict['k_digest_iE'] = k_digest_iE_init
         eq_dict['k_digest_M']  = k_digest_M_init
         eq_dict['k_digest_oiE'] = k_digest_oiE_init
+    # Hapto in steady state
+    elif model_name == 'Hapto':
+        # E_init determined by Hkt_init, t_R_a_init and t_E_death (fixed)
+        E_init = (model.Hkt_init * model.Vol_blood) / (model.Vol_E + (model.k_E_death/(2*np.log(2)/t_R_a_init))*model.Vol_R)
+        # R_init from E_init , t_R_a_init and t_E_death (fixed)
+        R_init = E_init *( model.k_E_death/(2*np.log(2)/t_R_a_init))
+        # P_init from R_init, t_R_a_init and t_P_a_init
+        P_init = (R_init * (model.k_R_death + 2*np.log(2)/t_R_a_init))/ (2**10 *2*np.log(2) / t_P_a_init)    
 
-    # setting initial values/params
+        # Hb_init, needed for J_P_death
+        Hb_init = (model.Vol_E * E_init * model.Hb_conc_E + model.Vol_R * R_init * model.Hb_conc_R) / (10*model.Vol_blood)  # conc unit from g/l to g/dl, thus div. by 10
+
+        # equilibrating precursors (P)
+        J_P_death_init = P_init * (model.a_P_d / ( 1 + model.k_P_d * Hb_init**model.r_P_d))**(-1)
+        J_P_aging_init = P_init * np.log(2) / (t_P_a_init/2)
+        k_P_birth_init   = J_P_death_init + J_P_aging_init
+
+        # equilibrating LDH
+        J_LDH_decay_init = model.LDH * (np.log(2) / model.t_halb_LDH_decay)
+        J_E_death_init = E_init * model.k_E_death
+        J_R_death_init = R_init * model.k_R_death
+        LDH_RBC_init = (J_LDH_decay_init * model.Vol_blood) / (J_E_death_init + J_R_death_init )
     
+    # setting initial values/params
     eq_dict['E'] = E_init
     eq_dict['R'] = R_init
     eq_dict['P'] = P_init

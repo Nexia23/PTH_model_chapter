@@ -81,8 +81,6 @@ def get_params_bounds(model_name):
         bounds.pop('s_BH_pth')
         bounds.pop('s_BH_non')
         extra_bounds = {
-            'Treg':(1e2,1e3, False),
-            'Ttox':(1e2, 1e3, False),
             'k_digest_R': (1e-12, 1e0, True), 
             'beta_Treg': (1e-4, 1e0, True),
             #'beta_in_Treg':(2e-4, 2e0, True),
@@ -162,7 +160,7 @@ def main():
     # Estimation 
     pop =  30
     if model_name=='immune':
-        pop = 100
+        pop = 150
     est_obj = FitManager(model, data, model_name)    
     ParamEster = ParameterEstimator()
     bounds = get_params_bounds(model_name)
@@ -182,7 +180,7 @@ def main():
     keys = ['pth','non']
     for key in data.keys():
         usedpars = {k.replace("_"+key,""):v for k,v in best_parameters.items() if key in k or not k.split('_')[-1] in keys}
-        dummy_dict = get_steady_state(model, usedpars)
+        dummy_dict = get_steady_state(model, usedpars, model_name)
         update_parameters[key] = {k:v for k,v in dummy_dict.items() }
 
     best_parameters['pre_t'] = pre_t

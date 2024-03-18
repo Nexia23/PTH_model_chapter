@@ -55,16 +55,18 @@
     #Immune Fluxes
     J_Treg_prod  := beta_Treg * (E+oiE_5+oiE_6) + beta_in_Treg * (M+iE+oiE)
     J_Treg_decay := delta_Treg * Treg
+    
     J_Ttox_birth := J_Ttox_prod + J_Ttox_pfeed
     J_Ttox_prod  := mu_tox * (E+oiE_5+oiE_6)/Treg + mu_in_tox*(M+iE+oiE)/Treg
     J_Ttox_pfeed := (V_f*Ttox^2) / (K_f+Ttox)
     J_Ttox_decay := delta_Ttox * Ttox + epsilon * Ttox^2
     
     #Immune Parameter
-    Treg = 500
-    Ttox = 500
-    k_digest_E   = k_E_death/Ttox
-    k_digest_iE  = 10 * k_digest_E 
+    Treg = beta_Treg/delta_Treg * E
+    Ttox = R * k_R_aging / (E * k_digest_E)
+
+    k_digest_E   = k_E_death / 546.8315756308999
+    k_digest_iE  = 48 * k_digest_E 
     k_digest_M   = k_digest_E
     k_digest_oiE = k_oiE_death/Ttox
     k_digest_R   = 0 

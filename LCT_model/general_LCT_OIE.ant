@@ -1,11 +1,11 @@
 # steady state 
-    t_mat_P = 7
-    t_R_a_init =     1 + scale_rpi/ (1+exp(slope_rpi*(Hkt_init - step_1)))+ scale_rpi/ (1+exp(slope_rpi*(Hkt_init - step_2)))+ scale_rpi/ (1+exp(slope_rpi*(Hkt_init - step_3)))  #in days, Entwicklung von Stammzelle zum Retikulozyt dauert ca. 5-9 Tage, plus 3 Tage die er schon retikulozyte ist aber noch in Rückenmark
+    t_mat_P    = 7
+    t_R_a_init = 1 + scale_rpi/ (1+exp(slope_rpi*(Hkt_init - step_1)))+ scale_rpi/ (1+exp(slope_rpi*(Hkt_init - step_2)))+ scale_rpi/ (1+exp(slope_rpi*(Hkt_init - step_3)))  #in days, Entwicklung von Stammzelle zum Retikulozyt dauert ca. 5-9 Tage, plus 3 Tage die er schon retikulozyte ist aber noch in Rückenmark
     t_P_a_init = t_mat_P - t_R_a_init
     
-    Hkt_init = 0.45
-    k_P_birth   = J_P_death + J_P_aging     # P *(k_P_death +k_P_aging)
-    LDH_RBC = (J_LDH_decay * Vol_blood) / (J_E_death +J_R_death ) #  U  (pro RBC)  #https://www.ncbi.nlm.nih.gov/books/NBK557536/?report=printable
+    Hkt_init   = 0.45
+    k_P_birth  = J_P_death + J_P_aging     # P *(k_P_death + k_P_aging)
+    LDH_RBC    = (J_LDH_decay * Vol_blood) / (J_E_death + J_R_death ) #  U  (pro RBC)  #https://www.ncbi.nlm.nih.gov/books/NBK557536/?report=printable
 
     #species initiation
     ##erythropoisis
@@ -63,7 +63,7 @@
 
     J_R_aging    := R * k_R_aging
     k_R_aging    := ln(2) / (rpi_step_func/2)    # in 1/days 
-    rpi_step_func := 1 + scale_rpi/ (1+exp(slope_rpi*(Hkt - step_1)))+ scale_rpi/ (1+exp(slope_rpi*(Hkt - step_2)))+ scale_rpi/ (1+exp(slope_rpi*(Hkt - step_3)))
+    rpi_step_func:= 1 + scale_rpi/ (1+exp(slope_rpi*(Hkt - step_1)))+ scale_rpi/ (1+exp(slope_rpi*(Hkt - step_2)))+ scale_rpi/ (1+exp(slope_rpi*(Hkt - step_3)))
 
     J_E_death    := E * k_E_death 
     k_E_death    := 2*ln(2) / (t_E_death) + s_BH * J_oiE_death
@@ -139,11 +139,7 @@
     t_halb_ART_decay = 1/12   #Halbwertszeit von 2h -> verlässliche quelle noch suchen
     ##LDH
     t_halb_LDH_decay = 4      #(3-5 Tage), https://www.medicoconsult.de/ldh/
-       
-    ##parameter für t1/2 von R und P #müssen gefittet werden
-    t_R_a_max = 3.5327734516666713
-    s_R_a = 5.997437274180615
-    Hkt_0 = 0.24658779053348504
+
     ## Stepfunction for R maturation time
     slope_rpi = 250
     scale_rpi = 0.5

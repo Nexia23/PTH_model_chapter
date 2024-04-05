@@ -10,7 +10,7 @@
     #species initiation
     ##erythropoisis
     P   = (R * (k_R_death + log(2)/(t_R_a_init/2)))/ (2^10 *log(2) / (t_P_a_init/2))     #453.04169624571756  k_R_death -> for ss = 0 since no ioE
-    R   =  E * k_E_death/(k_R_aging)                                                     #46696.30405453991 
+    R   =  E * k_E_death/(2*log(2)/t_R_a_init)                                                     #46696.30405453991 
     E   = (Hkt_init * Vol_blood * (t_E_death/2))/ ( ((t_E_death/2)* Vol_E) + ((t_R_a_init/2)*Vol_R)) #5566629.619931825  #    cells, bezieht sich auf gesamtvolumen 1 mikroliter
     ##parasite lifecircle 
     M   = 40e3     #Merozoiten,(Austin, 1997) pro mikroliter (10^6 cells/ml => 10^3 cells/mikroliter)

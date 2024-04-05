@@ -6,13 +6,13 @@
 		- [ ] k_P_birth #model_extension 
 		- [x] J_P_death representations(=hill function [here](https://pubmed.ncbi.nlm.nih.gov/7606142/)) #model_extension 
 	- [ ] read about malaria infection models, obviously Rebeccas stuff is good start
-		- [ ] look at immune responses or medication addition
+		- [x] look at immune responses or medication addition
 	- [ ] read about PADH 
 		- [x] what is the definition
 		- [x] first formulation and hypothesis for this effect
 - [ ] **Results:**
 	- [ ] describe model and chosen parameters
-		- [ ] improve model .svg of rebacca
+		- [x] improve model .svg of rebacca
 		- [ ] reaction equations
 		- [ ] parameter table (markdown or pandas?)
 			- just time parameters or k values?
@@ -49,5 +49,5 @@
 			- [ ] build small immune response in model #model_extension 
 - [ ] Appendix:
 	- [ ] Sanity check graphs:
-		- [ ] oscillating infection 
-		- [ ] 10% decrease of erythrocytes to see recover to default, does erythropoiesis work?
+		- [x] oscillating infection 
+		- [x] 10% decrease of erythrocytes to see recover to default, does erythropoiesis work?

@@ -1,0 +1,42 @@
+## Model description
+#CHECK ART and ACT logic bomb in writing as ART values used in model but ACT described 
+- [ ] Reaction equations
+	- [ ] write latex
+		- [ ] formatting
+		- [ ] color added reaction parts?
+	- [ ] description
+		- [ ] Erythropoiesis
+		- [ ] infection
+		- [ ] bystander
+- [ ] Parameter selection:
+	- [ ] parameter table
+	- [ ] explain decision which estimated
+## Results part
+- [ ] parameter estimation:
+	- [ ] estimation run stats ~10 runs
+	- [ ] figure for these
+- [ ] create figures 
+	- [ ] oscillation
+	- [ ] 10% drop erythrocytes
+	- [ ] bystander model
+	- [ ] parameter scan
+		- [ ] only risk factors
+		- [ ] most interesting
+- [ ] bystander immune
+	- [ ] equations
+		- [ ] latex write
+		- [ ] description
+	- [ ] figure
+	- [ ] para scan
+- [ ] bystander hapto 
+	- [ ] equations
+		- [x] latex write
+		- [ ] description
+	- [ ] figure
+	- [ ] para scan
+## Discussion
+- [ ] basic model to realty
+- [ ] evaluation of hypothesis 
+	- [ ] immune response
+	- [ ] haptoglobin
+	- [ ] conclusion of preference

@@ -1,8 +1,10 @@
-- [ ] #CHECK Hapto model, should release of fHb impact all Erythrocytes types? Seems logical 
+- [ ] #enhance change Hkt to Hct as everything is in english
+- [ ] sbatch for model estimation ~10 runs each
 - [ ] write pandas table for parameters of model or MD at least
-- [ ] #CHECK haptoglobin steady state calc might be wrong, since little fHB present in the beginning, but fHb actually at zero in model at steady state so probably not relevant 
 - [ ] read about immune system reaction to PS and anitPS, could be reason for immune answer 
-
+- [ ] 
+- [x] #CHECK Hapto model, should release of fHb impact all Erythrocytes types? 
+	-> Seems logical, so changed 
 - [x] #CHECK estimation of immune system model results in weird Hkt_init values, why does it need such values?
 	-> could the steady state calc be wrong, as of now idea is $k_{E,digest} = \frac{k_{E,death}}{T_{tot,init}}$, so that there is no difference, is that somehow wrong?
 	-> steady state calc was wrong used [[SymPy]] to solve 
@@ -59,3 +61,4 @@
 		-> if set for 7-28 (before 7-21), lowers number of groups to 7 (before 12) and slower k value
 		-> less groups but slower aging
 - [x] implement Akaike information criterion calc to evaluate models
+- [x] #CHECK haptoglobin steady state calc might be wrong, since little fHB present in the beginning, but fHb actually at zero in model at steady state so probably not relevant 

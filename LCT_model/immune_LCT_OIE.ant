@@ -53,7 +53,7 @@
     Ttox_birth:     -> Ttox ; J_Ttox_birth
     Ttox_decay: Ttox->      ; J_Ttox_decay
     #Immune Fluxes
-    J_Treg_prod  := beta_Treg * (E+oiE_5+oiE_6) + beta_in_Treg * (M+iE+oiE)
+    J_Treg_prod  := beta_Treg * (E+oiE_5+oiE_6) + beta_in_Treg * (M+iE+oiE) #read up Treg as naming might be confusing 
     J_Treg_decay := delta_Treg * Treg
     
     J_Ttox_birth := J_Ttox_prod + J_Ttox_pfeed

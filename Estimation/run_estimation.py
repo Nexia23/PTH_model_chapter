@@ -160,7 +160,7 @@ def main():
     # Estimation 
     pop =  30
     if model_name=='immune':
-        pop = 300
+        pop = 150
     est_obj = FitManager(model, data, model_name)    
     ParamEster = ParameterEstimator()
     bounds = get_params_bounds(model_name)

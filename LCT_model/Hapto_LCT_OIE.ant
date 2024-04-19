@@ -74,14 +74,14 @@
     t_P_aging    := t_mat_P - rpi_step_func
 
     J_R_death    := R * k_R_death 
-    k_R_death    := 0 + s_BH * (k_switch_fHb) #J_oiE_death   # in 1/days,Annahme
+    k_R_death    := 0 + (k_switch_fHb) #J_oiE_death   # in 1/days,Annahme
 
     J_R_aging    := R * k_R_aging
     k_R_aging    := ln(2) / (rpi_step_func/2)    # in 1/days 
     rpi_step_func:= 1 + scale_rpi/ (1+exp(slope_rpi*(Hkt - step_1)))+ scale_rpi/ (1+exp(slope_rpi*(Hkt - step_2)))+ scale_rpi/ (1+exp(slope_rpi*(Hkt - step_3)))
 
     J_E_death    := E * k_E_death 
-    k_E_death    := 2*ln(2) / (t_E_death) + s_BH * (k_switch_fHb) #J_oiE_death
+    k_E_death    := 2*ln(2) / (t_E_death) + (k_switch_fHb) #J_oiE_death
     
     k_switch_fHb := switch_fHb / (1+exp(-par1_fHb * (fHb - par2_fHb-(1000* fHb_conc_0 / M_Hb))))
     par1_fHb   = 1e5
@@ -94,7 +94,7 @@
     k_E_infect    = 2.02e-6                   # in 1/mikroliter*day ((Austin, 1997) 2e-6
     tropism       = 6                        # P.falciparum has preference for Retis ~2-12 more likely infected                  
     
-    J_iE_death   := iE * k_iE_death + s_BH * (k_switch_fHb)     #einbezug antibodies, spleen
+    J_iE_death   := iE * k_iE_death + (k_switch_fHb)     #einbezug antibodies, spleen
     k_iE_death   := k_iE_death_0  + (1- k_iE_pit_frac) * k_iE_art_max*(ART^h_art/((ART^h_art)+(ID50)^h_art))                          # in 1/days, vereinfacht in Austin(1998)  (0.025  Ma 2019)
 
     J_iE_rupture := iE * k_iE_rupture     #16-32M s.Cowman 2016, Anderson 1989, Diebner 2000
@@ -110,7 +110,7 @@
     J_iE_pit     := iE  * k_iE_pit       #einbezug artesunat
     k_iE_pit     := k_iE_pit_0 + k_iE_pit_frac * k_iE_art_max*(ART^h_art/((ART^h_art)+(ID50)^h_art)) #bei Medikamentengabe nach 8h Maximum an gepitteten RBCs
 
-    J_oiE_death  := oiE_6*k_oiE_death + s_BH * (k_switch_fHb);
+    J_oiE_death  := oiE_6*k_oiE_death + (k_switch_fHb);
     k_oiE_death  := 0.443960624771928
     ##LDH
     J_LDH_release:= (LDH_RBC/ Vol_blood)* (J_R_death+ J_E_death + J_iE_death + J_iE_rupture + J_oiE_death) 

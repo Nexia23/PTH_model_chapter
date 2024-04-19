@@ -28,8 +28,7 @@ for element in "${elements[@]}"; do
 #SBATCH --partition=SiCore
 
 echo "Running job for element: $element (Iteration: $i)"
-# Add your command or job execution here
-# Example: Assuming you want to run a Python script with the element as an argument
+# Add your command, job execution here
 python3 run_estimation.py "$element" "$i"
 EOT
 

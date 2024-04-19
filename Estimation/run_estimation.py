@@ -64,24 +64,28 @@ def get_params_bounds(model_name):
         })
     extra_bounds = {}
     if model_name == 'Hapto':
+        bounds.pop('s_BH_pth')
+        bounds.pop('s_BH_non')
         extra_bounds = {
             't_halb_HP_decay' : (2, 6, False),         # 2-5 Tage zotero, 1Quellen: https://link.springer.com/chapter/10.1007/978-3-662-48986-4_1389 und weiterverfolgen https://archive.org/stream/WilliamsHematology9thEditionMcGrawHill_201805/Williams%20Hematology%2C%209th%20Edition%20McGraw-Hill_djvu.txt
             't_halb_HCC_decay': (3e-3, 9e-3, False), 
             # Pth specific parameteres
             'par1_fHb_pth': (4e3, 6e3, False),
             'par2_fHb_pth': (4e-4, 4e-3, False),
-            'switch_fHb_pth' : (4e3, 8e3, False),
+            'switch_fHb_pth' : (1e-6, 8e3, True),
             # non-Pth specific parameteres
             'par1_fHb_non': (1e3, 1e4, False),
             'par2_fHb_non': (1e-4, 1e-2, True),
-            'switch_fHb_non' : (1e0, 6e4, True),
+            'switch_fHb_non' : (1e-6, 6e3, True),
             }
     elif model_name=="immune":
         # delete not used parameters from bounds
         bounds.pop('s_BH_pth')
         bounds.pop('s_BH_non')
+        bounds.pop('fac_R_d')
         extra_bounds = {
-            'k_digest_R': (1e-12, 1e0, True), 
+            'k_digest_inf': (1e-12, 1e0, True), 
+            'k_digest_R': (1e-15, 1e0, True), 
             'beta_Treg': (1e-4, 1e0, True),
             #'beta_in_Treg':(2e-4, 2e0, True),
             'delta_Treg':(1e-3, 5e2, True),   # 109

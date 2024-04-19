@@ -19,7 +19,7 @@ def get_params_bounds(model_name):
         'r_P_d': (1, 15, False),
         'fac_R_d': (1e-16, 1, False),
         'k_P_art_max': (1e-9, 1e1, True),
-        't_mat_P': (5, 14, False),
+        't_mat_P': (5, 9, False),
         'slope_rpi':(1e0, 500, True),            # own idea
         #'k_M_death': (60, 100, False),
         #'t_E_death': (100, 130, False),

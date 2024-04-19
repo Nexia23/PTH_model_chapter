@@ -84,7 +84,7 @@ def get_params_bounds(model_name):
             'k_digest_R': (1e-12, 1e0, True), 
             'beta_Treg': (1e-4, 1e0, True),
             #'beta_in_Treg':(2e-4, 2e0, True),
-            'delta_Treg':(1e-3, 1e3, True),   # 109
+            'delta_Treg':(1e-3, 5e2, True),   # 109
             'mu_tox':(1e-3,1e2, True),        # 22
             #'mu_in_tox':(1e0,1e8, True),      # 1e5
             'V_f':(1e-2, 5e2, True),           # 165
@@ -95,11 +95,11 @@ def get_params_bounds(model_name):
             # Pth specific parameteres
             #'Hkt_init_pth': (0.35, 0.55, False),
             'beta_in_Treg_pth':(2e-4, 2e2, True),
-            'mu_in_tox_pth':(1e0,1e8, True),      # 1e5
+            'mu_in_tox_pth':(1e-2,1e8, True),      # 1e5
             # non-Pth specific parameteres
             #'Hkt_init_non': (0.35, 0.55, False),
             'beta_in_Treg_non':(2e-4, 2e2, True),
-            'mu_in_tox_non':(1e0,1e8, True),      # 1e5
+            'mu_in_tox_non':(1e-2,1e8, True),      # 1e5
             }
     bounds.update(extra_bounds)
     return bounds

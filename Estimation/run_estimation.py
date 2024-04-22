@@ -82,9 +82,12 @@ def get_params_bounds(model_name):
         # delete not used parameters from bounds
         bounds.pop('s_BH_pth')
         bounds.pop('s_BH_non')
+        bounds.pop('k_M_death_pth')
+        bounds.pop('k_M_death_non')
         bounds.pop('fac_R_d')
+
         extra_bounds = {
-            'k_digest_inf': (1e-12, 1e0, True), 
+            'k_digest_inf': (1e-12, 1e2, True), 
             'k_digest_R': (1e-15, 1e0, True), 
             'beta_Treg': (1e-4, 1e0, True),
             #'beta_in_Treg':(2e-4, 2e0, True),

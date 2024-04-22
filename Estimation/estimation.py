@@ -122,12 +122,15 @@ class FitManager():
             # simulate 
             t_max = self.data[key]['Time'].max()
             species = ['time', 'Hb', '[LDH]', '[R]']
-            if self.name == 'immune':
+            if self.model_name == 'immune':
                 species = ['time', 'Hb', '[LDH]', '[R]','[Treg]','[Ttox]']
             res = self.model.simulate(-pre_t, int(t_max), int(t_max + pre_t + 1),
                                       selections=species)
             res_df = pd.DataFrame(res, columns=res.colnames)
-            
+            if self.model_name == 'immune':
+                t_reg_error = sum(abs(res_df['[Treg]'].values[0]-[500])/500,abs(res_df['[Treg]'].values[-1] -[500])/500)
+                t_tox_error = sum(abs(res_df['[Ttox]'].values[0]-[500])/500,abs(res_df['[Ttox]'].values[-1] -[500])/500)
+                error_sum += t_reg_error.sum() + t_tox_error.sum()
             # only keep timepoints which are in data
             res_df = res_df[res_df['time'].isin(self.data[key]['Time'])]
             # TODO: loop over data columns?
@@ -137,10 +140,7 @@ class FitManager():
                          / (self.data[key]['LDH_mean'].max() - self.data[key]['LDH_mean'].min()))**2
             R_error = ((self.data[key]['[R]_mean'].values - res_df['[R]'].values )  
                        / (self.data[key]['[R]_mean'].max() - self.data[key]['[R]_mean'].min()))**2
-            if self.name == 'immune':
-                t_reg_error = sum(abs(res['[Treg]'].values[0]-[500])/500,abs(res['[Treg]'].values[-1] -[500])/500)
-                t_tox_error = sum(abs(res['[Ttox]'].values[0]-[500])/500,abs(res['[Ttox]'].values[-1] -[500])/500)
-                error_sum += t_reg_error + t_tox_error
+            
             self.model.resetToOrigin()
             # print(Hb_error.sum(), LDH_error.sum())
             # weighted sum -> works better

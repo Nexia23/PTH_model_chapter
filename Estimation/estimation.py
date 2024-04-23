@@ -38,6 +38,7 @@ def get_steady_state(model, pars: dict, model_name: str ='general'):
     J_R_death_init = R_init * model.k_R_death
     LDH_RBC_init = (J_LDH_decay_init * model.Vol_blood) / (J_E_death_init + J_R_death_init ) 
     
+    #equlibration dict
     eq_dict = {}
     # Immune response in steady state
     if model_name == 'immune':
@@ -60,10 +61,12 @@ def get_steady_state(model, pars: dict, model_name: str ='general'):
 
         eq_dict['Treg']  = Treg_init
         eq_dict['Ttox']  = Ttox_init 
-        eq_dict['k_digest_E']  = k_digest_E_init
+        eq_dict['k_digest_E'] = k_digest_E_init
+        eq_dict['k_digest_inf'] = 48 * k_digest_E_init
+        eq_dict['k_digest_M']   = 48 * k_digest_E_init
         eq_dict['k_digest_oiE'] = k_digest_oiE_init
 
-    # Hapto in steady state k_deaths change
+    # Hapto in steady state, k_deaths change
     elif model_name == 'Hapto':
         # E_init determined by Hkt_init, t_R_a_init and t_E_death (fixed)
         E_init = (model.Hkt_init * model.Vol_blood) / (model.Vol_E + (model.k_E_death/(2*np.log(2)/t_R_a_init))*model.Vol_R)
@@ -143,15 +146,15 @@ class FitManager():
             # simulate 
             t_max = self.data[key]['Time'].max()
             species = ['time', 'Hb', '[LDH]', '[R]']
-            if self.model_name == 'immune':
-                species = ['time', 'Hb', '[LDH]', '[R]','[Treg]','[Ttox]']
+            #if self.model_name == 'immune':
+            #    species = ['time', 'Hb', '[LDH]', '[R]','[Treg]','[Ttox]']
             res = self.model.simulate(-pre_t, int(t_max), int(t_max + pre_t + 1),
                                       selections=species)
             res_df = pd.DataFrame(res, columns=res.colnames)
-            if self.model_name == 'immune':
-                t_reg_error = sum(abs(res_df['[Treg]'].values[0]-[500])/500,abs(res_df['[Treg]'].values[-1] -[500])/500)
-                t_tox_error = sum(abs(res_df['[Ttox]'].values[0]-[500])/500,abs(res_df['[Ttox]'].values[-1] -[500])/500)
-                error_sum += t_reg_error.sum() + t_tox_error.sum()
+            #if self.model_name == 'immune':
+                #t_reg_error = sum(abs(res_df['[Treg]'].values[0]-[500])/500,abs(res_df['[Treg]'].values[-1] -[500])/500)
+                #t_tox_error = sum(abs(res_df['[Ttox]'].values[0]-[500])/500,abs(res_df['[Ttox]'].values[-1] -[500])/500)
+                #error_sum += t_reg_error.sum() + t_tox_error.sum()
             # only keep timepoints which are in data
             res_df = res_df[res_df['time'].isin(self.data[key]['Time'])]
             # TODO: loop over data columns?

@@ -82,12 +82,10 @@ def get_params_bounds(model_name):
         # delete not used parameters from bounds
         bounds.pop('s_BH_pth')
         bounds.pop('s_BH_non')
-        bounds.pop('k_M_death_pth')
-        bounds.pop('k_M_death_non')
-        bounds.pop('fac_R_d')
+        #bounds.pop('fac_R_d')
 
         extra_bounds = {
-            'k_digest_inf': (1e-12, 1e2, True), 
+            #'k_digest_inf': (1e-12, 1e2, True), 
             'k_digest_R': (1e-15, 1e0, True), 
             'beta_Treg': (1e-4, 1e0, True),
             #'beta_in_Treg':(2e-4, 2e0, True),
@@ -102,11 +100,11 @@ def get_params_bounds(model_name):
             # Pth specific parameteres
             #'Hkt_init_pth': (0.35, 0.55, False),
             'beta_in_Treg_pth':(2e-4, 2e2, True),
-            'mu_in_tox_pth':(1e-2,1e8, True),      # 1e5
+            'mu_in_tox_pth':(1e0,1e8, True),      # 1e5
             # non-Pth specific parameteres
             #'Hkt_init_non': (0.35, 0.55, False),
             'beta_in_Treg_non':(2e-4, 2e2, True),
-            'mu_in_tox_non':(1e-2,1e8, True),      # 1e5
+            'mu_in_tox_non':(1e0,1e8, True),      # 1e5
             }
     bounds.update(extra_bounds)
     return bounds
@@ -167,7 +165,7 @@ def main():
     # Estimation 
     pop =  30
     if model_name=='immune':
-        pop = 150
+        pop = 350
     est_obj = FitManager(model, data, model_name)    
     ParamEster = ParameterEstimator()
     bounds = get_params_bounds(model_name)

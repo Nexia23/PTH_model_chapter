@@ -62,7 +62,7 @@ def get_steady_state(model, pars: dict, model_name: str ='general'):
         eq_dict['Treg']  = Treg_init
         eq_dict['Ttox']  = Ttox_init 
         eq_dict['k_digest_E'] = k_digest_E_init
-        eq_dict['k_digest_inf'] = 48 * k_digest_E_init
+        eq_dict['k_digest_iE'] = 48 * k_digest_E_init
         eq_dict['k_digest_M']   = 48 * k_digest_E_init
         eq_dict['k_digest_oiE'] = k_digest_oiE_init
 

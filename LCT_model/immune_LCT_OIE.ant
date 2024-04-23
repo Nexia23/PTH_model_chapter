@@ -67,7 +67,7 @@
 
     k_digest_E   = k_E_death / 546.8315756308999
     k_digest_R   = 0
-    k_digest_inf = 100 * k_digest_E
+    k_digest_iE = 100 * k_digest_E
     k_digest_M   = 100 * k_digest_E   
     k_digest_oiE = k_oiE_death/Ttox
 
@@ -108,7 +108,7 @@
     tropism       = 6                                        # P.falciparum has preference for Retis ~2-12 more likely infected                  
     
     J_iE_death   := iE * k_iE_death                          # einbezug antibodies, spleen
-    k_iE_death   := k_digest_inf * Ttox + (1- k_iE_pit_frac) * k_iE_art_max*(ART^h_art/((ART^h_art)+(ID50)^h_art))                          # in 1/days, vereinfacht in Austin(1998)  (0.025  Ma 2019)
+    k_iE_death   := k_digest_iE * Ttox + (1- k_iE_pit_frac) * k_iE_art_max*(ART^h_art/((ART^h_art)+(ID50)^h_art))                          # in 1/days, vereinfacht in Austin(1998)  (0.025  Ma 2019)
 
     J_iE_rupture := iE * k_iE_rupture                        # 16-32M s.Cowman 2016, Anderson 1989, Diebner 2000
     k_iE_rupture  = ln(2) / (t_iE_rupture/2)

@@ -4,7 +4,6 @@ import pandas as pd
 import tellurium as te
 from sympy import solveset, S, symbols
 
-
 def get_steady_state(model, pars: dict, model_name: str ='general'):
     for p in pars:
         try:
@@ -13,15 +12,15 @@ def get_steady_state(model, pars: dict, model_name: str ='general'):
             continue
     
     rpi_step_func = 1 + model.scale_rpi/ (1+np.exp(model.slope_rpi*(model.Hkt_init - model.step_1)))+ model.scale_rpi/ (1+np.exp(model.slope_rpi*(model.Hkt_init - model.step_2)))+ model.scale_rpi/ (1+np.exp(model.slope_rpi*(model.Hkt_init - model.step_3)))
-    # Hapto model and genral model can get calculated using the same eqs
+
     # setting Hkt defeins aging times of precursors (P) and reticulocytes (R)      
     t_R_a_init = rpi_step_func     # t_R_a_max, s_R_a, Hkt_0 stem from fitting, see plot_dependencies.ipynb (RPI)
     t_P_a_init = model.t_mat_P-rpi_step_func 
 
     # E_init determined by Hkt_init, t_R_a_init and t_E_death (fixed)
-    E_init = (model.Hkt_init * model.Vol_blood) / (model.Vol_E + (model.k_E_death/(2*np.log(2)/t_R_a_init))*model.Vol_R)
+    E_init = (model.Hkt_init * model.Vol_blood) / (model.Vol_E + (t_R_a_init/model.t_E_death)*model.Vol_R)
     # R_init from E_init , t_R_a_init and t_E_death (fixed)
-    R_init = E_init *( model.k_E_death/(2*np.log(2)/t_R_a_init))
+    R_init = E_init * t_R_a_init/ model.t_E_death
     # P_init from R_init, t_R_a_init and t_P_a_init
     P_init = (R_init * (model.k_R_death + 2*np.log(2)/t_R_a_init))/ (2**10 *2*np.log(2) / t_P_a_init)    
 
@@ -35,9 +34,9 @@ def get_steady_state(model, pars: dict, model_name: str ='general'):
 
     # equilibrating LDH
     J_LDH_decay_init = model.LDH * (np.log(2) / model.t_halb_LDH_decay)
-    J_E_death_init = E_init * model.k_E_death
+    J_E_death_init = E_init * 2*np.log(2) / model.t_E_death
     J_R_death_init = R_init * model.k_R_death
-    LDH_RBC_init = (J_LDH_decay_init * model.Vol_blood) / (J_E_death_init + J_R_death_init )
+    LDH_RBC_init = (J_LDH_decay_init * model.Vol_blood) / (J_E_death_init + J_R_death_init ) 
     
     eq_dict = {}
     # Immune response in steady state
@@ -56,14 +55,36 @@ def get_steady_state(model, pars: dict, model_name: str ='general'):
         Ttox_init = float(list(p)[-1])
 
         #print(Ttox_init)
-        k_digest_E_init   = 2*np.log(2)/t_R_a_init * R_init/(E_init*Ttox_init) #model.k_E_death / 546.8315756308999
+        k_digest_E_init   = model.k_R_aging * R_init/(E_init*Ttox_init) #model.k_E_death / 546.8315756308999
         k_digest_oiE_init = model.k_oiE_death/Ttox_init
 
         eq_dict['Treg']  = Treg_init
         eq_dict['Ttox']  = Ttox_init 
         eq_dict['k_digest_E']  = k_digest_E_init
-        #eq_dict['k_digest_inf']  = 100 *  k_digest_E_init
         eq_dict['k_digest_oiE'] = k_digest_oiE_init
+
+    # Hapto in steady state k_deaths change
+    elif model_name == 'Hapto':
+        # E_init determined by Hkt_init, t_R_a_init and t_E_death (fixed)
+        E_init = (model.Hkt_init * model.Vol_blood) / (model.Vol_E + (model.k_E_death/(2*np.log(2)/t_R_a_init))*model.Vol_R)
+        # R_init from E_init , t_R_a_init and t_E_death (fixed)
+        R_init = E_init *( model.k_E_death/(2*np.log(2)/t_R_a_init))
+        # P_init from R_init, t_R_a_init and t_P_a_init
+        P_init = (R_init * (model.k_R_death + 2*np.log(2)/t_R_a_init))/ (2**10 *2*np.log(2) / t_P_a_init)    
+
+        # Hb_init, needed for J_P_death
+        Hb_init = (model.Vol_E * E_init * model.Hb_conc_E + model.Vol_R * R_init * model.Hb_conc_R) / (10*model.Vol_blood)  # conc unit from g/l to g/dl, thus div. by 10
+
+        # equilibrating precursors (P)
+        J_P_death_init = P_init * (model.a_P_d / ( 1 + model.k_P_d * Hb_init**model.r_P_d))**(-1)
+        J_P_aging_init = P_init * np.log(2) / (t_P_a_init/2)
+        k_P_birth_init   = J_P_death_init + J_P_aging_init
+
+        # equilibrating LDH
+        J_LDH_decay_init = model.LDH * (np.log(2) / model.t_halb_LDH_decay)
+        J_E_death_init = E_init * model.k_E_death
+        J_R_death_init = R_init * model.k_R_death
+        LDH_RBC_init = (J_LDH_decay_init * model.Vol_blood) / (J_E_death_init + J_R_death_init )
     
     # setting initial values/params
     eq_dict['E'] = E_init

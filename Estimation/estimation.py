@@ -56,13 +56,17 @@ def get_steady_state(model, pars: dict, model_name: str ='general'):
 
         #print(Ttox_init)
         k_digest_E_init   = model.k_R_aging * R_init/(E_init*Ttox_init) #model.k_E_death / 546.8315756308999
+        k_digest_iE_init  = 48 * k_digest_E_init 
+        k_digest_M_init   = 48 * k_digest_E_init
         k_digest_oiE_init = model.k_oiE_death/Ttox_init
 
         eq_dict['Treg']  = Treg_init
         eq_dict['Ttox']  = Ttox_init 
         eq_dict['k_digest_E']  = k_digest_E_init
+        eq_dict['k_digest_iE'] = k_digest_iE_init
+        eq_dict['k_digest_M']  = k_digest_M_init
         eq_dict['k_digest_oiE'] = k_digest_oiE_init
-
+        
     # Hapto in steady state k_deaths change
     elif model_name == 'Hapto':
         # E_init determined by Hkt_init, t_R_a_init and t_E_death (fixed)

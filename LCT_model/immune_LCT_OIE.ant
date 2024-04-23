@@ -67,7 +67,8 @@
 
     k_digest_E   = k_E_death / 546.8315756308999
     k_digest_R   = 0
-    k_digest_inf = 100 * k_digest_E    
+    k_digest_inf = 100 * k_digest_E
+    k_digest_M   = 100 * k_digest_E   
     k_digest_oiE = k_oiE_death/Ttox
 
     beta_Treg    = 0.01
@@ -87,14 +88,14 @@
     k_P_death    := (a_P_d / ( 1 + k_P_d * Hb^r_P_d))^(-1) + k_P_art_max*(ART^h_art/((ART^h_art)+(ID50)^h_art)) # Hill function idea
  
     J_P_aging    := P * k_P_aging
-    k_P_aging    := ln(2) / (t_P_aging/2)    # in 1/days
+    k_P_aging    := ln(2) / (t_P_aging/2)                   # in 1/days
     t_P_aging    := t_mat_P - rpi_step_func
 
     J_R_death    := R * k_R_death 
-    k_R_death    := 0 + fac_R_d * k_digest_R * Ttox   # in 1/days,Annahme
+    k_R_death    := 0 + fac_R_d * k_digest_R * Ttox         # in 1/days,Annahme
 
     J_R_aging    := R * k_R_aging
-    k_R_aging    := ln(2) / (rpi_step_func/2)    # in 1/days 
+    k_R_aging    := ln(2) / (rpi_step_func/2)               # in 1/days 
     rpi_step_func:= 1 + scale_rpi/ (1+exp(slope_rpi*(Hkt - step_1)))+ scale_rpi/ (1+exp(slope_rpi*(Hkt - step_2)))+ scale_rpi/ (1+exp(slope_rpi*(Hkt - step_3)))
 
     J_E_death    := E * k_digest_E * Ttox
@@ -102,24 +103,24 @@
  
     ##Infection with parasite
     J_R_infect   := R * M * tropism * k_E_infect 
-    J_E_infect   := E * M * k_E_infect       # einbezug parasit?, E ersmal als Abhängigkeit ausgelassen da am Anfang E >> M -> mit Jorin absprechen+
-    k_E_infect    = 2.02e-6                   # in 1/mikroliter*day ((Austin, 1997) 2e-6
-    tropism       = 6                        # P.falciparum has preference for Retis ~2-12 more likely infected                  
+    J_E_infect   := E * M * k_E_infect                       # einbezug parasit?, E ersmal als Abhängigkeit ausgelassen da am Anfang E >> M -> mit Jorin absprechen+
+    k_E_infect    = 2.02e-6                                  # in 1/mikroliter*day ((Austin, 1997) 2e-6
+    tropism       = 6                                        # P.falciparum has preference for Retis ~2-12 more likely infected                  
     
-    J_iE_death   := iE * k_iE_death       #einbezug antibodies, spleen
+    J_iE_death   := iE * k_iE_death                          # einbezug antibodies, spleen
     k_iE_death   := k_digest_inf * Ttox + (1- k_iE_pit_frac) * k_iE_art_max*(ART^h_art/((ART^h_art)+(ID50)^h_art))                          # in 1/days, vereinfacht in Austin(1998)  (0.025  Ma 2019)
 
-    J_iE_rupture := iE * k_iE_rupture     #16-32M s.Cowman 2016, Anderson 1989, Diebner 2000
+    J_iE_rupture := iE * k_iE_rupture                        # 16-32M s.Cowman 2016, Anderson 1989, Diebner 2000
     k_iE_rupture  = ln(2) / (t_iE_rupture/2)
 
-    J_M_death    := M  * k_M_death
-    k_M_death     = k_digest_inf * Ttox                     # 48 in 1/days 2010 Thi (48)
+    J_M_death    := M * k_M_death                            # around 48 in 1/days 2010 Thi (48)
+    k_M_death     = k_digest_M * Ttox                     
 
     ##Artesunate treatment
     J_ART_decay  := ART * k_ART_decay
-    k_ART_decay   = ln(2) / t_halb_ART_decay #ART hat 1h Halbwertszeit (Tilley 2016), andere Quellen 2h 
+    k_ART_decay   = ln(2) / t_halb_ART_decay                # ART hat 1h Halbwertszeit (Tilley 2016), andere Quellen 2h 
 
-    J_iE_pit     := iE  * k_iE_pit       #einbezug artesunat
+    J_iE_pit     := iE  * k_iE_pit                          # einbezug artesunat
     k_iE_pit     := k_iE_pit_0 + k_iE_pit_frac * k_iE_art_max*(ART^h_art/((ART^h_art)+(ID50)^h_art)) #bei Medikamentengabe nach 8h Maximum an gepitteten RBCs
 
     J_oiE_death  := oiE_6 * k_digest_oiE * Ttox;
@@ -131,20 +132,20 @@
     k_LDH_decay   = ln(2) / t_halb_LDH_decay
     
     #Messwerte
-    N_A = 6.022e23            # 1/mol Avogadokonstante
+    N_A = 6.022e23               # 1/mol Avogadokonstante
     ##Hämoglobin
     ###Volumen
-    Vol_R       = 100e-15        #in l, Jorin
-    Vol_E       = 80e-15         #=80 fL, in l, =MCH
-    Vol_iE      = 80e-15         #in lk_E_infect
-    Vol_oiE     = 50e-15         #in l
+    Vol_R       = 100e-15        # in l, Jorin
+    Vol_E       = 80e-15         # =80 fL, in l, =MCH
+    Vol_iE      = 80e-15         # in lk_E_infect
+    Vol_oiE     = 50e-15         # in l
     Vol_blood   = 1e-6           # =1µl, in l, gesamtes Blutvolumen 
-    Vol_plasma := (1-Hkt)* Vol_blood
+    Vol_plasma := (1-Hkt) * Vol_blood
     ###Hb Konzentrationen in g/l
-    Hb_conc_R   = 300        #in g/l (Piva,2014)   #niedriger conc. aber Hb-content ist höher wegen dem hohen Volumen
-    Hb_conc_E   = 322.5      #in g/l,  =MCHC, 5mM (Hanssen 2012), (Francis 1997))  
-    Hb_conc_iE  = 209.625    # CHECK: avg over ring, troph, schiz?in g/l, orin meinte80, Aber 60-80% (Francis 1997) 65% (Krugliak 2002)- 80% (Coronado 2014) von Hb bis rupture wird aufgebraucht -> nur 20-35% bleiben übrig , durchschnittlich 65% des Hb von E
-    Hb_conc_oiE = 316.05     # CHECK: same amoutn different volume?:Annahme: gleiche Hb wie ringstage Ery, 4.9mM (Hanssen 2012), noch nicht alles Hb verbraucht
+    Hb_conc_R   = 300            # in g/l (Piva,2014)   #niedriger conc. aber Hb-content ist höher wegen dem hohen Volumen
+    Hb_conc_E   = 322.5          # in g/l,  =MCHC, 5mM (Hanssen 2012), (Francis 1997))  
+    Hb_conc_iE  = 209.625        # CHECK: avg over ring, troph, schiz?in g/l, orin meinte80, Aber 60-80% (Francis 1997) 65% (Krugliak 2002)- 80% (Coronado 2014) von Hb bis rupture wird aufgebraucht -> nur 20-35% bleiben übrig , durchschnittlich 65% des Hb von E
+    Hb_conc_oiE = 316.05         # CHECK: same amoutn different volume?:Annahme: gleiche Hb wie ringstage Ery, 4.9mM (Hanssen 2012), noch nicht alles Hb verbraucht
 
     ## Hkt, Hb
     #https://www.labopart.de/einsender/formelberechnungen/rpi/
@@ -155,7 +156,7 @@
     parasitemia := iE*100 / (E + R + iE + oiE )          # in percent, bsp 0.5
     R_percent   := 100*R / (R + E + iE + oiE )           # in % bsp. 50%
     RPI         := R_percent * Hkt/ (rpi_step_func * 0.45) 
-    oiE :=  oiE_1+oiE_2+oiE_3+oiE_4+oiE_5+oiE_6;
+    oiE         :=  oiE_1+oiE_2+oiE_3+oiE_4+oiE_5+oiE_6;
     oiE_percent := oiE*100 / (R + E + iE + oiE )         # in %
 
     # parameters
@@ -168,9 +169,9 @@
     r_P_d = 5.87026485554641
 
     ##Artesunate treatment
-    t_halb_ART_decay = 1/12   #Halbwertszeit von 2h -> verlässliche quelle noch suchen
+    t_halb_ART_decay = 1/12              # Halbwertszeit von 2h -> verlässliche quelle noch suchen
     ##LDH
-    t_halb_LDH_decay = 4      #(3-5 Tage), https://www.medicoconsult.de/ldh/
+    t_halb_LDH_decay = 4                 # (3-5 Tage), https://www.medicoconsult.de/ldh/
 
     ##parameter für t1/2 von R und P #müssen gefittet werden
     t_R_a_max = 3.5327734516666713

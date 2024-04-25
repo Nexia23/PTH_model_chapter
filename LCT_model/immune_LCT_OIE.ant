@@ -67,9 +67,9 @@
 
     k_digest_E   = k_E_death / 546.8315756308999
     k_digest_R   = 0
-    k_digest_iE = 100 * k_digest_E
+    k_digest_iE  = 100 * k_digest_E
     k_digest_M   = 100 * k_digest_E   
-    k_digest_oiE = k_oiE_death/Ttox
+    k_digest_oiE := k_oiE_death/Ttox
 
     beta_Treg    = 0.01
     beta_in_Treg = 0.02
@@ -84,7 +84,7 @@
     # Assignments, Fluxes
     ##Erythropoese
     J_P_birth    := k_P_birth 
-    J_P_death    := P* k_P_death 
+    J_P_death    := P * k_P_death 
     k_P_death    := (a_P_d / ( 1 + k_P_d * Hb^r_P_d))^(-1) + k_P_art_max*(ART^h_art/((ART^h_art)+(ID50)^h_art)) # Hill function idea
  
     J_P_aging    := P * k_P_aging
@@ -99,7 +99,7 @@
     rpi_step_func:= 1 + scale_rpi/ (1+exp(slope_rpi*(Hkt - step_1)))+ scale_rpi/ (1+exp(slope_rpi*(Hkt - step_2)))+ scale_rpi/ (1+exp(slope_rpi*(Hkt - step_3)))
 
     J_E_death    := E * k_digest_E * Ttox
-    k_E_death     = 2*ln(2) / (t_E_death)
+    k_E_death     = 2*ln(2) / (t_E_death)                   #np.log(2) has different value
  
     ##Infection with parasite
     J_R_infect   := R * M * tropism * k_E_infect 
@@ -123,7 +123,7 @@
     J_iE_pit     := iE  * k_iE_pit                          # einbezug artesunat
     k_iE_pit     := k_iE_pit_0 + k_iE_pit_frac * k_iE_art_max*(ART^h_art/((ART^h_art)+(ID50)^h_art)) #bei Medikamentengabe nach 8h Maximum an gepitteten RBCs
 
-    J_oiE_death  := oiE_6 * k_digest_oiE * Ttox;
+    J_oiE_death  := oiE_6 * k_oiE_death;
     k_oiE_death   = 0.443960624771928 
 
     ##LDH

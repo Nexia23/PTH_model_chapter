@@ -11,16 +11,16 @@ import json
 def get_params_bounds(model_name):
     bounds = OrderedDict({
         #'Hkt_init': (0.35, 0.55, False),   
-        'k_E_infect': (7e-7 , 4.5e-5, True),    # jetzt paramscan frueher (1e-8 , 1e-4),
-        'tropism': (2, 200, False),
-        'M':  (1e2, 5e3, True),
+        'k_E_infect': (1e-8 , 4.5e-5, True),    # jetzt paramscan frueher (1e-8 , 1e-4),
+        'tropism': (2, 30, False),
+        'M':  (1e1, 5e3, True),
         'a_P_d': (15.6e1, 1e7, True),        
         'k_P_d':  (1e-3, 10, True),      
         'r_P_d': (1, 15, False),
         'fac_R_d': (1e-16, 1, False),
         'k_P_art_max': (1e-9, 1e1, True),
         't_mat_P': (5, 9, False),
-        'slope_rpi':(1e0, 500, True),            # own idea
+        'slope_rpi':(1e0, 500, True),           # own idea
         #'k_M_death': (60, 100, False),
         #'t_E_death': (100, 130, False),
         'k_iE_pit_frac': (0, 1, False),         # Anteil der iE die durch ART gepitted werden, 0-1. Rest sterben durch ART
@@ -39,10 +39,6 @@ def get_params_bounds(model_name):
         'LDH_pth': (140, 280, False),           # LDH concentration in blood plasma
         'k_M_death_pth': (30, 100, False),
         #'M_pth':  (1e2, 5e3, True),
-        #'a_P_d_pth': (15.6e1, 1e7, True),        
-        #'k_P_d_pth':  (1e-3, 10, True),      
-        #'r_P_d_pth': (4, 15, False),
-        #'fac_R_d_pth': (1e-16, 1, False),
         #'k_iE_pit_frac_pth': (0, 1, False),        # Anteil der iE die durch ART gepitted werden, 0-1. Rest sterben durch ART
 
         # non-Pth specific parameteres
@@ -56,16 +52,12 @@ def get_params_bounds(model_name):
         'k_M_death_non': (30, 100, False),
         #'t_E_death_inf_non': (40, 130, False),
         #'M_non':  (1e2, 5e3, True),
-        #'a_P_d_non': (15.6e1, 1e7, True),        
-        #'k_P_d_non':  (1e-3, 10, True),      
-        #'r_P_d_non': (4, 15, False),
-        #'fac_R_d_non': (1e-16, 1, False),
         #'k_iE_pit_frac_non': (0, 1, False),        # Anteil der iE die durch ART gepitted werden, 0-1. Rest sterben durch ART
         })
     extra_bounds = {}
     if model_name == 'Hapto':
-        bounds.pop('s_BH_pth')
-        bounds.pop('s_BH_non')
+        #bounds.pop('s_BH_pth')
+        #bounds.pop('s_BH_non')
         extra_bounds = {
             't_halb_HP_decay' : (2, 6, False),         # 2-5 Tage zotero, 1Quellen: https://link.springer.com/chapter/10.1007/978-3-662-48986-4_1389 und weiterverfolgen https://archive.org/stream/WilliamsHematology9thEditionMcGrawHill_201805/Williams%20Hematology%2C%209th%20Edition%20McGraw-Hill_djvu.txt
             't_halb_HCC_decay': (3e-3, 9e-3, False), 
@@ -85,9 +77,10 @@ def get_params_bounds(model_name):
         #bounds.pop('fac_R_d')
 
         extra_bounds = {
+            'Treg':(1,1e3, False),
             #'k_digest_inf': (1e-12, 1e2, True), 
-            'k_digest_R': (1e-15, 1e0, True), 
-            'beta_Treg': (1e-4, 1e0, True),
+            'k_digest_R': (1e-15, 1e-12, True), 
+            #'beta_Treg': (1e-4, 1e0, True),
             #'beta_in_Treg':(2e-4, 2e0, True),
             'delta_Treg':(1e-3, 5e2, True),   # 109
             'mu_tox':(1e-3,1e2, True),        # 22
@@ -165,7 +158,7 @@ def main():
     # Estimation 
     pop =  30
     if model_name=='immune':
-        pop = 350
+        pop = 500
     est_obj = FitManager(model, data, model_name)    
     ParamEster = ParameterEstimator()
     bounds = get_params_bounds(model_name)

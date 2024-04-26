@@ -17,7 +17,7 @@ def get_params_bounds(model_name):
         'a_P_d': (15.6e1, 1e7, True),        
         'k_P_d':  (1e-3, 10, True),      
         'r_P_d': (1, 15, False),
-        'fac_R_d': (1e-16, 1, False),
+        'fac_R_d': (1e-16, 1, True),
         'k_P_art_max': (1e-9, 1e1, True),
         't_mat_P': (5, 9, False),
         'slope_rpi':(1e0, 500, True),           # own idea
@@ -29,11 +29,9 @@ def get_params_bounds(model_name):
         #'ID50': (1e-1, 1000),                  # ART dosis bei der 50% der iE getötet werden, #parameterscan zu unsensibel       
         #'pre_t': (2,6, True),                  # time of ART addition, 3 and 5 in medians in data for non-pth and pth respectively
         
-        # Pth specific parameteres
-        #'Hkt_init_pth': (0.35, 0.55, False),   
-        #'t_mat_P_pth': (5,14, False),
+        #### Pth specific parameteres
+        'Hkt_init_pth': (0.35, 0.55, False),   
         #'tropism_pth': (2, 200, False),
-        #'k_P_art_max_pth': (1e-9, 1e1, True),
         't_E_death_pth': (100, 130, False),
         's_BH_pth': (1e-8, 1e-4, True),         # slope of linear function defining bystander heamolysis strength
         'LDH_pth': (140, 280, False),           # LDH concentration in blood plasma
@@ -41,13 +39,11 @@ def get_params_bounds(model_name):
         #'M_pth':  (1e2, 5e3, True),
         #'k_iE_pit_frac_pth': (0, 1, False),        # Anteil der iE die durch ART gepitted werden, 0-1. Rest sterben durch ART
 
-        # non-Pth specific parameteres
-        #'Hkt_init_non': (0.35, 0.55, False),  
-        #'t_mat_P_non': (5,14, False),
+        #### non-Pth specific parameteres
+        'Hkt_init_non': (0.35, 0.55, False),  
         #'tropism_non': (2, 200, False),
-        #'k_P_art_max_non': (1e-9, 1e1, True),
         't_E_death_non': (100, 130, False),
-        's_BH_non': (1e-11, 1e-5, True),      # slope of linear function defining bystander heamolysis strength
+        's_BH_non': (1e-15, 1e-5, True),      # slope of linear function defining bystander heamolysis strength
         'LDH_non': (140, 280, False),       # LDH concentration in blood plasma
         'k_M_death_non': (30, 100, False),
         #'t_E_death_inf_non': (40, 130, False),
@@ -56,16 +52,16 @@ def get_params_bounds(model_name):
         })
     extra_bounds = {}
     if model_name == 'Hapto':
-        #bounds.pop('s_BH_pth')
+        #bounds.pop('s_BH_pth') # no pop as switch_fHb is very sensitive even tho just multiplied
         #bounds.pop('s_BH_non')
         extra_bounds = {
             't_halb_HP_decay' : (2, 6, False),         # 2-5 Tage zotero, 1Quellen: https://link.springer.com/chapter/10.1007/978-3-662-48986-4_1389 und weiterverfolgen https://archive.org/stream/WilliamsHematology9thEditionMcGrawHill_201805/Williams%20Hematology%2C%209th%20Edition%20McGraw-Hill_djvu.txt
             't_halb_HCC_decay': (3e-3, 9e-3, False), 
-            # Pth specific parameteres
+            #### Pth specific parameteres
             'par1_fHb_pth': (4e3, 6e3, False),
             'par2_fHb_pth': (4e-4, 4e-3, False),
             'switch_fHb_pth' : (1e-6, 8e3, True),
-            # non-Pth specific parameteres
+            #### non-Pth specific parameteres
             'par1_fHb_non': (1e3, 1e4, False),
             'par2_fHb_non': (1e-4, 1e-2, True),
             'switch_fHb_non' : (1e-6, 6e3, True),
@@ -77,25 +73,22 @@ def get_params_bounds(model_name):
         #bounds.pop('fac_R_d')
 
         extra_bounds = {
-            'Treg':(1,1e3, False),
-            #'k_digest_inf': (1e-12, 1e2, True), 
-            'k_digest_R': (1e-15, 1e-12, True), 
-            #'beta_Treg': (1e-4, 1e0, True),
-            #'beta_in_Treg':(2e-4, 2e0, True),
-            'delta_Treg':(1e-3, 5e2, True),   # 109
-            'mu_tox':(1e-3,1e2, True),        # 22
-            #'mu_in_tox':(1e0,1e8, True),      # 1e5
-            'V_f':(1e-2, 5e2, True),           # 165
-            'K_f':(1e0, 2e2, True),          # 20
-            'delta_Ttox':(1e-3, 1e2, True),#  = 0.6
-            'epsilon':(1e-6, 2e0, True),#     = 0.8
-            
-            # Pth specific parameteres
-            #'Hkt_init_pth': (0.35, 0.55, False),
+            'Treg':(1,1e3, True),
+            'k_digest_R': (1e-15, 1e-8, True), 
+            'k_digest_iE': (1e-7, 1e-4, True), 
+            'delta_Treg':(1e-3, 5e2, True),       # 109
+            'mu_tox':(1e-3,1e2, True),            # 22
+            #'mu_in_tox':(1e0,1e8, True),         # 1e5
+            'V_f':(1e-2, 5e2, True),              # 165
+            'K_f':(1e0, 2e2, True),               # 20
+            'delta_Ttox':(1e-3, 1e2, True),       # 0.6
+            'epsilon':(1e-6, 2e0, True),          # 0.8
+        
+            #### Pth specific parameteres
             'beta_in_Treg_pth':(2e-4, 2e2, True),
             'mu_in_tox_pth':(1e0,1e8, True),      # 1e5
-            # non-Pth specific parameteres
-            #'Hkt_init_non': (0.35, 0.55, False),
+
+            #### non-Pth specific parameteres
             'beta_in_Treg_non':(2e-4, 2e2, True),
             'mu_in_tox_non':(1e0,1e8, True),      # 1e5
             }

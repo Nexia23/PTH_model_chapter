@@ -57,11 +57,9 @@ def get_steady_state(model, pars: dict, model_name: str ='general'):
         # Take last value as often only positve and highest value
         Ttox_init = float(list(p)[-1])
 
-        # R_init from E_init , t_R_a_init and t_E_death (fixed)
-        R_init = E_init * ( t_R_a_init/model.t_E_death)
-        k_R_death_init = model.fac_R_d * model.k_digest_R * Ttox_init
         # equilibrating precursors (P)
-        # P_init from R_init, t_R_a_init and t_P_a_init
+        # P_init from R_init, k_R_death, t_R_a_init and t_P_a_init
+        k_R_death_init = model.fac_R_d * model.k_digest_R * Ttox_init
         P_init = (R_init * (k_R_death_init + 2*np.log(2)/t_R_a_init))/ (2**10 *2*np.log(2) / t_P_a_init)    
        
         J_P_death_init = P_init * (model.a_P_d / ( 1 + model.k_P_d * Hb_init**model.r_P_d))**(-1)
@@ -71,25 +69,22 @@ def get_steady_state(model, pars: dict, model_name: str ='general'):
         # Hb_init, needed for J_P_death
         Hb_init = (model.Vol_E * E_init * model.Hb_conc_E + model.Vol_R * R_init * model.Hb_conc_R) / (10*model.Vol_blood)  # conc unit from g/l to g/dl, thus div. by 10
 
-        # equilibrating LDH
-        k_digest_E_init   = 2*np.log(2)/(model.t_E_death*Ttox_init)#model.k_R_aging * R_init/(E_init*Ttox_init) #model.k_E_death / 546.8315756308999
-        print(2*np.log(2)/(model.t_E_death*Ttox_init))
+        # equilibrating LDH 
+        # beware Antimony has different value for 2*np.log(2) as numpy
+        k_digest_E_init   = 2*np.log(2)/(model.t_E_death*Ttox_init) #model.k_R_aging * R_init/(E_init*Ttox_init) #model.k_E_death / 546.8315756308999
         J_LDH_decay_init = model.LDH * (np.log(2) / model.t_halb_LDH_decay)
         J_E_death_init = E_init * k_digest_E_init * Ttox_init
-
         J_R_death_init = R_init * k_R_death_init
-        LDH_RBC_init = (J_LDH_decay_init * model.Vol_blood) / (J_E_death_init + J_R_death_init )
-        print(J_R_death_init)
 
-        k_digest_oiE_init = model.k_oiE_death/Ttox_init
+        LDH_RBC_init = (J_LDH_decay_init * model.Vol_blood) / (J_E_death_init + J_R_death_init )
 
         eq_dict['beta_Treg']    = beta_Treg
         eq_dict['Ttox']         = Ttox_init 
         eq_dict['k_digest_E']   = k_digest_E_init
-        eq_dict['k_digest_iE']  = 48 * k_digest_E_init
-        #eq_dict['k_digest_M']   = 48 * k_digest_E_init
-        eq_dict['k_digest_oiE'] = k_digest_oiE_init
-        eq_dict['k_R_death']    = k_R_death_init
+        #eq_dict['k_R_death']    = k_R_death_init         update: estimated, should be very low
+        #eq_dict['k_digest_iE']  = 48 * k_digest_E_init   update: estimated
+        #eq_dict['k_digest_M']   = 48 * k_digest_E_init   update: estimated as k_M_death, closer to observations
+        #eq_dict['k_digest_oiE'] = k_digest_oiE_init      update: set from LCT as closer to observations
 
     # Hapto in steady state, k_deaths change
     elif model_name == 'Hapto':

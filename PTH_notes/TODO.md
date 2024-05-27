@@ -1,8 +1,10 @@
-- [ ] #enhance change Hkt to Hct as everything is in english
-- [ ] sbatch for model estimation ~10 runs each
+- [ ] #enhance change Hkt to Hct as everything is in English
 - [ ] write pandas table for parameters of model or MD at least
 - [ ] read about immune system reaction to PS and anitPS, could be reason for immune answer 
-- [ ] 
+- [ ] run estimation for every patient
+	- [ ] eval which model better fit compare to clinical observation
+
+- [x] sbatch for model estimation ~10 runs each
 - [x] #CHECK Hapto model, should release of fHb impact all Erythrocytes types? 
 	-> Seems logical, so changed 
 - [x] #CHECK estimation of immune system model results in weird Hkt_init values, why does it need such values?

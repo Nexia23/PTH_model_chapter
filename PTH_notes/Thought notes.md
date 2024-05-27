@@ -1,4 +1,11 @@
-- [Link](https://www.ncbi.nlm.nih.gov/books/NBK26919/table/A4143/?report=objectonly)to table with number of cells in blood for T cell number as estimate for macrophages as immune response to phagocytise red blood cells
+- [Link](https://www.ncbi.nlm.nih.gov/books/NBK26919/table/A4143/?report=objectonly)to table with number of cells in blood for T cell number 1 × 10^9 cells/L as estimate for macrophages as immune response to phagocytise red blood cells
+	-  CD4+ T cells typically make up 10-20% of total lymphocytes in human peripheral blood[1](https://www.bio-rad-antibodies.com/flow-cytometry-cell-frequency.html).
+	- The frequency of naive CD4+ T cells specific for a given antigen is very low, ranging between 0.01-0.001% of the total CD4+ T cell count[2](https://www.miltenyibiotec.com/GB-en/resources/macs-handbook/human-cells-and-organs/human-cell-types/cd4-t-cells-human.html). 1-10 cells/µL
+	- For some specific epitopes studied, frequencies as high as 20 naive CD4+ T cells per million total CD4+ T cells (0.002%) were observed[3](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3997369/).
+	- Regulatory T cells (Tregs), a subset of CD4+ T cells, comprise approximately 1-10% of the total CD4+ T cell population in healthy adults[1](https://www.bio-rad-antibodies.com/flow-cytometry-cell-frequency.html) 1-100 cells/µL
+	- 0.2-1.4% Treg in bio rad 2-14 cells/µL
+	- Treg will be stimated to be 1-100  cells/µL
+		- thus equilibration of $\beta_{Treg} = \frac{\delta_{Treg}\cdot Treg}{E_{init}}$
 - What if the mean life time of healthy red blood cells changes with parasite burden?
 	- implemented as event it does work well, cost function worse and without event, also the graphs look bad
 - Should P birth and death be more dynamic? 

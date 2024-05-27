@@ -4,6 +4,7 @@
 		- [x] basic biology 
 			- stuff in folder understanding, direct citation
 		- [ ] k_P_birth #model_extension 
+			--> leave as is from talk at conference with iron deficiency model           people hard to to any kind of estimate 
 		- [x] J_P_death representations(=hill function [here](https://pubmed.ncbi.nlm.nih.gov/7606142/)) #model_extension 
 	- [ ] read about malaria infection models, obviously Rebeccas stuff is good start
 		- [x] look at immune responses or medication addition

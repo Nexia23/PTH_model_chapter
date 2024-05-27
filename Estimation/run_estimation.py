@@ -30,7 +30,7 @@ def get_params_bounds(model_name):
         #'pre_t': (2,6, True),                  # time of ART addition, 3 and 5 in medians in data for non-pth and pth respectively
         
         #### Pth specific parameteres
-        'Hkt_init_pth': (0.35, 0.55, False),   
+        #'Hkt_init_pth': (0.35, 0.55, False),   
         #'tropism_pth': (2, 200, False),
         't_E_death_pth': (100, 130, False),
         's_BH_pth': (1e-8, 1e-4, True),         # slope of linear function defining bystander heamolysis strength
@@ -40,7 +40,7 @@ def get_params_bounds(model_name):
         #'k_iE_pit_frac_pth': (0, 1, False),        # Anteil der iE die durch ART gepitted werden, 0-1. Rest sterben durch ART
 
         #### non-Pth specific parameteres
-        'Hkt_init_non': (0.35, 0.55, False),  
+        #'Hkt_init_non': (0.35, 0.55, False),  
         #'tropism_non': (2, 200, False),
         't_E_death_non': (100, 130, False),
         's_BH_non': (1e-15, 1e-5, True),      # slope of linear function defining bystander heamolysis strength
@@ -110,7 +110,7 @@ def calculate_cma_std(bounds):
     
 
 def save_estimation(best_score, best_parameters, update_params, ParamEster, fit_data:str, 
-                    bounds: OrderedDict, run_id:int, location: str = 'general'):
+                    bounds: OrderedDict, run_id:int, location: str = 'general', patient: int=0):
     
     keys = update_params.keys()
     for key in update_params:
@@ -132,24 +132,47 @@ def save_estimation(best_score, best_parameters, update_params, ParamEster, fit_
 
         save_to = key
         if key == "non": save_to ="non_pth"
-        
-        os.makedirs(f'{location}/{save_to}', exist_ok=True)
+        if not patient: folder_loc=f'{location}/{save_to}'
+        else: folder_loc=f'{location}/{save_to}/patient{patient}'
+        os.makedirs(folder_loc, exist_ok=True)
 
-        with open(f'{location}/{save_to}/{name}_{run_id}.json', "w") as write_file:
+        with open(folder_loc+f'/{name}_{run_id}.json', "w") as write_file:
             json.dump(result_dict, write_file, indent=4)
+
+
+def extract_patient_fitting_data(df: pd.DataFrame, features: list=['Hb', 'LDH'], patient_num: int=20):
+ 
+    patient_df = df[df['patientnumber']==patient_num]
+    fitting_df = patient_df[['time'] + features]
+    # Change naming to fit estimation.py cost function
+    features_fit = [x+"_mean" for x in features]
+    fitting_df.columns = ['Time'] + features_fit
+
+    return fitting_df
 
 
 def main():
     model_name = sys.argv[1]
     run_id = sys.argv[2]
+    patient_num = 0
+    if len(sys.argv) == 4:
+        patient_num  = sys.argv[3]
+        df = pd.read_csv('../datasets/OIE_data.csv')
+        dpatient_fitting = extract_patient_fitting_data(df, features=['Hb', 'LDH', '[R]'], patient_num=patient_num)
+        data = {"pth":dpatient_fitting,       
+                "non":dpatient_fitting}
+        data_used =[f"patient{patient_num}",
+                    f"patient{patient_num}"]
+    else:
+        print('Hello')
+        data = {"pth":pd.read_csv("pth.csv"),       
+                "non":pd.read_csv("non_pth.csv")}
+        data_used =["pth.csv",
+                    "non_pth.csv"]
+
     model = te.loada(f'../LCT_model/{model_name}_LCT_OIE.ant')
-    #data = pd.read_csv(fit_data)
-    data = {"pth":pd.read_csv("pth.csv"),       
-            "non":pd.read_csv("non_pth.csv")}
-    data_used =["pth.csv",
-                "non_pth.csv"]
-    # Estimation 
     pop =  30
+    print(data)
     if model_name=='immune':
         pop = 500
     est_obj = FitManager(model, data, model_name)    
@@ -176,7 +199,7 @@ def main():
 
     best_parameters['pre_t'] = pre_t
     save_estimation(best_score, best_parameters, update_parameters, ParamEster,
-                    data_used, bounds, run_id, location=model_name)
+                    data_used, bounds, run_id, location=model_name, patient=patient_num)
 
     print(best_score, best_parameters, runtime)
 

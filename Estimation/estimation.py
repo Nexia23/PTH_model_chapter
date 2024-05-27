@@ -187,6 +187,7 @@ class FitManager():
             self.model.resetToOrigin()
             # print(Hb_error.sum(), LDH_error.sum())
             # weighted sum -> works better
-            error_sum += Hb_error.sum() + LDH_error.sum() + 10*R_error.sum()
-        return error_sum
+            # patient specific data has nan values
+            error_sum += np.nansum(Hb_error) + np.nansum(LDH_error) + 10*np.nansum(R_error)        
+            return error_sum
     

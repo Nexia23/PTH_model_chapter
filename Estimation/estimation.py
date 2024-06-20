@@ -10,7 +10,7 @@ def get_steady_state(model, pars: dict, model_name: str ='general'):
             model.setValue(p, pars[p])    # CAUTION: if you include a volume which is not 1 in the model, species might get fucked up
         except RuntimeError:
             continue
-    
+
     rpi_step_func = 1 + model.scale_rpi/ (1+np.exp(model.slope_rpi*(model.Hkt_init - model.step_1)))+ model.scale_rpi/ (1+np.exp(model.slope_rpi*(model.Hkt_init - model.step_2)))+ model.scale_rpi/ (1+np.exp(model.slope_rpi*(model.Hkt_init - model.step_3)))
 
     # setting Hkt defeins aging times of precursors (P) and reticulocytes (R)      
@@ -115,8 +115,8 @@ def get_steady_state(model, pars: dict, model_name: str ='general'):
     eq_dict['P'] = P_init
     eq_dict['k_P_birth'] = k_P_birth_init
     eq_dict['LDH_RBC'] = LDH_RBC_init
-
-    # include chosen parameters
+    
+    # include chosen parameters !!beware values of pars overwrite eq_dict values
     eq_dict.update(pars)
     return eq_dict
 
@@ -129,7 +129,6 @@ def set_model_to_ss(model, pars: dict, model_name: str='general'):
             continue
         except TypeError:
             print(p, update_pars[p])
-   # print(update_pars)
     return model
 
 

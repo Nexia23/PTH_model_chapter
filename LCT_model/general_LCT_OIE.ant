@@ -51,7 +51,7 @@
     # Assignments, Fluxes
     ##Erythropoese
     J_P_birth    := k_P_birth 
-    J_P_death    := P* k_P_death 
+    J_P_death    := P * k_P_death 
     k_P_death    := (a_P_d / ( 1 + k_P_d * Hb^r_P_d))^(-1) + k_P_art_max*(ART^h_art/((ART^h_art)+(ID50)^h_art)) # Hill function idea
  
     J_P_aging    := P * k_P_aging

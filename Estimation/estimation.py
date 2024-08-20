@@ -154,8 +154,9 @@ class FitManager():
         
         # from here loop over data set keys for both models
         error_sum = 0
-        keys = ['pth','non']    # has to be explict to work for singel runs
-        for key in self.data:
+        keys = ['non','pth']    # has to be explict to work for singel runs
+        for key in keys:
+
             usedpars = {k.replace("_"+key,""):v for k,v in pars.items() if key in k or not k.split('_')[-1] in keys}
 
             # set model to steady state
@@ -187,6 +188,7 @@ class FitManager():
             # print(Hb_error.sum(), LDH_error.sum())
             # weighted sum -> works better
             # patient specific data has nan values
+            #print(key, np.nansum(Hb_error) + np.nansum(LDH_error) + 10*np.nansum(R_error))
             error_sum += np.nansum(Hb_error) + np.nansum(LDH_error) + 10*np.nansum(R_error)        
-            return error_sum
+        return error_sum
     

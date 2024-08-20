@@ -164,7 +164,6 @@ def main():
         data_used =[f"patient{patient_num}",
                     f"patient{patient_num}"]
     else:
-        print('Hello')
         data = {"pth":pd.read_csv("pth.csv"),       
                 "non":pd.read_csv("non_pth.csv")}
         data_used =["pth.csv",
@@ -175,7 +174,7 @@ def main():
     print(data)
     if model_name=='immune':
         pop = 500
-    est_obj = FitManager(model, data, model_name)    
+    est_obj = FitManager(model, data, model_name) 
     ParamEster = ParameterEstimator()
     bounds = get_params_bounds(model_name)
     stds = calculate_cma_std(bounds)
@@ -183,7 +182,7 @@ def main():
     best_score, best_parameters, runtime = ParamEster.run(method='cma', iterations=20,
                                                           run_id=run_id, n_lhs=1,
                                                           optimizer_args={'CMA_stds': stds,
-                                                                          'popsize': pop})
+                                                                          'popsize': pop,})
     # Saving of estimation results
     if 'pre_t' in best_parameters:  
         pre_t = best_parameters.pop('pre_t')

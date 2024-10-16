@@ -11,3 +11,4 @@ notebooks/figures/*
 PTH_notes/parameterscan/*
 *.out
 *.err
+*.ipynb_checkpoints

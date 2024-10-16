@@ -10,7 +10,7 @@ elements=("101" "102" "105" "106" "107" "108"
 "83" "86" "87" "88" "89" "90" "94" "95" "98" "99")
 
 # Number of times to repeat each element
-num_repeats=50
+num_repeats=5
 
 # Loop over each element
 for element in "${elements[@]}"; do
@@ -34,6 +34,7 @@ for element in "${elements[@]}"; do
 #SBATCH --partition=SiCore
 
 echo "Running job for element: $element (Iteration: $i)"
+echo "Server name: \$(hostname)" >> $output_file
 # Add your command, job execution here
 python3 run_estimation.py general "$i" "$element"
 EOT

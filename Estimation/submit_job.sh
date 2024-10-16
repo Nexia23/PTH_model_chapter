@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# List of elements to iterate over "Hapto" "general" 
-elements=("immune" )
+# List of elements to iterate over "Hapto" "general" "immune"
+elements=("general" "Hapto" "immune")
 
 # Number of times to repeat each element
-num_repeats=50
+num_repeats=30
 
 # Loop over each element
 for element in "${elements[@]}"; do

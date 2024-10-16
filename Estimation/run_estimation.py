@@ -10,7 +10,7 @@ import json
 
 def get_params_bounds(model_name):
     bounds = OrderedDict({
-        #'Hkt_init': (0.35, 0.55, False),   
+        'Hkt_init': (0.35, 0.55, False),   
         'k_E_infect': (1e-8 , 4.5e-5, True),    # jetzt paramscan frueher (1e-8 , 1e-4),
         'tropism': (2, 30, False),
         'M':  (1e1, 5e3, True),
@@ -23,7 +23,7 @@ def get_params_bounds(model_name):
         'slope_rpi':(1e0, 500, True),           # own idea
         #'k_M_death': (60, 100, False),
         #'t_E_death': (100, 130, False),
-        'k_iE_pit_frac': (0, 1, False),         # Anteil der iE die durch ART gepitted werden, 0-1. Rest sterben durch ART
+        #'k_iE_pit_frac': (0, 1, False),         # Anteil der iE die durch ART gepitted werden, 0-1. Rest sterben durch ART
         #'k_iE_art_max': (1, 1000),             # maximale abtötrate von iE durch ART, #parameterscan zu unsensibel 
         #'h_art' :(3, 6, False),                # assume similar to in vitro: [1] R. K. Tyagi u. a., doi: 10.1186/s12916-018-1156-x.
         #'ID50': (1e-1, 1000),                  # ART dosis bei der 50% der iE getötet werden, #parameterscan zu unsensibel       
@@ -37,7 +37,7 @@ def get_params_bounds(model_name):
         'LDH_pth': (140, 280, False),           # LDH concentration in blood plasma
         'k_M_death_pth': (30, 100, False),
         #'M_pth':  (1e2, 5e3, True),
-        #'k_iE_pit_frac_pth': (0, 1, False),        # Anteil der iE die durch ART gepitted werden, 0-1. Rest sterben durch ART
+        'k_iE_pit_frac_pth': (0, 1, False),        # Anteil der iE die durch ART gepitted werden, 0-1. Rest sterben durch ART
 
         #### non-Pth specific parameteres
         #'Hkt_init_non': (0.35, 0.55, False),  
@@ -48,7 +48,7 @@ def get_params_bounds(model_name):
         'k_M_death_non': (30, 100, False),
         #'t_E_death_inf_non': (40, 130, False),
         #'M_non':  (1e2, 5e3, True),
-        #'k_iE_pit_frac_non': (0, 1, False),        # Anteil der iE die durch ART gepitted werden, 0-1. Rest sterben durch ART
+        'k_iE_pit_frac_non': (0, 1, False),        # Anteil der iE die durch ART gepitted werden, 0-1. Rest sterben durch ART
         })
     extra_bounds = {}
     if model_name == 'Hapto':

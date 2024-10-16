@@ -9,3 +9,5 @@ Estimation/immune_job*
 .vscode/*
 notebooks/figures/*
 PTH_notes/parameterscan/*
+*.out
+*.err

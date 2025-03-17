@@ -1,0 +1,3 @@
+In the marrow the reticulocytes are about equal in number to the nucleated erythrocytes and slightly greater in number than the reticulocytes in the circulating blood. If sufficiently severe hypoxia is present, this marrow pool of reticulocytes can be released. This approximately doubles the number of circulating reticulocytes.
+
+Normally, reticulocytes remain as such, slowly synthesizing hemoglobin, for 2-3 days in the marrow and 1 day in the blood. Residual ribosomes, mitochondria, and other organelles are then removed, and the mature erythrocytes circulate for about 120 days. During this time they gradually age, certain enzymatic activities diminish, and they are finally destroyed within phagocytic cells of the reticuloendothelial system.

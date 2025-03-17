@@ -1,1 +1,14 @@
 Estimation/outcmaes/*
+PTH_notes/.obsidian/*
+Estimation/__pycache__/*
+PTH_notes/png/*
+*.svg
+Estimation/general_job*
+Estimation/Hapto_job*
+Estimation/immune_job*
+.vscode/*
+notebooks/figures/*
+PTH_notes/parameterscan/*
+*.out
+*.err
+*.ipynb_checkpoints

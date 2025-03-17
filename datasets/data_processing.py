@@ -1,4 +1,5 @@
 #packages
+import os
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -123,11 +124,28 @@ def get_mean_of_feature(data: pd.DataFrame, feature: str, pth: int = 0):
     # median_feature = np.nanmedian(f_reshaped, axis=0)  
     return mean_feature 
 
+
+def extract_patient_fitting_data(df: pd.DataFrame, features: list=['Hb', 'LDH']):
+    for num in df.patientnumber.unique():
+        patient = num
+        patient_df = df[df['patientnumber']==num]
+        
+        fitting_df = patient_df[['time'] + features]
+        fitting_df.columns = ['Time'] + features
+        
+        os.makedirs(f'datasets/{patient}/', exist_ok=True)
+
+        patient_df.to_csv(f'datasets/{patient}/data.csv', index=False)
+
+    return None
+
+
 if __name__=='__main__':
     data_df = pd.read_excel('datasets/haemolysismodel_conRetis.xlsx')   #import Data von Pinkus 
     df =long_format(data_df)
+    #extract_patient_fitting_data(df)
     df.to_csv('datasets/OIE_data.csv', index=False)    
-    pth, non_pth = extract_fitting_data(df) 
+    pth, non_pth = extract_fitting_data(df, ['Hb', 'LDH','[R]']) 
     pth.to_csv('Estimation/pth.csv', index=False)
     non_pth.to_csv('Estimation/non_pth.csv', index=False)
 

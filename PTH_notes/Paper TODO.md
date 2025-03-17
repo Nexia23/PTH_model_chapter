@@ -1,0 +1,54 @@
+## Chapter Text
+- [ ] **Introduction:**
+	- [ ] Read about Erythropoiesis and modeling efforts to find better 
+		- [x] basic biology 
+			- stuff in folder understanding, direct citation
+		- [ ] k_P_birth #model_extension 
+			--> leave as is from talk at conference with iron deficiency model           people hard to to any kind of estimate 
+		- [x] J_P_death representations(=hill function [here](https://pubmed.ncbi.nlm.nih.gov/7606142/)) #model_extension 
+	- [ ] read about malaria infection models, obviously Rebeccas stuff is good start
+		- [x] look at immune responses or medication addition
+	- [ ] read about PADH 
+		- [x] what is the definition
+		- [x] first formulation and hypothesis for this effect
+- [ ] **Results:**
+	- [ ] describe model and chosen parameters
+		- [x] improve model .svg of rebacca
+		- [ ] reaction equations
+		- [ ] parameter table (markdown or pandas?)
+			- just time parameters or k values?
+	- [ ] Paragraphs and plots:
+		- [x] 10% erythrocytes reduction show recovery
+			- ![[E_reduction_10percent.png]]
+		- [x] show 'normal' cyclic infection + medication
+			- parameter set has to be slightly changed
+				- tropism = 1, as it damps the oscillation to near none if higher >2
+					- interesting discussion point
+				- higher k_M_death  * 2 = 96 or could lower k_E_infect * 1/2
+				- ![[Oscillation.png]]
+		- [x] show infection +/- BH 
+			- [ ] analysis of effect
+	- [ ] Parameterscan and/or sensitivity analysis
+		- [ ] interesting parameters risk factors plot in Rebeccas BA
+			- [ ] find out if actually risk factors or just named so as they have big impact of dynamics
+			- [ ] find clinical risk factors
+				- [ ] factor connection to model parameter
+- [ ] **Discussion:**
+	- [ ] research reasons for bystander Haemolysis and model them
+		- [ ] Haptoglobin incapable to buffer oiE substance release
+			- [ ] ROS: degraded haemoglobin and artesunate
+				- absent or low haptoglobin levels are a clinical parameter for finding PADH in Sawettachai Jaita et al., Post-Artesunate Delayed Hemolysis: A Review of Current Evidence,Tropical Medicine and Infectious Diseas 2023 https://doi.org/10.3390/tropicalmed8010049
+				- in same publication artesunate is mentioned to suppress bone marrow precursor production 
+			- [ ] release of surface proteins
+				- [ ] what happens to oiEs at death
+					- [x] digested by marcophage
+					- [ ] disintegrate so release of substance has higher probability
+			- [ ] include in model Haptoglobin #model_extension
+		- [ ] immune system 
+			- [ ] over priming of immune cells in response to infection?
+				- [ ] short term cells of higher interest
+			- [ ] build small immune response in model #model_extension 
+- [ ] Appendix:
+	- [ ] Sanity check graphs:
+		- [x] oscillating infection 
+		- [x] 10% decrease of erythrocytes to see recover to default, does erythropoiesis work?

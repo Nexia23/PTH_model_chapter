@@ -1,0 +1,20 @@
+- [Link](https://www.ncbi.nlm.nih.gov/books/NBK26919/table/A4143/?report=objectonly)to table with number of cells in blood for T cell number 1 × 10^9 cells/L as estimate for macrophages as immune response to phagocytise red blood cells
+	-  CD4+ T cells typically make up 10-20% of total lymphocytes in human peripheral blood[1](https://www.bio-rad-antibodies.com/flow-cytometry-cell-frequency.html).
+	- The frequency of naive CD4+ T cells specific for a given antigen is very low, ranging between 0.01-0.001% of the total CD4+ T cell count[2](https://www.miltenyibiotec.com/GB-en/resources/macs-handbook/human-cells-and-organs/human-cell-types/cd4-t-cells-human.html). 1-10 cells/µL
+	- For some specific epitopes studied, frequencies as high as 20 naive CD4+ T cells per million total CD4+ T cells (0.002%) were observed[3](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3997369/).
+	- Regulatory T cells (Tregs), a subset of CD4+ T cells, comprise approximately 1-10% of the total CD4+ T cell population in healthy adults[1](https://www.bio-rad-antibodies.com/flow-cytometry-cell-frequency.html) 1-100 cells/µL
+	- 0.2-1.4% Treg in bio rad 2-14 cells/µL
+	- Treg will be stimated to be 1-100  cells/µL
+		- thus equilibration of $\beta_{Treg} = \frac{\delta_{Treg}\cdot Treg}{E_{init}}$
+- What if the mean life time of healthy red blood cells changes with parasite burden?
+	- implemented as event it does work well, cost function worse and without event, also the graphs look bad
+- Should P birth and death be more dynamic? 
+	--> Hill function for regulation of J_P_death
+	- run delay model has nice graphs but unrealistically high fluxes, here either ignore and claim ignorance or unknown regulation
+	- or see if the difference is all that matters $\Delta_{birth-death}=$  500, estimation finds other values  
+- Artemisinin drug administration correlates with is half life time in publication it was advised to use same time - N J White, Assessment of the Pharmacodynamic Properties of Antimalarial Drugs in Vivo., Antimicrobial Agents and Chemotherapy 41,  (July 1997).
+- Found a paper Plasmodium falciparum rhoptry protein RSP2 triggers destruction of the erythroid lineage, this instead of haptoglobin as trigger or together 
+	- [Suppression of erythropoiesis in malarial anemia is associated with hemozoin in vitro and in vivo'](https://ashpublications.org/blood/article/108/8/2569/22589/Suppression-of-erythropoiesis-in-malarial-anemia)
+- Most #tropism studies on _P. falciparum_ agree that it has the capability to invade both reticulocytes and normocytes but prefers reticulocytes when available ([Table 1](https://www.frontiersin.org/articles/10.3389/fmicb.2022.1022828/full#tab1)). Varying extents of its reticulocyte preference were reported: from as low as 2 times more ([Pasvol et al., 1980](https://www.frontiersin.org/articles/10.3389/fmicb.2022.1022828/full#ref121); [Naidu et al., 2019](https://www.frontiersin.org/articles/10.3389/fmicb.2022.1022828/full#ref105)), to as high as 14 times more ([Hegner, 1938](https://www.frontiersin.org/articles/10.3389/fmicb.2022.1022828/full#ref53)) than its normocyte preference
+- data for EPO fitting [here](https://pubmed.ncbi.nlm.nih.gov/1511160/) sadly not the found the paper yet
+- Measurement ideas free Hb, Heme or HMGB1 [paper](https://doi.org/10.1126/scitranslmed.3001118)![[heme_toxic.png]]
